@@ -31,6 +31,16 @@ public final class Lex{
 	private static final HashSet<Integer> delimiter=new HashSet<>();
 	private static final HashSet<Integer> idInitial=new HashSet<>(),idSubsequent=new HashSet<>();
 	private static final HashSet<Integer> idInitialType=new HashSet<>(),idSubsequentType=new HashSet<>();
+	private static final SimpleToken DOT=SimpleToken.getToken(".");
+	private static final SimpleToken COMMA=SimpleToken.getToken(",");
+	private static final SimpleToken COMMA_AT=SimpleToken.getToken(",@");
+	private static final SimpleToken LEFT_VECTOR=SimpleToken.getToken("#(");
+	private static final SimpleToken LEFT_PAREN=SimpleToken.getToken("(");
+	private static final SimpleToken RIGHT_PAREN=SimpleToken.getToken(")");
+	private static final SimpleToken QUOTE=SimpleToken.getToken("\'");
+	private static final SimpleToken QUASIQUOTE=SimpleToken.getToken("`");
+	private static final SimpleToken BYTE8=SimpleToken.getToken("#u8(");
+	private static final SimpleToken COMMENT_NEXT=SimpleToken.getToken("#;");
 	private final PushbackReader in;
 	private boolean foldingCase=false;
 	final HashMap<String,Object> datums=new HashMap<>();
@@ -125,9 +135,9 @@ public final class Lex{
 	 * @return
 	 * @throws java.io.IOException
 	 */
-	public ArrayList<Object> getRemainingTokens()throws IOException{
-		ArrayList<Object> tokens=new ArrayList<>();
-		Object next=nextToken();
+	public ArrayList<Token> getRemainingTokens()throws IOException{
+		ArrayList<Token> tokens=new ArrayList<>();
+		Token next=nextToken();
 		while(next!=null){
 			tokens.add(next);
 			next=nextToken();
@@ -135,6 +145,9 @@ public final class Lex{
 		return tokens;
 	}
 	private void unreadIfNotEOF(int c) throws IOException{
+		unreadIfNotEOF(c,in);
+	}
+	private static void unreadIfNotEOF(int c,PushbackReader in) throws IOException{
 		if(c!=EOF)
 			in.unread(c);
 	}
@@ -142,24 +155,25 @@ public final class Lex{
 	 * Get the next token
 	 * @return the token or null if the end of the code is reached
 	 */
-	public Object nextToken(){
+	public Token nextToken(){
 		try{
   			while(true){
 				int c=in.read();
 				if(isWhiteSpace(c))
 					continue;
 				switch(c){
-					case EOF:
-						return null;
-					case '(':case ')':case '`':case '\''://case '[':case ']':
-						return Token.getToken(String.valueOf((char)c));
+					case EOF:return null;
+					case '(':return LEFT_PAREN;
+					case ')':return RIGHT_PAREN;
+					case '`':return QUASIQUOTE;
+					case '\'':return QUOTE;
 					case ',':
 						c=in.read();
 						if(c=='@')
-							return Token.getToken(",@");
+							return COMMA_AT;
 						else{
 							unreadIfNotEOF(c);
-							return Token.getToken(",");
+							return COMMA;
 						}
 					case ';':
 						eatLineRemaining();
@@ -182,7 +196,7 @@ public final class Lex{
 									throw new LexicalException();
 								break;
 							case ';':
-								return Token.getToken("#;");
+								return COMMENT_NEXT;
 							case '\\':
 								return nextCharacter();
 							case 't':case 'T':
@@ -200,10 +214,10 @@ public final class Lex{
 									unreadIfNotEOF(c);
 								return ScmBoolean.FALSE;
 							case '(':
-								return Token.getToken("#(");
+								return LEFT_VECTOR;
 							case 'u':case 'U':
 								if(in.read()=='8'&&in.read()=='(')
-									return Token.getToken("#u8(");
+									return BYTE8;
 								else
 									throw new LexicalException();
 							/*case '\'':
@@ -222,11 +236,14 @@ public final class Lex{
 									return new Token("#vu8(");
 								}
 								break;*/
+							case EOF:
+								throw new LexicalException();
 							default:
 								in.unread(c);
-								if(Character.isLetter(c))
-									return nextNumber('#');
-								else
+								if(Character.isLetter(c)){
+									in.unread('#');
+									return parseNumber(untilNextDelimiter());
+								}else
 									return nextLabel();
 						}
 						break;
@@ -235,7 +252,8 @@ public final class Lex{
 					case '|':
 						return nextVerbatimIdentifer();
 					default:
-						return nextIdentiferOrNumber(c);
+						in.unread(c);
+						return nextIdentiferOrNumber();
 				}
 			}
 		}catch(IOException ex){
@@ -243,6 +261,9 @@ public final class Lex{
 		}
 	}
 	private void expectIgnoreCase(String str) throws IOException{
+		expectIgnoreCase(str,in);
+	}
+	private static void expectIgnoreCase(String str,Reader in) throws IOException{
 		for(int i=0;i<str.length();i++)
 			if(Character.toLowerCase(in.read())!=Character.toLowerCase(str.charAt(i)))
 				throw new LexicalException();
@@ -289,17 +310,26 @@ public final class Lex{
 			}
 		}
 	}
-	private int nextCharacter()throws IOException{
+	private ScmCharacter nextCharacter()throws IOException{
 		String cname=untilNextDelimiter();
+		int codepoint;
 		if(cname.length()==1)
-			return cname.codePointAt(0);
-		else if(cname.charAt(0)=='x'||cname.charAt(0)=='X'){
-			return Character.toChars(Integer.valueOf(cname.substring(1),16))[0];
+			codepoint=cname.codePointAt(0);
+		else if(cname.length()==0){
+			codepoint=in.read();
+			if(codepoint==EOF)
+				throw new LexicalException();
+		}else if(cname.charAt(0)=='x'||cname.charAt(0)=='X'){
+			codepoint=Character.toChars(Integer.valueOf(cname.substring(1),16))[0];
 		}else{
 			if(foldingCase)
 				cname=ScmString.toFoldingCase(cname);
-			return (int)name2char.get(cname);
+			if(name2char.containsKey(cname))
+				codepoint=name2char.get(cname);
+			else
+				throw new LexicalException();
 		}
+		return ScmCharacter.getScmCharacter(codepoint);
 	}
 	private Identifier createIdentifier(String name){
 		return new Identifier(foldingCase?ScmString.toFoldingCase(name):name);
@@ -308,7 +338,7 @@ public final class Lex{
 		StringBuilder buf=new StringBuilder();
 		buf.appendCodePoint(in.read());
 		int c;
-		while((c=in.read())!=EOF&&!isDelimiter(c)&&c!='#'){
+		while((c=in.read())!=EOF&&!isDelimiter(c)){
 			buf.appendCodePoint(c);
 		}
 		unreadIfNotEOF(c);
@@ -328,7 +358,7 @@ public final class Lex{
 				throw new LexicalException();
 		}
 	}
-	private String nextString() throws IOException{
+	private ScmString nextString() throws IOException{
 		StringBuilder str=new StringBuilder();
 		int c=in.read();
 		while(true){
@@ -355,7 +385,7 @@ public final class Lex{
 				c=in.read();
 			}
 		}
-		return str.toString();
+		return new ScmString(str.toString());
 	}
 	private int eatLineEndingInString(int c)throws IOException{
 		while(c!=EOF&&isIntraLineSpace(c))
@@ -381,7 +411,7 @@ public final class Lex{
 	private static boolean isIntraLineSpace(int c){
 		return c==TABULATION||Character.getType(c)==Character.SPACE_SEPARATOR;
 	}
-	private String nextVerbatimIdentifer()throws IOException{
+	private Identifier nextVerbatimIdentifer()throws IOException{
 		int c=in.read();
 		StringBuilder buf=new StringBuilder();
 		while(c!='|'&&c!=EOF){
@@ -392,7 +422,7 @@ public final class Lex{
 			}
 			c=in.read();
 		}
-		return foldingCase?ScmString.toFoldingCase(buf.toString()):buf.toString();
+		return createIdentifier(buf.toString());
 	}
 	private int nextHexOrMem()throws IOException{
 		int c=in.read();
@@ -410,49 +440,41 @@ public final class Lex{
 			throw new LexicalException();
 		}
 	}
-	private Object nextIdentiferOrNumber(int prefix)throws IOException{
-		if(isInitial(prefix))
-			return nextIdentifer(prefix);
+	private boolean isAllSubsequent(String token){
+		return token.codePoints().allMatch((c)->isSubsequent(c));
+	}
+	private Token nextIdentiferOrNumber()throws IOException{
+		String token=untilNextDelimiter();
+		if(isInitial(token.codePointAt(0))&&isAllSubsequent(token))
+			return createIdentifier(token);
+		int prefix=token.codePointAt(0);
 		if(prefix=='.'){
-			int c=in.read();
-			if(c==EOF||isDelimiter(c)){
-				return Token.getToken(".");
-			}
-			in.unread(c);
-			if(c=='.'||c=='+'||c=='-'||c=='@'||isInitial(c)){
-				return nextIdentifer(prefix);
+			if(token.length()==1)
+				return DOT;
+			int snd=token.codePointAt(1);
+			if((snd=='.'||snd=='+'||snd=='-'||snd=='@'||isInitial(snd))&&isAllSubsequent(token)){
+				return createIdentifier(token);
 			}
 		}else if(prefix=='+'||prefix=='-'){
-			int c=in.read();
-			if(c==EOF||isDelimiter(c)){
-				return createIdentifier(Character.toString((char)prefix));
+			if(token.length()==1){
+				return createIdentifier(token);
 			}
-			if(c=='+'||c=='-'||c=='@'||isInitial(c)){
-				in.unread(c);
-				return nextIdentifer(prefix);
-			}
-			if(c=='.'){
-				c=in.read();
-				unreadIfNotEOF(c);
-				in.unread('.');
-				if(c=='.'||c=='+'||c=='-'||c=='@'||isInitial(c)){
-					return nextIdentifer(prefix);
+			int c=token.codePointAt(1);
+			if(c=='.'&&token.length()>=3){
+				c=token.codePointAt(2);
+				if((c=='.'||c=='+'||c=='-'||c=='@'||isInitial(c))&&isAllSubsequent(token)){
+					return createIdentifier(token);
 				}
-			}else
-				in.unread(c);
+			}
+			if((c=='+'||c=='-'||c=='@'||isInitial(c))&&isAllSubsequent(token)){
+				try{
+					return parseNumber(token);
+				}catch(RuntimeException ex){
+					return createIdentifier(token);
+				}
+			}
 		}
-		return nextNumber(prefix);
-	}
-	private Identifier nextIdentifer(int prefix)throws IOException{
-		StringBuilder str=new StringBuilder();
-		str.appendCodePoint(prefix);
-		prefix=in.read();
-		while(prefix!=EOF&&isSubsequent(prefix)){
-			str.appendCodePoint(prefix);
-			prefix=in.read();
-		}
-		unreadIfNotEOF(prefix);
-		return createIdentifier(str.toString());
+		return parseNumber(token);
 	}
 	private static boolean isInitial(int c){
 		return (c>='a'&&c<='z')||(c>='A'&&c<='Z')||idInitial.contains(c)||(c>127&&idInitialType.contains(Character.getType(c)));
@@ -460,54 +482,63 @@ public final class Lex{
 	private static boolean isSubsequent(int c){
 		return (c>='a'&&c<='z')||(c>='A'&&c<='Z')||(c>='0'&&c<='9')||idSubsequent.contains(c)||(c>127&&idSubsequentType.contains(Character.getType(c)));
 	}
-	private Object nextNumber(int prefix)throws IOException{
+	private static ScmNumber parseNumber(String literal)throws IOException{
+		PushbackReader in=new PushbackReader(new StringReader(literal));
 		int base=10;
 		byte exact=0;//1 mean exact, -1 means inexact,0 means not mentioned
-		if(prefix=='#'){
-			do{
-				switch(in.read()){
-					case 'i':case 'I':exact=-1;break;
-					case 'e':case 'E':exact=1;break;
-					case 'b':case 'B':base=2;break;
-					case 'o':case 'O':base=8;break;
-					case 'd':case 'D':base=10;break;
-					case 'x':case 'X':base=16;break;
-					default:throw new LexicalException();
-				}
-				prefix=in.read();
-			}while(prefix=='#');
+		int prefix=in.read();
+		while(prefix=='#'){
+			switch(in.read()){
+				case 'i':case 'I':exact=-1;break;
+				case 'e':case 'E':exact=1;break;
+				case 'b':case 'B':base=2;break;
+				case 'o':case 'O':base=8;break;
+				case 'd':case 'D':base=10;break;
+				case 'x':case 'X':base=16;break;
+				default:throw new LexicalException();
+			}
+			prefix=in.read();
 		}
-		Object real=nextReal(prefix,exact,base);
+		unreadIfNotEOF(prefix,in);
+		ScmReal real=parseReal(in,base,exact);
+		prefix=in.read();
+		ScmNumber result=null;
 		switch(prefix){
 			case 'i':
-				return new Tuple(BigInteger.ZERO,real);
+				result=new ScmComplexRectangular(ScmInteger.ZERO,real);
+				break;
 			case '@':
-				return new Tuple(real,nextReal(in.read(),exact,base));
-			case '+':
-			case '-':
-				return new Tuple(real,nextReal(prefix,exact,base));
-			default:
-				unreadIfNotEOF(prefix);
-				return real;
+				result=new ScmComplexPolar(real,parseReal(in,base,exact));
+				break;
+			case '+':case '-':
+				in.unread(prefix);
+				result=new ScmComplexRectangular(real,parseReal(in,base,exact));
+				if(in.read()!='i')
+					throw new LexicalException();
+				break;
+			case EOF:result=real;break;
 		}
+		if(in.read()!=EOF)
+			throw new LexicalException();
+		else
+			return result;
 	}
-	private Object nextReal(int prefix,byte exact,int base)throws IOException{
+	private static ScmReal parseReal(PushbackReader in,int base,int exact) throws IOException{
 		boolean neg=false;
+		int prefix=in.read();
 		if(prefix=='+'){
 			prefix=in.read();
 		}else if(prefix=='-'){
 			neg=true;
 			prefix=in.read();
 		}
-		if(prefix=='i'){
-			in.unread('i');
-			return neg?BigInteger.ONE.negate():BigInteger.ONE;
-		}
 		BigInteger num=BigInteger.ZERO,b=BigInteger.valueOf(base);
 		DigitVerifier digitCheck=DigitVerifier.getDigitVerifier(base);
+		boolean ate=false;
 		while(digitCheck.verify(prefix)){
 			num=num.multiply(b).add(BigInteger.valueOf(Character.digit(prefix,base)));
 			prefix=in.read();
+			ate=true;
 		}
 		BigDecimal real;
 		if(prefix=='.'){
@@ -518,31 +549,41 @@ public final class Lex{
 				real=BigDecimal.valueOf(Character.digit(prefix,base)).multiply(pos).add(real);
 				pos=pos.multiply(ratio);
 				prefix=in.read();
+				ate=true;
 			}
-		}else if(prefix=='/'){
+			if(exact==0)
+				exact=-1;
+		}else if(ate&&prefix=='/'){
 			BigInteger dorm=BigInteger.ZERO;
 			prefix=in.read();
 			while(digitCheck.verify(prefix)){
 				dorm=dorm.multiply(b).add(BigInteger.valueOf(Character.digit(prefix,base)));
 				prefix=in.read();
 			}
-			unreadIfNotEOF(prefix);
-			return new Rational(neg?num.negate():num,dorm);
+			unreadIfNotEOF(prefix,in);
+			return new ScmRational(new ScmInteger(neg?num.negate():num),new ScmInteger(dorm));
 		}else if(prefix=='i'||prefix=='I'){
-			prefix=in.read();
-			if(prefix=='n'||prefix=='N'){
-				expectIgnoreCase("f.0");
-				return neg?Double.NEGATIVE_INFINITY:Double.POSITIVE_INFINITY;
-			}else{
-				in.unread(prefix);
+			if(ate){
 				in.unread('i');
-				return neg?num.negate():num;
+				return new ScmInteger(neg?num.negate():num);
+			}else{
+				prefix=in.read();
+				if(prefix=='n'||prefix=='N'){
+					expectIgnoreCase("f.0",in);
+					return neg?ScmFloatingPointNumber.NEGATIVE_INF:ScmFloatingPointNumber.POSITIVE_INF;
+				}else{
+					unreadIfNotEOF(prefix,in);
+					in.unread('i');
+					return neg?ScmInteger.ONE.negate():ScmInteger.ONE;
+				}
 			}
-		}else if(prefix=='n'){
-			expectIgnoreCase("an.0");
-			return neg?-Double.NaN:Double.NaN;
+		}else if((!ate)&&(prefix=='n'||prefix=='N')){
+			expectIgnoreCase("an.0",in);
+			return neg?ScmFloatingPointNumber.NEGATIVE_NAN:ScmFloatingPointNumber.POSITIVE_NAN;
 		}else
 			real=new BigDecimal(num);
+		if(!ate)
+			throw new LexicalException();
 		if(prefix=='e'){
 			prefix=in.read();
 			boolean negexp=false;
@@ -558,8 +599,20 @@ public final class Lex{
 				prefix=in.read();
 			}
 			real=real.movePointRight(negexp?-exp:exp);
+			if(exact==0)
+				exact=-1;
 		}
-		return neg?real.negate():real;
+		unreadIfNotEOF(prefix,in);
+		if(exact==-1)
+			return new ScmFloatingPointNumber(neg?real.negate():real);
+		else{
+			try{
+				num=real.toBigIntegerExact();
+				return new ScmInteger(neg?num.negate():num);
+			}catch(RuntimeException e){
+				return new ScmFloatingPointNumber(neg?real.negate():real);
+			}
+		}
 	}
 	public static void main(String[] args)throws IOException{
 		BufferedReader in=new BufferedReader(new InputStreamReader(System.in));

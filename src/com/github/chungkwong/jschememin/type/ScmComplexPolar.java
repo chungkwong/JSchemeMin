@@ -13,28 +13,39 @@
  *
  */
 package com.github.chungkwong.jschememin.type;
-import com.github.chungkwong.jschememin.*;
-public final class ScmBoolean implements Token,ScmObject{
-	public static final ScmBoolean TRUE=new ScmBoolean(true);
-	public static final ScmBoolean FALSE=new ScmBoolean(false);
-	private final boolean val;
-	public ScmBoolean(boolean val){
-		this.val=val;
-	}
-	public boolean isTrue(){
-		return val;
+import java.util.*;
+/**
+ *
+ * @author Chan Chung Kwong <1m02math@126.com>
+ */
+public class ScmComplexPolar implements ScmComplex{
+private final ScmReal abs,radius;
+	public ScmComplexPolar(ScmReal real,ScmReal imag){
+		this.abs=real;
+		this.radius=imag;
 	}
 	@Override
 	public boolean equals(Object obj){
-		return this==obj;
+		return obj instanceof ScmComplexPolar&&
+				((ScmComplexPolar)obj).abs.equals(abs)&&((ScmComplexPolar)obj).radius.equals(radius);
 	}
 	@Override
 	public int hashCode(){
-		return this.val?1:0;
+		int hash=7;
+		hash=31*hash+Objects.hashCode(this.abs);
+		hash=31*hash+Objects.hashCode(this.radius);
+		return hash;
+	}
+	@Override
+	public String toString(){
+		return abs+"exp(i"+radius+")";
+	}
+	@Override
+	public boolean isExact(){
+		return abs.isExact()&&radius.isExact();
 	}
 	@Override
 	public String toExternalRepresentation(){
-		return val?"#t":"#f";
+		return abs.toExternalRepresentation()+"@"+radius.toExternalRepresentation();
 	}
-
 }

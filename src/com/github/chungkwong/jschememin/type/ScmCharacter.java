@@ -1,6 +1,21 @@
+/*
+ * Copyright (C) 2016 Chan Chung Kwong
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ */
 package com.github.chungkwong.jschememin.type;
+import com.github.chungkwong.jschememin.*;
 import java.util.*;
-public final class ScmCharacter extends ScmObject implements Comparable<ScmCharacter>{
+public final class ScmCharacter implements ScmObject, Comparable<ScmCharacter>,Token{
 	static final HashMap<Integer,Integer> caseFoldMap=new HashMap<>();
 	int codepoint;
 	static{
@@ -11,6 +26,9 @@ public final class ScmCharacter extends ScmObject implements Comparable<ScmChara
 	}
 	public ScmCharacter(int codepoint){
 		this.codepoint=codepoint;
+	}
+	public static ScmCharacter getScmCharacter(int codePoint){
+		return new ScmCharacter(codePoint);
 	}
 	public ScmCharacter upCase(){
 		return new ScmCharacter(Character.toUpperCase(codepoint));
@@ -51,7 +69,20 @@ public final class ScmCharacter extends ScmObject implements Comparable<ScmChara
 	public int compareToIgnoreCase(ScmCharacter c){
 		return foldCase().compareTo(c.foldCase());
 	}
+	@Override
 	public String toExternalRepresentation(){
-		return new String(new int[]{codepoint},0,1);
+		StringBuilder buf=new StringBuilder();
+		buf.append("#\\");
+		buf.appendCodePoint(codepoint);
+		return buf.toString();
 	}
+	@Override
+	public boolean equals(Object obj){
+		return obj instanceof ScmCharacter&&((ScmCharacter)obj).codepoint==codepoint;
+	}
+	@Override
+	public int hashCode(){
+		return codepoint;
+	}
+
 }

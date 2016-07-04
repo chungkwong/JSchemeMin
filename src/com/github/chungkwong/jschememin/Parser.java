@@ -1,7 +1,21 @@
+/*
+ * Copyright (C) 2015,2016 Chan Chung Kwong
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ */
 package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
-public final class Parser implements TokenIterator{
+public final class Parser{
 	Lex lex;
 	private Stack<Level> stack=new Stack<Level>();
 	HashMap<String,Object> datumRef=new HashMap<String,Object>();
@@ -29,10 +43,9 @@ public final class Parser implements TokenIterator{
 			Object token=lex.nextToken();
 			if(token==null)
 				break;
-			if(token instanceof Boolean||token instanceof Character||token instanceof String||token instanceof Identifier
-				||token instanceof Number||token instanceof Rational||token instanceof Tuple)
-					nonComment=addDatum(token);
-			else if(token instanceof Token){
+			if(token instanceof ScmObject||token instanceof Identifier)
+				nonComment=addDatum(token);
+			else if(token instanceof SimpleToken){
 				String name=token.toString();
 				if(abbreviation.containsKey(name)){
 					stack.push(new ListLevel(abbreviation.get(name)));
@@ -65,7 +78,7 @@ public final class Parser implements TokenIterator{
 				Object car=((ScmPair)pair).getCar();
 				if(car instanceof DatumLabelSrc){
 					datumRef.put(((DatumLabelSrc)car).getLabel(),datum);
-				}else if(car instanceof Token&&car.toString().equals("#;")){
+				}else if(car instanceof SimpleToken&&car.toString().equals("#;")){
 					return false;
 				}else{
 					datum=pair;

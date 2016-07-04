@@ -13,17 +13,25 @@
  *
  */
 package com.github.chungkwong.jschememin;
-
-/**
- *
- * @author Chan Chung Kwong <1m02math@126.com>
- */
-public class Main {
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String[] args) {
-	// TODO code application logic here
+import java.util.*;
+public final class SimpleToken implements Token{
+	private final String id;
+	private SimpleToken(String id){
+		this.id=id;
 	}
-
+	public static SimpleToken getToken(String id){
+		return new SimpleToken(id);
+	}
+	@Override
+	public String toString(){
+		return id;
+	}
+	@Override
+	public boolean equals(Object obj){
+		return obj instanceof SimpleToken&&((SimpleToken)obj).id.equals(id);
+	}
+	@Override
+	public int hashCode(){
+		return Objects.hashCode(this.id);
+	}
 }
