@@ -38,7 +38,7 @@ public class ScmComplexRectangular implements ScmComplex{
 	}
 	@Override
 	public String toString(){
-		return "("+real+")+("+imag+")i";
+		return toExternalRepresentation();
 	}
 	@Override
 	public boolean isExact(){

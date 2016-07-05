@@ -22,6 +22,9 @@ public final class ScmInteger implements ScmReal{
 	public ScmInteger(BigInteger value){
 		this.value=value;
 	}
+	public static ScmInteger valueOf(long val){
+		return new ScmInteger(BigInteger.valueOf(val));
+	}
 	public ScmInteger negate(){
 		return new ScmInteger(value.negate());
 	}
@@ -61,7 +64,7 @@ public final class ScmInteger implements ScmReal{
 	}
 	@Override
 	public String toString(){
-		return value.toString();
+		return toExternalRepresentation();
 	}
 	@Override
 	public boolean isExact(){

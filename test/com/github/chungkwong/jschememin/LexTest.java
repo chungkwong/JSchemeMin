@@ -47,7 +47,7 @@ public class LexTest{
 	public void testWhitespace(){
 		check("");
 		check("\n");
-		check("\nhello",new Identifier("hello"));
+		check("\nhello",new ScmSymbol("hello"));
 		check("\r");
 		check("\r\n");
 		check(" ");
@@ -59,7 +59,7 @@ public class LexTest{
 		check("#|;dn#||#wfke|#");
 		check("#|;dn#|ds|g#r|#wfke|#");
 		check("#|;dn##|ds|g##r||#wfke|#");
-		check("#|;dn#|ds|g#r|#wfke|#hello",new Identifier("hello"));
+		check("#|;dn#|ds|g#r|#wfke|#hello",new ScmSymbol("hello"));
 	}
     @Test
 	public void testBoolean(){
@@ -78,6 +78,7 @@ public class LexTest{
 	}
 	@Test
 	public void testCharacter(){
+		check("#\\ ",ScmCharacter.getScmCharacter(' '));
 		check("#\\a",ScmCharacter.getScmCharacter('a'));
 		check("#\\x",ScmCharacter.getScmCharacter('x'));
 		check("#\\x4F",ScmCharacter.getScmCharacter('\u004f'));
@@ -91,6 +92,7 @@ public class LexTest{
 		check("#\\space",ScmCharacter.getScmCharacter(' '));
 		check("#\\tab",ScmCharacter.getScmCharacter('\t'));
 		check("#\\a)",ScmCharacter.getScmCharacter('a'),SimpleToken.getToken(")"));
+		check("#\\ )",ScmCharacter.getScmCharacter(' '),SimpleToken.getToken(")"));
 		check("#\\x)",ScmCharacter.getScmCharacter('x'),SimpleToken.getToken(")"));
 		check("#\\x4F)",ScmCharacter.getScmCharacter('\u004f'),SimpleToken.getToken(")"));
 		check("#\\alarm)",ScmCharacter.getScmCharacter('\u0007'),SimpleToken.getToken(")"));
@@ -134,6 +136,7 @@ public class LexTest{
 		check("#e4.",new ScmInteger(BigInteger.valueOf(4)));
 		check("#e-4.",new ScmInteger(BigInteger.valueOf(-4)));
 		check("23.670",new ScmFloatingPointNumber(new BigDecimal("23.67")));
+		check("#e23.670",new ScmFloatingPointNumber(new BigDecimal("23.67")));
 		check(".670",new ScmFloatingPointNumber(new BigDecimal(".67")));
 		check("1.e-10",new ScmFloatingPointNumber(new BigDecimal("1e-10")));
 		check("1.e+10",new ScmFloatingPointNumber(new BigDecimal("10000000000")));
@@ -146,7 +149,20 @@ public class LexTest{
 		check("+nan.0",ScmFloatingPointNumber.POSITIVE_NAN);
 		check("-nan.0",ScmFloatingPointNumber.NEGATIVE_NAN);
 		check("+inf.0",ScmFloatingPointNumber.POSITIVE_INF);
-		check("-inf.0",ScmFloatingPointNumber.NEGATIVE_INF);//TODO FOLLOW
+		check("-inf.0",ScmFloatingPointNumber.NEGATIVE_INF);
+		check("0)",new ScmInteger(BigInteger.valueOf(0)),SimpleToken.getToken(")"));
+		check("13)",new ScmInteger(BigInteger.valueOf(13)),SimpleToken.getToken(")"));
+		check("#b1101)",new ScmInteger(BigInteger.valueOf(13)),SimpleToken.getToken(")"));
+		check("#X#eD)",new ScmInteger(BigInteger.valueOf(13)),SimpleToken.getToken(")"));
+		check("-13)",new ScmInteger(BigInteger.valueOf(-13)),SimpleToken.getToken(")"));
+		check("#b-1101)",new ScmInteger(BigInteger.valueOf(-13)),SimpleToken.getToken(")"));
+		check("4/2)",new ScmRational(new ScmInteger(BigInteger.valueOf(2)),new ScmInteger(BigInteger.valueOf(1))),SimpleToken.getToken(")"));
+		check("#b1101/11)",new ScmRational(new ScmInteger(BigInteger.valueOf(13)),new ScmInteger(BigInteger.valueOf(3))),SimpleToken.getToken(")"));
+		check("3e2)",new ScmFloatingPointNumber(new BigDecimal(300)),SimpleToken.getToken(")"));
+		check("23.670)",new ScmFloatingPointNumber(new BigDecimal("23.67")),SimpleToken.getToken(")"));
+		check(".670)",new ScmFloatingPointNumber(new BigDecimal(".67")),SimpleToken.getToken(")"));
+		check("1.e-10)",new ScmFloatingPointNumber(new BigDecimal("1e-10")),SimpleToken.getToken(")"));
+		check("+nan.0)",ScmFloatingPointNumber.POSITIVE_NAN,SimpleToken.getToken(")"));
 	}
 	@Test
 	public void testComplexNumber(){
@@ -195,43 +211,58 @@ public class LexTest{
 	}
 	@Test
 	public void testIdentifier(){
-		check("+",new Identifier("+"));
-		check("+@",new Identifier("+@"));
-		check("+-df",new Identifier("+-df"));
-		check("++",new Identifier("++"));
-		check("+.@",new Identifier("+.@"));
-		check("+.-df",new Identifier("+.-df"));
-		check("+..+",new Identifier("+..+"));
-		check("+a",new Identifier("+a"));
-		check("-",new Identifier("-"));
-		check("-@",new Identifier("-@"));
-		check("--df+-.@)",new Identifier("--df+-.@"),SimpleToken.getToken(")"));
-		check("-+",new Identifier("-+"));
-		check("..",new Identifier(".."));
-		check(".@",new Identifier(".@"));
-		check(".+",new Identifier(".+"));
-		check(".--d",new Identifier(".--d"));
-		check(".a",new Identifier(".a"));
-		check("||",new Identifier(""));
-		check("|hello\nworld|",new Identifier("hello\nworld"));
-		check("|hello\\|\\x4f;world|",new Identifier("hello|\u004fworld"));
+		check("+",new ScmSymbol("+"));
+		check("+@",new ScmSymbol("+@"));
+		check("+-df",new ScmSymbol("+-df"));
+		check("++",new ScmSymbol("++"));
+		check("+.@",new ScmSymbol("+.@"));
+		check("+.-df",new ScmSymbol("+.-df"));
+		check("+..+",new ScmSymbol("+..+"));
+		check("+a",new ScmSymbol("+a"));
+		check("-",new ScmSymbol("-"));
+		check("-@",new ScmSymbol("-@"));
+		check("--df+-.@)",new ScmSymbol("--df+-.@"),SimpleToken.getToken(")"));
+		check("-+",new ScmSymbol("-+"));
+		check("..",new ScmSymbol(".."));
+		check(".@",new ScmSymbol(".@"));
+		check(".+",new ScmSymbol(".+"));
+		check(".--d",new ScmSymbol(".--d"));
+		check(".a",new ScmSymbol(".a"));
+		check("||",new ScmSymbol(""));
+		check("|hello\nworld|",new ScmSymbol("hello\nworld"));
+		check("|hello\\|\\x4f;world|",new ScmSymbol("hello|\u004fworld"));
 		check("abcxyz0129ABCXYZ!$%&*/:<=>?^_~+-.@)"
-				,new Identifier("abcxyz0129ABCXYZ!$%&*/:<=>?^_~+-.@"),SimpleToken.getToken(")"));
-		check("!",new Identifier("!"));
-		check("$",new Identifier("$"));
-		check("%",new Identifier("%"));
-		check("&",new Identifier("&"));
-		check("*",new Identifier("*"));
-		check("/",new Identifier("/"));
-		check(":",new Identifier(":"));
-		check("<",new Identifier("<"));
-		check("=",new Identifier("="));
-		check(">",new Identifier(">"));
-		check("?",new Identifier("?"));
-		check("^",new Identifier("^"));
-		check("_",new Identifier("_"));
-		check("~",new Identifier("~"));
-		check("!",new Identifier("!"));
+				,new ScmSymbol("abcxyz0129ABCXYZ!$%&*/:<=>?^_~+-.@"),SimpleToken.getToken(")"));
+		check("!",new ScmSymbol("!"));
+		check("$",new ScmSymbol("$"));
+		check("%",new ScmSymbol("%"));
+		check("&",new ScmSymbol("&"));
+		check("*",new ScmSymbol("*"));
+		check("/",new ScmSymbol("/"));
+		check(":",new ScmSymbol(":"));
+		check("<",new ScmSymbol("<"));
+		check("=",new ScmSymbol("="));
+		check(">",new ScmSymbol(">"));
+		check("?",new ScmSymbol("?"));
+		check("^",new ScmSymbol("^"));
+		check("_",new ScmSymbol("_"));
+		check("~",new ScmSymbol("~"));
+		check("!",new ScmSymbol("!"));
+		check("|H\\x65;llo|",new ScmSymbol("Hello"));
+		check("|\\x3BB;|",new ScmSymbol("λ"));
+		check("|\\t\\t|",new ScmSymbol("\u0009\u0009"));
+		check("...",new ScmSymbol("..."));
+		check("+soup+",new ScmSymbol("+soup+"));
+		check("<=?",new ScmSymbol("<=?"));
+		check("->string",new ScmSymbol("->string"));
+		check("a34kTMNs",new ScmSymbol("a34kTMNs"));
+		check("lambda",new ScmSymbol("lambda"));
+		check("list->vector",new ScmSymbol("list->vector"));
+		check("q",new ScmSymbol("q"));
+		check("V17a",new ScmSymbol("V17a"));
+		check("|two word|",new ScmSymbol("two word"));
+		check("|two\\x20;word|",new ScmSymbol("two word"));
+		check("the-word-recursion-has-many-meanings",new ScmSymbol("the-word-recursion-has-many-meanings"));
 	}
 	@Test
 	public void testPunctuation(){

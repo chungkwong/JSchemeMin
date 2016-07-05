@@ -31,7 +31,7 @@ public final class ScmString implements Token,ScmObject{
 	}
 	@Override
 	public String toString(){
-		return val;
+		return toExternalRepresentation();
 	}
 	@Override
 	public boolean equals(Object obj){
@@ -39,7 +39,9 @@ public final class ScmString implements Token,ScmObject{
 	}
 	@Override
 	public int hashCode(){
-		return Objects.hashCode(this.val);
+		int hash=3;
+		hash=67*hash+Objects.hashCode(this.val);
+		return hash;
 	}
 	@Override
 	public String toExternalRepresentation(){
@@ -47,8 +49,8 @@ public final class ScmString implements Token,ScmObject{
 		buf.append("\"");
 		val.codePoints().forEach((c)->{
 			if(c=='\"'||c=='\\')
-				buf.append('\"');
-			buf.append(c);
+				buf.append('\\');
+			buf.appendCodePoint(c);
 		});
 		buf.append("\"");
 		return buf.toString();

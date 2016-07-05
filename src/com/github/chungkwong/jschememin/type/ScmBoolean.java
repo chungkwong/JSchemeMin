@@ -33,8 +33,11 @@ public final class ScmBoolean implements Token,ScmObject{
 		return this.val?1:0;
 	}
 	@Override
+	public String toString(){
+		return toExternalRepresentation();
+	}
+	@Override
 	public String toExternalRepresentation(){
 		return val?"#t":"#f";
 	}
-
 }

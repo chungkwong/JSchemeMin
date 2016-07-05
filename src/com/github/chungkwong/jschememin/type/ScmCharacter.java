@@ -77,6 +77,10 @@ public final class ScmCharacter implements ScmObject, Comparable<ScmCharacter>,T
 		return buf.toString();
 	}
 	@Override
+	public String toString(){
+		return toExternalRepresentation();
+	}
+	@Override
 	public boolean equals(Object obj){
 		return obj instanceof ScmCharacter&&((ScmCharacter)obj).codepoint==codepoint;
 	}

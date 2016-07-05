@@ -16,19 +16,17 @@ package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
 public final class Parser{
-	Lex lex;
+	private final Lex lex;
 	private Stack<Level> stack=new Stack<Level>();
-	HashMap<String,Object> datumRef=new HashMap<String,Object>();
-	static final HashMap<String,String> abbreviation=new HashMap<String,String>();
+	private final HashMap<DatumLabel,ScmObject> datumRef=new HashMap<>();
+	private final HashMap<DatumLabel,List<Backtrack>> datumBacktrack=new HashMap<>();
+	private static final HashMap<String,ScmSymbol> abbreviation=new HashMap<>();
+	private static final ScmSymbol COMMENT=new ScmSymbol("#;");
 	static{
-		abbreviation.put("\'","quote");
-		abbreviation.put("`","quasiquote");
-		abbreviation.put(",","unquote");
-		abbreviation.put(",@","unquote-splicing");
-		/*abbreviation.put("#’","syntax");
-		abbreviation.put("#`","quasisyntax");
-		abbreviation.put("#,","unsyntax");
-		abbreviation.put("#,@","unsyntax-splicing");*/
+		abbreviation.put("\'",new ScmSymbol("quote"));
+		abbreviation.put("`",new ScmSymbol("quasiquote"));
+		abbreviation.put(",",new ScmSymbol("unquote"));
+		abbreviation.put(",@",new ScmSymbol("unquote-splicing"));
 	}
 	public Parser(Lex lex){
 		this.lex=lex;
@@ -36,16 +34,32 @@ public final class Parser{
 	public Parser(String str){
 		this(new Lex(str));
 	}
-	public Object nextDatum(){
-		boolean nonComment=true;
+	public ScmObject nextDatum(){
+		boolean nonComment;
 		stack.add(new ListLevel());
 		do{//tail recursive optimization by hand
+			nonComment=true;
 			Object token=lex.nextToken();
-			if(token==null)
+			if(token==null){
 				break;
-			if(token instanceof ScmObject||token instanceof Identifier)
-				nonComment=addDatum(token);
-			else if(token instanceof SimpleToken){
+			}
+			if(token instanceof DatumLabelRef){
+				if(datumRef.containsKey((DatumLabelRef)token)){
+					nonComment=addDatum(datumRef.get(((DatumLabelRef)token)));
+				}else if(datumBacktrack.containsKey((DatumLabelRef)token)){
+					nonComment=addDatum((DatumLabelRef)token);
+				}else{
+					throw new SyntaxException("Invalid label");
+				}
+			}else if(token instanceof DatumLabelSrc){
+				if(datumBacktrack.containsKey((DatumLabelSrc)token)||datumRef.containsKey((DatumLabelSrc)token)){
+					throw new SyntaxException("Multiple declaration label");
+				}
+				datumBacktrack.put((DatumLabelSrc)token,new LinkedList<>());
+				stack.push(new ListLevel((DatumLabelSrc)token));
+			}else if(token instanceof ScmObject){
+				nonComment=addDatum((ScmObject)token);
+			}else if(token instanceof SimpleToken){
 				String name=token.toString();
 				if(abbreviation.containsKey(name)){
 					stack.push(new ListLevel(abbreviation.get(name)));
@@ -58,119 +72,151 @@ public final class Parser{
 				}else if(name.equals("#u8(")){
 					stack.push(new ByteVectorLevel());
 				}else if(name.equals("#;")){
-					stack.push(new ListLevel(token));
+					stack.push(new ListLevel(COMMENT));
 				}else if(name.equals(".")){
 					stack.peek().addDot();
+				}else{
+					assert false;
 				}
-			}else if(token instanceof DatumLabelRef){
-				nonComment=addDatum(datumRef.get(((DatumLabelRef)token).getLabel()));
-			}else if(token instanceof DatumLabelSrc){
-				stack.push(new ListLevel(token));
+			}else{
+				assert false;
 			}
 		}while(stack.size()>1||!nonComment);
 		ScmPairOrNil ret=(ScmPairOrNil)stack.pop().getContent();
 		return ret instanceof ScmPair?((ScmPair)ret).getCar():null;
 	}
-	private final boolean addDatum(Object datum){
+	private final boolean addDatum(ScmObject datum){
 		while(stack.peek().add(datum)){
-			Object pair=stack.pop().getContent();
-			if(pair instanceof ScmPair){
-				Object car=((ScmPair)pair).getCar();
-				if(car instanceof DatumLabelSrc){
-					datumRef.put(((DatumLabelSrc)car).getLabel(),datum);
-				}else if(car instanceof SimpleToken&&car.toString().equals("#;")){
-					return false;
-				}else{
-					datum=pair;
-				}
+			ScmPair pair=(ScmPair)stack.pop().getContent();
+			ScmObject car=pair.getCar();
+			if(car instanceof DatumLabelSrc){
+				datumRef.put((DatumLabelSrc)car,datum);
+				datumBacktrack.remove((DatumLabelSrc)car).forEach((b)->b.fillIn(pair.getCdr()));
+			}else if(car==COMMENT){
+				return false;
+			}else{
+				datum=pair;
 			}
 		}
 		return true;
 	}
-	public ArrayList<Object> getRemainingDatums(){
-		ArrayList<Object> datums=new ArrayList<Object>();
-		Object datum=nextDatum();
-		while(datum!=null){
+	public ArrayList<ScmObject> getRemainingDatums(){
+		ArrayList<ScmObject> datums=new ArrayList<ScmObject>();
+		ScmObject datum;//=nextDatum();
+		while((datum=nextDatum())!=null){
+		//for(int i=0;i<10;i++){
 			datums.add(datum);
-			datum=nextDatum();
 		}
 		return datums;
 	}
-	/*public static void main(String[] args) throws Exception{
-		BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
-		String s=null;
-		while((s=in.readLine())!=null){
-			System.out.println(new Parser(s).getDatums());
+	public static void main(String[] args) throws Exception{
+		Scanner in=new Scanner(System.in);
+		while(in.hasNextLine()){
+			System.out.println(new Parser(in.nextLine()).getRemainingDatums());
 		}
-	}*/
-}
-interface Level{
-	boolean add(Object obj);
-	void addDot();
-	Object getContent();
-}
-class ListLevel implements Level{
-	ScmPairOrNil first;
-	Object end;
-	boolean last,pop;
-	public ListLevel(Object car){
-		pop=true;
-		end=first=new ScmPair(car,ScmNil.NIL);
 	}
-	public ListLevel(){
-		pop=last=false;
-		end=first=ScmNil.NIL;
+	interface Level{
+		boolean add(ScmObject obj);
+		void addDot();
+		ScmObject getContent();
 	}
-	public boolean add(Object obj){
-		if(last){
-			((ScmPair)end).setCdr(obj);
-		}else{
-			ScmPair pair=new ScmPair(obj,ScmNil.NIL);
-			if(first==ScmNil.NIL){
-				end=first=pair;
+	class ListLevel implements Level{
+		ScmPairOrNil first;
+		Object end;
+		boolean last, pop;
+		public ListLevel(ScmObject car){
+			pop=last=true;
+			end=first=new ScmPair(car,ScmNil.NIL);
+		}
+		public ListLevel(){
+			pop=last=false;
+			end=first=ScmNil.NIL;
+		}
+		@Override
+		public boolean add(ScmObject obj){
+			if(last){
+				((ScmPair)end).setCdr(obj);
+				if(obj instanceof DatumLabelRef)
+					datumBacktrack.get((DatumLabelRef)obj).add((o)->((ScmPair)end).setCdr(o));
 			}else{
-				((ScmPair)end).setCdr(pair);
-				end=pair;
+				ScmPair pair=new ScmPair(obj,ScmNil.NIL);
+				if(first==ScmNil.NIL){
+					end=first=pair;
+				}else{
+					((ScmPair)end).setCdr(pair);
+					end=pair;
+				}
+				if(obj instanceof DatumLabelRef)
+					datumBacktrack.get((DatumLabelRef)obj).add((o)->pair.setCar(o));
+			}
+			return pop;
+		}
+		@Override
+		public void addDot(){
+			last=true;
+		}
+		@Override
+		public ScmObject getContent(){
+			return first;
+		}
+	}
+	class VectorLevel implements Level{
+		final ArrayList<ScmObject> vector=new ArrayList<>();
+		public VectorLevel(){
+		}
+		@Override
+		public boolean add(ScmObject obj){
+			vector.add(obj);
+			if(obj instanceof DatumLabelRef){
+				int index=vector.size()-1;
+				datumBacktrack.get((DatumLabelRef)obj).add((o)->vector.set(index,o));
+			}
+			return false;
+		}
+		@Override
+		public void addDot(){
+			throw new SyntaxException("Dot in vector");
+		}
+		@Override
+		public ScmObject getContent(){
+			return new ScmVector(vector);
+		}
+	}
+	class ByteVectorLevel implements Level{
+		BitSet vector=new BitSet();
+		int length=0;
+		public ByteVectorLevel(){
+		}
+		@Override
+		public boolean add(ScmObject obj){
+			int b;
+			try{
+				b=((ScmInteger)obj).getValue().intValueExact();
+			}catch(RuntimeException ex){
+				throw new SyntaxException("A byte is Expected");
+			}
+			if(b>=0&&b<256){
+				for(int i=0;i<8;i++){
+					if((b&(1<<i))!=0){
+						vector.set(length+i);
+					}
+				}
+				length+=8;
+				return false;
+			}else{
+				throw new SyntaxException("A byte is Expected");
 			}
 		}
-		return pop;
+		@Override
+		public void addDot(){
+			throw new SyntaxException("Dot in bytevector");
+		}
+		@Override
+		public ScmObject getContent(){
+			return new ScmByteVector(vector.toByteArray());
+		}
 	}
-	public void addDot(){
-		last=true;
-	}
-	public Object getContent(){
-		return first;
-	}
-}
-class VectorLevel implements Level{
-	ArrayList<Object> vector=new ArrayList<Object>();
-	public VectorLevel(){
-
-	}
-	public boolean add(Object obj){
-		vector.add(obj);
-		return false;
-	}
-	public void addDot(){
-		throw new RuntimeException("Dot in vector");
-	}
-	public Object getContent(){
-		return vector;
-	}
-}
-class ByteVectorLevel implements Level{
-	ArrayList<Byte> vector=new ArrayList<Byte>();
-	public ByteVectorLevel(){
-
-	}
-	public boolean add(Object obj){
-		vector.add(((java.math.BigInteger)obj).byteValue());
-		return false;
-	}
-	public void addDot(){
-		throw new RuntimeException("Dot in bytevector");
-	}
-	public Object getContent(){
-		return vector;
+	interface Backtrack{
+		void fillIn(ScmObject obj);
 	}
 }

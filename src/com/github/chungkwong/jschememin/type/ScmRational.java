@@ -49,6 +49,10 @@ public final class ScmRational implements ScmReal{
 		return true;
 	}
 	@Override
+	public String toString(){
+		return toExternalRepresentation();
+	}
+	@Override
 	public String toExternalRepresentation(){
 		return numerator.toExternalRepresentation()+"/"+denominator.toExternalRepresentation();
 	}

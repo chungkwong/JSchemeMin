@@ -59,7 +59,7 @@ public class ScmFloatingPointNumber implements ScmReal{
 	}
 	@Override
 	public String toString(){
-		return value.toString();
+		return toExternalRepresentation();
 	}
 	@Override
 	public boolean isExact(){
@@ -77,60 +77,42 @@ public class ScmFloatingPointNumber implements ScmReal{
 	public static final NegativeNaN NEGATIVE_NAN=new NegativeNaN();
 	public static final PositiveInf POSITIVE_INF=new PositiveInf();
 	public static final NegativeInf NEGATIVE_INF=new NegativeInf();
-	public static class PositiveNaN implements ScmReal{
-		@Override
-		public boolean isExact(){
-			return false;
-		}
+	public static class PositiveNaN extends SpecialValue{
 		@Override
 		public String toExternalRepresentation(){
 			return "+nan.0";
 		}
-		@Override
-		public boolean needPlusSign(){
-			return false;
-		}
 	}
-	public static class NegativeNaN implements ScmReal{
-		@Override
-		public boolean isExact(){
-			return false;
-		}
+	public static class NegativeNaN extends SpecialValue{
 		@Override
 		public String toExternalRepresentation(){
 			return "-nan.0";
 		}
-		@Override
-		public boolean needPlusSign(){
-			return false;
-		}
 	}
-	public static class PositiveInf implements ScmReal{
-		@Override
-		public boolean isExact(){
-			return false;
-		}
+	public static class PositiveInf extends SpecialValue{
 		@Override
 		public String toExternalRepresentation(){
 			return "+inf.0";
 		}
+	}
+	public static class NegativeInf extends SpecialValue{
 		@Override
-		public boolean needPlusSign(){
-			return false;
+		public String toExternalRepresentation(){
+			return "-inf.0";
 		}
 	}
-	public static class NegativeInf implements ScmReal{
+	static abstract class SpecialValue implements ScmReal{
 		@Override
 		public boolean isExact(){
 			return false;
 		}
 		@Override
-		public String toExternalRepresentation(){
-			return "-inf.0";
-		}
-		@Override
 		public boolean needPlusSign(){
 			return false;
+		}
+		@Override
+		public String toString(){
+			return toExternalRepresentation();
 		}
 	}
 }

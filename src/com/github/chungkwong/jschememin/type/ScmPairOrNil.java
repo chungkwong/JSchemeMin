@@ -1,4 +1,4 @@
 package com.github.chungkwong.jschememin.type;
 
-public interface ScmPairOrNil{
+public interface ScmPairOrNil extends ScmObject{
 }

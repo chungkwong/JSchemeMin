@@ -38,7 +38,7 @@ private final ScmReal abs,radius;
 	}
 	@Override
 	public String toString(){
-		return abs+"exp(i"+radius+")";
+		return toExternalRepresentation();
 	}
 	@Override
 	public boolean isExact(){

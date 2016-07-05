@@ -5,6 +5,10 @@ public final class ScmNil implements ScmPairOrNil{
 	private ScmNil(){
 	}
 	public String toString(){
-		return "Nil";
+		return toExternalRepresentation();
+	}
+	@Override
+	public String toExternalRepresentation(){
+		return "()";
 	}
 }

@@ -13,11 +13,50 @@
  *
  */
 package com.github.chungkwong.jschememin.type;
-
-public final class ScmByteVector{
-
-	public ScmByteVector(){
-
+import java.math.*;
+import java.util.*;
+public final class ScmByteVector implements ScmObject{
+	private final byte[] vector;
+	public ScmByteVector(byte[] vector){
+		this.vector=vector;
 	}
-
+	public int getLength(){
+		return vector.length;
+	}
+	public ScmInteger get(int index){
+		return new ScmInteger(BigInteger.valueOf(index));
+	}
+	public void set(int index,ScmInteger element){
+		int b=element.getValue().intValueExact();
+		if(b>=0&&b<256)
+			vector[index]=(byte)b;
+	}
+	@Override
+	public String toExternalRepresentation(){
+		StringBuilder buf=new StringBuilder();
+		buf.append("#u8(");
+		if(vector.length>=1)
+			buf.append(Byte.toUnsignedInt(vector[0]));
+		for(int i=1;i<vector.length;i++)
+			buf.append(' ').append(Byte.toUnsignedInt(vector[i]));
+		buf.append(')');
+		return buf.toString();
+	}
+	@Override
+	public String toString(){
+		return toExternalRepresentation();
+	}
+	@Override
+	public boolean equals(Object obj){
+		if(!(obj instanceof ScmByteVector))
+			return false;
+		ScmByteVector o=(ScmByteVector)obj;
+		return Arrays.equals(((ScmByteVector)obj).vector,vector);
+	}
+	@Override
+	public int hashCode(){
+		int hash=7;
+		hash=17*hash+Arrays.hashCode(this.vector);
+		return hash;
+	}
 }

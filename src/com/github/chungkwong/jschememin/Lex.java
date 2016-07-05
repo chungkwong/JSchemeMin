@@ -43,7 +43,6 @@ public final class Lex{
 	private static final SimpleToken COMMENT_NEXT=SimpleToken.getToken("#;");
 	private final PushbackReader in;
 	private boolean foldingCase=false;
-	final HashMap<String,Object> datums=new HashMap<>();
 	static{
 		name2char.put("null",(int)'\0');
 		name2char.put("alarm",ALARM);
@@ -331,8 +330,8 @@ public final class Lex{
 		}
 		return ScmCharacter.getScmCharacter(codepoint);
 	}
-	private Identifier createIdentifier(String name){
-		return new Identifier(foldingCase?ScmString.toFoldingCase(name):name);
+	private ScmSymbol createIdentifier(String name){
+		return new ScmSymbol(foldingCase?ScmString.toFoldingCase(name):name);
 	}
 	private String untilNextDelimiter()throws IOException{
 		StringBuilder buf=new StringBuilder();
@@ -348,9 +347,10 @@ public final class Lex{
 		StringBuilder buf=new StringBuilder();
 		while(true){
 			int c=in.read();
-			if(c=='=')
+			if(c=='='){
+				DatumRecord.updateId(Integer.parseInt(buf.toString()));
 				return new DatumLabelSrc(buf.toString());
-			else if(c=='#')
+			}else if(c=='#')
 				return new DatumLabelRef(buf.toString());
 			else if(Character.isDigit(c))
 				buf.appendCodePoint(c);
@@ -411,7 +411,7 @@ public final class Lex{
 	private static boolean isIntraLineSpace(int c){
 		return c==TABULATION||Character.getType(c)==Character.SPACE_SEPARATOR;
 	}
-	private Identifier nextVerbatimIdentifer()throws IOException{
+	private ScmSymbol nextVerbatimIdentifer()throws IOException{
 		int c=in.read();
 		StringBuilder buf=new StringBuilder();
 		while(c!='|'&&c!=EOF){
