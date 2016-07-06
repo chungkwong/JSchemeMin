@@ -15,7 +15,7 @@
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
 import java.util.*;
-public final class ScmCharacter implements ScmObject, Comparable<ScmCharacter>,Token{
+public final class ScmCharacter extends ScmObject implements Comparable<ScmCharacter>,Token{
 	static final HashMap<Integer,Integer> caseFoldMap=new HashMap<>();
 	int codepoint;
 	static{
@@ -63,6 +63,7 @@ public final class ScmCharacter implements ScmObject, Comparable<ScmCharacter>,T
 	public boolean isLowerCase(){
 		return Character.isLowerCase(codepoint);
 	}
+	@Override
 	public int compareTo(ScmCharacter c){
 		return codepoint-c.codepoint;
 	}
@@ -77,16 +78,16 @@ public final class ScmCharacter implements ScmObject, Comparable<ScmCharacter>,T
 		return buf.toString();
 	}
 	@Override
-	public String toString(){
-		return toExternalRepresentation();
-	}
-	@Override
 	public boolean equals(Object obj){
 		return obj instanceof ScmCharacter&&((ScmCharacter)obj).codepoint==codepoint;
 	}
 	@Override
 	public int hashCode(){
 		return codepoint;
+	}
+	@Override
+	public boolean isSelfevaluating(){
+		return true;
 	}
 
 }

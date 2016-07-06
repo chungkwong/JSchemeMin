@@ -13,6 +13,6 @@
  *
  */
 package com.github.chungkwong.jschememin.type;
-public interface ScmComplex extends ScmNumber{
+public abstract class ScmComplex extends ScmNumber{
 
 }

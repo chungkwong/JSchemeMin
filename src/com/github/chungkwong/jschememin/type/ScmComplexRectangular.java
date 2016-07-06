@@ -18,7 +18,7 @@ import java.util.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class ScmComplexRectangular implements ScmComplex{
+public class ScmComplexRectangular extends ScmComplex{
 	private final ScmReal real,imag;
 	public ScmComplexRectangular(ScmReal real,ScmReal imag){
 		this.real=real;
@@ -35,10 +35,6 @@ public class ScmComplexRectangular implements ScmComplex{
 		hash=31*hash+Objects.hashCode(this.real);
 		hash=31*hash+Objects.hashCode(this.imag);
 		return hash;
-	}
-	@Override
-	public String toString(){
-		return toExternalRepresentation();
 	}
 	@Override
 	public boolean isExact(){

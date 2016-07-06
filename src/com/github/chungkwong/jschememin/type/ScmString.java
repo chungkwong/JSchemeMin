@@ -15,7 +15,7 @@
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
 import java.util.*;
-public final class ScmString implements Token,ScmObject{
+public final class ScmString extends ScmObject implements Token{
 	private final String val;
 	public ScmString(String val){
 		this.val=val;
@@ -28,10 +28,6 @@ public final class ScmString implements Token,ScmObject{
 	}
 	public String getValue(){
 		return val;
-	}
-	@Override
-	public String toString(){
-		return toExternalRepresentation();
 	}
 	@Override
 	public boolean equals(Object obj){
@@ -54,6 +50,10 @@ public final class ScmString implements Token,ScmObject{
 		});
 		buf.append("\"");
 		return buf.toString();
+	}
+	@Override
+	public boolean isSelfevaluating(){
+		return true;
 	}
 
 }

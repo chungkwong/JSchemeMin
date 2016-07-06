@@ -18,7 +18,7 @@ import java.util.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class ScmComplexPolar implements ScmComplex{
+public class ScmComplexPolar extends ScmComplex{
 private final ScmReal abs,radius;
 	public ScmComplexPolar(ScmReal real,ScmReal imag){
 		this.abs=real;
@@ -35,10 +35,6 @@ private final ScmReal abs,radius;
 		hash=31*hash+Objects.hashCode(this.abs);
 		hash=31*hash+Objects.hashCode(this.radius);
 		return hash;
-	}
-	@Override
-	public String toString(){
-		return toExternalRepresentation();
 	}
 	@Override
 	public boolean isExact(){

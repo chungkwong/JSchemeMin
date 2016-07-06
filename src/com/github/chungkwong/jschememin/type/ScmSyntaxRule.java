@@ -15,11 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.type;
-
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class ScmSyntaxRule{
-
+public class ScmSyntaxRule extends ScmObject{
+	@Override
+	public String toExternalRepresentation(){
+		return "'macro";
+	}
+	@Override
+	public boolean isSelfevaluating(){
+		return false;
+	}
+	public ScmObject tranform(ScmPairOrNil argument){
+		//TODO
+		return ScmNil.NIL;
+	}
 }

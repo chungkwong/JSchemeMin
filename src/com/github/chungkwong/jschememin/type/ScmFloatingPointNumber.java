@@ -19,7 +19,7 @@ import java.util.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class ScmFloatingPointNumber implements ScmReal{
+public class ScmFloatingPointNumber extends ScmReal{
 	public static final ScmFloatingPointNumber ZERO=new ScmFloatingPointNumber(BigDecimal.ZERO);
 	public static final ScmFloatingPointNumber ONE=new ScmFloatingPointNumber(BigDecimal.ONE);
 	private final BigDecimal value;
@@ -101,7 +101,7 @@ public class ScmFloatingPointNumber implements ScmReal{
 			return "-inf.0";
 		}
 	}
-	static abstract class SpecialValue implements ScmReal{
+	static abstract class SpecialValue extends ScmReal{
 		@Override
 		public boolean isExact(){
 			return false;

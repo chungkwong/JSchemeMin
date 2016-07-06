@@ -42,7 +42,7 @@ public final class Lex{
 	private static final SimpleToken BYTE8=SimpleToken.getToken("#u8(");
 	private static final SimpleToken COMMENT_NEXT=SimpleToken.getToken("#;");
 	private final PushbackReader in;
-	private boolean foldingCase=false;
+	private boolean foldingCase;
 	static{
 		name2char.put("null",(int)'\0');
 		name2char.put("alarm",ALARM);
@@ -120,7 +120,11 @@ public final class Lex{
 	 * @param in the source
 	 */
 	public Lex(Reader in){
+		this(new PushbackReader(in,2),false);
+	}
+	public Lex(Reader in,boolean foldingCase){
 		this.in=new PushbackReader(in,2);
+		this.foldingCase=foldingCase;
 	}
 	/**
 	 * Construct a lexical analyzer to analysis a piece of code as String

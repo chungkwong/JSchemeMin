@@ -16,7 +16,7 @@
  */
 package com.github.chungkwong.jschememin.type;
 import java.util.*;
-public final class ScmPair<A extends ScmObject,D extends ScmObject> implements ScmPairOrNil{
+public final class ScmPair<A extends ScmObject,D extends ScmObject> extends ScmPairOrNil{
 	private A car;
 	private D cdr;
 	public ScmPair(A car,D cdr){
@@ -45,9 +45,6 @@ public final class ScmPair<A extends ScmObject,D extends ScmObject> implements S
 		hash=13*hash+Objects.hashCode(this.car);
 		hash=13*hash+Objects.hashCode(this.cdr);
 		return hash;
-	}
-	public String toString(){
-		return toExternalRepresentation();
 	}
 	@Override
 	public String toExternalRepresentation(){

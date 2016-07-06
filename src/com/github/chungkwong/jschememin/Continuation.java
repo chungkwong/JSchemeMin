@@ -15,11 +15,58 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin;
-
+import com.github.chungkwong.jschememin.type.*;
+import java.util.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Continuation{
-
+	private final Stack<Evaluable> actives;
+	private final Stack<Object> pointers;
+	private ScmObject arguments;
+	public Continuation(){
+		this.pointers=new Stack<>();
+		this.actives=new Stack<>();
+	}
+	public Continuation(Stack<Evaluable> actives,Stack<Object> pointers){
+		this.pointers=pointers;
+		this.actives=actives;
+	}
+	public void callInit(Evaluable proc,ScmObject arguments){
+		actives.push(proc);
+		pointers.push(null);
+		this.arguments=arguments;
+	}
+	public void call(Evaluable proc,Object pointer,ScmObject arguments){
+		actives.push(proc);
+		pointers.pop();
+		pointers.push(pointer);
+		pointers.push(null);
+		this.arguments=arguments;
+	}
+	public void callTail(Evaluable proc,ScmObject arguments){
+		actives.pop();
+		pointers.pop();
+		actives.push(proc);
+		pointers.push(null);
+		this.arguments=arguments;
+	}
+	public void ret(ScmObject retValue){
+		actives.pop();
+		pointers.pop();
+		this.arguments=retValue;
+	}
+	public void evalNext(Environment env){
+		actives.peek().call(env,this,pointers.peek(),arguments);
+	}
+	public boolean hasNext(){
+		return pointers.isEmpty();
+	}
+	public ScmObject getValue(){
+		return arguments;
+	}
+	public Continuation getCopy(){
+		return new Continuation((Stack)actives.clone(),(Stack)pointers.clone());
+	}
 }

@@ -16,7 +16,7 @@
  */
 package com.github.chungkwong.jschememin.type;
 import java.util.*;
-public final class ScmVector implements ScmObject{
+public final class ScmVector extends ScmObject{
 	private final List<ScmObject> vector;
 	private ScmVector(List<ScmObject> vector){
 		this.vector=vector;
@@ -42,10 +42,6 @@ public final class ScmVector implements ScmObject{
 		int hash=7;
 		hash=97*hash+Objects.hashCode(this.vector);
 		return hash;
-	}
-	@Override
-	public String toString(){
-		return toExternalRepresentation();
 	}
 	@Override
 	public String toExternalRepresentation(){
@@ -75,5 +71,9 @@ public final class ScmVector implements ScmObject{
 	}
 	public static ScmVector toVector(ScmObject... obj){
 		return new ScmVector(Arrays.asList(obj));
+	}
+	@Override
+	public boolean isSelfevaluating(){
+		return true;
 	}
 }

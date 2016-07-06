@@ -14,6 +14,6 @@
  */
 package com.github.chungkwong.jschememin.type;
 
-public interface ScmReal extends ScmNumber{
-	boolean needPlusSign();
+public abstract class ScmReal extends ScmNumber{
+	public abstract boolean needPlusSign();
 }

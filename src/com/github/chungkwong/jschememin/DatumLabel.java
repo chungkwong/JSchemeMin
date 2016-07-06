@@ -15,7 +15,7 @@
 package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
-public abstract class DatumLabel implements Token,ScmObject{
+public abstract class DatumLabel extends ScmObject implements Token{
 	private final String label;
 	protected DatumLabel(String label){
 		this.label=label;
@@ -35,6 +35,10 @@ public abstract class DatumLabel implements Token,ScmObject{
 	}
 	@Override
 	public String toExternalRepresentation(){
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	@Override
+	public boolean isSelfevaluating(){
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

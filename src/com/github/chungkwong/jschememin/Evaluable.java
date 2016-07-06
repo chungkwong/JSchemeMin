@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.chungkwong.jschememin.type;
-
-public abstract class ScmPairOrNil extends ScmObject{
-	@Override
-	public boolean isSelfevaluating(){
-		return false;
-	}
+package com.github.chungkwong.jschememin;
+import com.github.chungkwong.jschememin.type.*;
+/**
+ *
+ * @author Chan Chung Kwong <1m02math@126.com>
+ */
+public interface Evaluable{
+	void call(Environment env,Continuation cont,Object pointer,ScmObject param);
 }

@@ -15,7 +15,7 @@
 package com.github.chungkwong.jschememin.type;
 import java.math.*;
 import java.util.*;
-public final class ScmByteVector implements ScmObject{
+public final class ScmByteVector extends ScmObject{
 	private final byte[] vector;
 	public ScmByteVector(byte[] vector){
 		this.vector=vector;
@@ -43,10 +43,6 @@ public final class ScmByteVector implements ScmObject{
 		return buf.toString();
 	}
 	@Override
-	public String toString(){
-		return toExternalRepresentation();
-	}
-	@Override
 	public boolean equals(Object obj){
 		if(!(obj instanceof ScmByteVector))
 			return false;
@@ -58,5 +54,9 @@ public final class ScmByteVector implements ScmObject{
 		int hash=7;
 		hash=17*hash+Arrays.hashCode(this.vector);
 		return hash;
+	}
+	@Override
+	public boolean isSelfevaluating(){
+		return true;
 	}
 }

@@ -14,7 +14,7 @@
  */
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
-public final class ScmBoolean implements Token,ScmObject{
+public final class ScmBoolean extends ScmObject implements Token{
 	public static final ScmBoolean TRUE=new ScmBoolean(true);
 	public static final ScmBoolean FALSE=new ScmBoolean(false);
 	private final boolean val;
@@ -33,11 +33,11 @@ public final class ScmBoolean implements Token,ScmObject{
 		return this.val?1:0;
 	}
 	@Override
-	public String toString(){
-		return toExternalRepresentation();
-	}
-	@Override
 	public String toExternalRepresentation(){
 		return val?"#t":"#f";
+	}
+	@Override
+	public boolean isSelfevaluating(){
+		return true;
 	}
 }

@@ -49,7 +49,6 @@ public class Environment{
 			}
 			env=env.parent;
 		}
-		bindings.put(id,obj);
 	}
 	public void add(ScmSymbol id,ScmObject obj){
 		bindings.put(id,obj);

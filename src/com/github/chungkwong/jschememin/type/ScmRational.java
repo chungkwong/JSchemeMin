@@ -14,7 +14,7 @@
  */
 package com.github.chungkwong.jschememin.type;
 import java.util.*;
-public final class ScmRational implements ScmReal{
+public final class ScmRational extends ScmReal{
 	private ScmInteger numerator,denominator;
 	private boolean simplified=false;
 	public ScmRational(ScmInteger numerator,ScmInteger denominator){
@@ -47,10 +47,6 @@ public final class ScmRational implements ScmReal{
 	@Override
 	public boolean isExact(){
 		return true;
-	}
-	@Override
-	public String toString(){
-		return toExternalRepresentation();
 	}
 	@Override
 	public String toExternalRepresentation(){

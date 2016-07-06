@@ -14,6 +14,11 @@
  */
 package com.github.chungkwong.jschememin.type;
 
-public interface ScmObject{
-	String toExternalRepresentation();
+public abstract class ScmObject{
+	public abstract String toExternalRepresentation();
+	public abstract boolean isSelfevaluating();
+	@Override
+	public String toString(){
+		return toExternalRepresentation();
+	}
 }

@@ -15,7 +15,7 @@
 package com.github.chungkwong.jschememin.type;
 import java.math.*;
 import java.util.*;
-public final class ScmInteger implements ScmReal{
+public final class ScmInteger extends ScmReal{
 	public static final ScmInteger ZERO=new ScmInteger(BigInteger.ZERO);
 	public static final ScmInteger ONE=new ScmInteger(BigInteger.ONE);
 	private final BigInteger value;
@@ -61,10 +61,6 @@ public final class ScmInteger implements ScmReal{
 		int hash=7;
 		hash=67*hash+Objects.hashCode(this.value);
 		return hash;
-	}
-	@Override
-	public String toString(){
-		return toExternalRepresentation();
 	}
 	@Override
 	public boolean isExact(){

@@ -14,6 +14,10 @@
  */
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
-public interface ScmNumber extends Token,ScmObject{
-	boolean isExact();
+public abstract class ScmNumber extends ScmObject implements Token{
+	public abstract boolean isExact();
+	@Override
+	public boolean isSelfevaluating(){
+		return true;
+	}
 }

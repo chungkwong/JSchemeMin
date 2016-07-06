@@ -15,14 +15,10 @@
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
 import java.util.*;
-public final class ScmSymbol implements Token,ScmObject{
+public final class ScmSymbol extends ScmObject implements Token{
 	private final String id;
 	public ScmSymbol(String id){
 		this.id=id;
-	}
-	@Override
-	public String toString(){
-		return toExternalRepresentation();
 	}
 	@Override
 	public boolean equals(Object obj){
@@ -45,5 +41,9 @@ public final class ScmSymbol implements Token,ScmObject{
 		});
 		buf.append('|');
 		return buf.toString();
+	}
+	@Override
+	public boolean isSelfevaluating(){
+		return false;
 	}
 }
