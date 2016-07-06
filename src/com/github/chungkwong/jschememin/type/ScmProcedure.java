@@ -3,15 +3,23 @@ import com.github.chungkwong.jschememin.*;
 public final class ScmProcedure extends ScmObject implements Evaluable{
 	private final Environment parent;
 	private final ScmObject formal;
-	private final ScmPairOrNil body;
-	public ScmProcedure(ScmObject formal,ScmPairOrNil body,Environment parent){
+	private final ScmPair body;
+	public ScmProcedure(ScmObject formal,ScmPair body,Environment parent){
 		this.formal=formal;
 		this.body=body;
 		this.parent=parent;
 	}
 	@Override
 	public String toExternalRepresentation(){
-		return "'procedure";
+		StringBuilder buf=new StringBuilder();
+		buf.append("(lambda").append(formal.toExternalRepresentation()).append(' ').append(body.toExternalRepresentation());
+		ScmPair tmp=body;
+		while(tmp.getCdr() instanceof ScmPair){
+			tmp=(ScmPair)tmp.getCdr();
+			buf.append(' ').append(tmp.getCar().toExternalRepresentation());
+		}
+		buf.append(')');
+		return buf.toString();
 	}
 	@Override
 	public boolean isSelfevaluating(){
@@ -19,9 +27,19 @@ public final class ScmProcedure extends ScmObject implements Evaluable{
 	}
 	@Override
 	public void call(Environment dynamicEnv,Continuation cont,Object pointer,ScmObject param){
-		Environment env=extendEnvironment((ScmPairOrNil)param);
-		//TODO
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if(pointer==null){
+			call(dynamicEnv,cont,new Backtrack(extendEnvironment((ScmPairOrNil)param),body),null);
+		}else{
+			assert pointer instanceof Backtrack;
+			Backtrack b=(Backtrack)pointer;
+			ScmObject next=b.getRemaining().getCdr();
+			if(next==ScmNil.NIL){
+				cont.callTail(ExpressionEvaluator.INSTANCE,b.getRemaining().getCar());
+			}else if(next instanceof ScmPair){
+				cont.call(ExpressionEvaluator.INSTANCE,new Backtrack(b.getEnvironment(),(ScmPair)next),b.getRemaining().getCar());
+			}else
+				throw new SyntaxException();
+		}
 	}
 	private Environment extendEnvironment(ScmPairOrNil param){
 		Environment env=new Environment(parent);
@@ -48,5 +66,19 @@ public final class ScmProcedure extends ScmObject implements Evaluable{
 		}else
 			throw new SyntaxException();
 		return env;
+	}
+	class Backtrack{
+		final Environment env;
+		final ScmPair remaining;
+		public Backtrack(Environment env,ScmPair remaining){
+			this.env=env;
+			this.remaining=remaining;
+		}
+		public Environment getEnvironment(){
+			return env;
+		}
+		public ScmPair getRemaining(){
+			return remaining;
+		}
 	}
 }

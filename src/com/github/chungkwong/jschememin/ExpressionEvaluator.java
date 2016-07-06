@@ -21,15 +21,15 @@ import java.io.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class ProcedureCall implements Evaluable{
-	public static final ProcedureCall CALL=new ProcedureCall();
+public class ExpressionEvaluator implements Evaluable{
+	public static final ExpressionEvaluator INSTANCE=new ExpressionEvaluator();
 	private static final ScmSymbol IF=new ScmSymbol("if");
 	private static final ScmSymbol SET=new ScmSymbol("set!");
 	private static final ScmSymbol LAMBDA=new ScmSymbol("lambda");
 	private static final ScmSymbol QUOTE=new ScmSymbol("quote");
 	private static final ScmSymbol INCLUDE=new ScmSymbol("include");
 	private static final ScmSymbol INCLUDE_CI=new ScmSymbol("include-ci");
-	private ProcedureCall(){
+	private ExpressionEvaluator(){
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
@@ -81,7 +81,7 @@ public class ProcedureCall implements Evaluable{
 				cont.call(this,(ScmSymbol)remain.getCar(),((ScmPair)remain.getCdr()).getCar());
 			}else if(car.equals(LAMBDA)){
 				ScmPair remain=(ScmPair)list.getCdr();
-				cont.ret(new ScmProcedure(remain.getCar(),(ScmPairOrNil)remain.getCdr(),env));
+				cont.ret(new ScmProcedure(remain.getCar(),(ScmPair)remain.getCdr(),env));
 			}else if(car.equals(QUOTE)){
 				cont.ret(list.getCdr());
 			}else if(car.equals(INCLUDE)){

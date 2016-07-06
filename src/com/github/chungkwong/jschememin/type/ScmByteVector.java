@@ -31,6 +31,9 @@ public final class ScmByteVector extends ScmObject{
 		if(b>=0&&b<256)
 			vector[index]=(byte)b;
 	}
+	public byte[] getByteArray(){
+		return vector;
+	}
 	@Override
 	public String toExternalRepresentation(){
 		StringBuilder buf=new StringBuilder();

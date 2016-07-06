@@ -14,30 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.chungkwong.jschememin;
-import com.github.chungkwong.jschememin.type.*;
-import java.util.*;
+package com.github.chungkwong.jschememin.type;
+
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Evaluator{
-	private final Environment env;
-	private final HashSet<ScmPair> imported=new HashSet<>();
-	private final boolean repl;
-	private Continuation cont;
-	private static final ScmSymbol ok=new ScmSymbol("ok"),fail=new ScmSymbol("fail");
-	public Evaluator(Environment env,boolean repl){
-		this.env=env;
-		this.repl=repl;
-	}
-	public ScmObject eval(ScmObject expr){
-		cont.callInit(ExpressionEvaluator.INSTANCE,expr);
-		while(cont.hasNext())
-			cont.evalNext(env);
-		return cont.getValue();
-	}
-	public Environment getEnvironment(){
-		return env;
+public abstract class ScmPort extends ScmObject{
+	@Override
+	public boolean isSelfevaluating(){
+		return false;
 	}
 }

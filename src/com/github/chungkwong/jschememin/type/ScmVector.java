@@ -16,6 +16,7 @@
  */
 package com.github.chungkwong.jschememin.type;
 import java.util.*;
+import java.util.stream.*;
 public final class ScmVector extends ScmObject{
 	private final List<ScmObject> vector;
 	private ScmVector(List<ScmObject> vector){
@@ -32,6 +33,9 @@ public final class ScmVector extends ScmObject{
 	}
 	public void set(int index,ScmObject element){
 		vector.set(index,element);
+	}
+	public Stream<ScmObject> stream(){
+		return vector.stream();
 	}
 	@Override
 	public boolean equals(Object obj){

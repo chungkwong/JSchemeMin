@@ -40,4 +40,7 @@ public final class ScmBoolean extends ScmObject implements Token{
 	public boolean isSelfevaluating(){
 		return true;
 	}
+	public static ScmBoolean valueOf(boolean b){
+		return b?ScmBoolean.TRUE:ScmBoolean.FALSE;
+	}
 }

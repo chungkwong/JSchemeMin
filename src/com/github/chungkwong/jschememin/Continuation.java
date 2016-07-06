@@ -21,7 +21,7 @@ import java.util.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Continuation{
+public class Continuation extends ScmObject{
 	private final Stack<Evaluable> actives;
 	private final Stack<Object> pointers;
 	private ScmObject arguments;
@@ -57,8 +57,16 @@ public class Continuation{
 		pointers.pop();
 		this.arguments=retValue;
 	}
+	public void reset(Continuation cont){
+		actives.clear();
+		pointers.clear();
+		actives.addAll(cont.actives);
+		pointers.addAll(cont.pointers);
+		arguments=cont.arguments;
+	}
 	public void evalNext(Environment env){
 		actives.peek().call(env,this,pointers.peek(),arguments);
+		arguments=null;
 	}
 	public boolean hasNext(){
 		return pointers.isEmpty();
@@ -68,5 +76,13 @@ public class Continuation{
 	}
 	public Continuation getCopy(){
 		return new Continuation((Stack)actives.clone(),(Stack)pointers.clone());
+	}
+	@Override
+	public String toExternalRepresentation(){
+		return actives.toString();
+	}
+	@Override
+	public boolean isSelfevaluating(){
+		return false;
 	}
 }

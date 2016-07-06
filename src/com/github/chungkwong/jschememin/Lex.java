@@ -123,7 +123,13 @@ public final class Lex{
 		this(new PushbackReader(in,2),false);
 	}
 	public Lex(Reader in,boolean foldingCase){
-		this.in=new PushbackReader(in,2);
+		this(new PushbackReader(in,2),foldingCase);
+	}
+	public Lex(PushbackReader in){
+		this(in,false);
+	}
+	public Lex(PushbackReader in,boolean foldingCase){
+		this.in=in;
 		this.foldingCase=foldingCase;
 	}
 	/**
