@@ -16,17 +16,27 @@
  */
 package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
+import java.util.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Library{
-	private final ScmPairOrNil name;
-	public Library(ScmPairOrNil name){
+	private final ScmPair name;
+	private final HashMap<ScmSymbol,ScmSymbol> export;
+	private final Environment internal;
+	public Library(ScmPair name,HashMap<ScmSymbol,ScmSymbol> export,Environment internal){
 		this.name=name;
+		this.export=export;
+		this.internal=internal;
 	}
-
-	public void exportTo(Environment env){
-
+	public ScmPair getName(){
+		return name;
+	}
+	public Set<ScmSymbol> getExportSet(){
+		return export.keySet();
+	}
+	public void exportTo(Environment env,HashMap<ScmSymbol,ScmSymbol> importset){
+		importset.forEach((ex,im)->env.add(im,internal.get(export.get(ex))));
 	}
 }

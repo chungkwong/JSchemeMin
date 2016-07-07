@@ -85,13 +85,13 @@ public final class Parser{
 		ScmPairOrNil ret=(ScmPairOrNil)stack.pop().getContent();
 		return ret instanceof ScmPair?((ScmPair)ret).getCar():null;
 	}
-	private final boolean addDatum(ScmObject datum){
+	private boolean addDatum(ScmObject datum){
 		while(stack.peek().add(datum)){
 			ScmPair pair=(ScmPair)stack.pop().getContent();
 			ScmObject car=pair.getCar();
 			if(car instanceof DatumLabelSrc){
 				datumRef.put((DatumLabelSrc)car,datum);
-				datumBacktrack.remove((DatumLabelSrc)car).forEach((b)->b.fillIn(pair.getCdr()));
+				datumBacktrack.remove((DatumLabelSrc)car).forEach((b)->b.fillIn(((ScmPair)pair.getCdr()).getCar()));
 			}else if(car==COMMENT){
 				return false;
 			}else{

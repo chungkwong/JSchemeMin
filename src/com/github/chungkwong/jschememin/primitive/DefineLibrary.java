@@ -15,11 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.primitive;
-
+import com.github.chungkwong.jschememin.*;
+import com.github.chungkwong.jschememin.type.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class DefineValues{
+public class DefineLibrary extends PrimitiveType{
+	public static final DefineLibrary INSTANCE=new DefineLibrary();
+	private DefineLibrary(){
+		super(new ScmSymbol("define-library"));
+	}
+	@Override
+	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
+		if(pointer==null){
+			ScmPair remain=(ScmPair)expr;
+			ScmPair name=(ScmPair)remain.getCar();
 
+		}else{
+			env.add((ScmSymbol)pointer,expr);
+			cont.ret(expr);
+		}
+	}
 }

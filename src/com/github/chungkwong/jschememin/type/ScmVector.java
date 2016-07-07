@@ -39,7 +39,7 @@ public final class ScmVector extends ScmObject{
 	}
 	@Override
 	public boolean equals(Object obj){
-		return obj==this||(obj instanceof ScmVector&&((ScmVector)obj).vector.equals(vector));
+		return obj==this||ObjectPair.equals(this,obj,new HashSet<ObjectPair>());
 	}
 	@Override
 	public int hashCode(){
@@ -55,12 +55,12 @@ public final class ScmVector extends ScmObject{
 		toExternalRepresentation(buf,refs);
 		return buf.toString();
 	}
-	void toExternalRepresentation(StringBuilder buf,IdentityHashMap<ScmObject,DatumRecord> refs){
+	boolean toExternalRepresentation(StringBuilder buf,IdentityHashMap<ScmObject,DatumRecord> refs){
 		DatumRecord record=refs.get(this);
 		if(record!=null&&record.isReused()){
 			if(record.isDefined()){
 				buf.append('#').append(record.getId()).append('#');
-				return;
+				return false;
 			}else{
 				buf.append('#').append(record.getId()).append('=');
 				record.define();
@@ -72,6 +72,7 @@ public final class ScmVector extends ScmObject{
 			buf.append(' ');
 		}
 		buf.append(')');
+		return true;
 	}
 	public static ScmVector toVector(ScmObject... obj){
 		return new ScmVector(Arrays.asList(obj));

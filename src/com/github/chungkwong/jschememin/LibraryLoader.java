@@ -15,11 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin;
-
+import com.github.chungkwong.jschememin.type.*;
+import java.util.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class LibraryLoader{
-
+	private static final HashMap<ScmPair,Library> libraries=new HashMap<ScmPair,Library>();
+	public static void addLibrary(Library lib){
+		libraries.put(lib.getName(),lib);
+	}
+	public static Library getLibrary(ScmPair name){
+		return libraries.get(name);
+	}
 }

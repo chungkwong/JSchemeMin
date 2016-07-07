@@ -37,7 +37,7 @@ public final class ScmPair<A extends ScmObject,D extends ScmObject> extends ScmP
 	}
 	@Override
 	public boolean equals(Object obj){
-		return obj==this||(obj instanceof ScmPair&&((ScmPair)obj).car.equals(car)&&((ScmPair)obj).cdr.equals(cdr));
+		return obj==this||ObjectPair.equals(this,obj,new HashSet<ObjectPair>());
 	}
 	@Override
 	public int hashCode(){
@@ -56,12 +56,12 @@ public final class ScmPair<A extends ScmObject,D extends ScmObject> extends ScmP
 		toExternalRepresentation(buf,refs);
 		return buf.toString();
 	}
-	void toExternalRepresentation(StringBuilder buf,IdentityHashMap<ScmObject,DatumRecord> refs){
+	boolean toExternalRepresentation(StringBuilder buf,IdentityHashMap<ScmObject,DatumRecord> refs){
 		DatumRecord record=refs.get(this);
 		if(record!=null&&record.isReused()){
 			if(record.isDefined()){
 				buf.append('#').append(record.getId()).append('#');
-				return;
+				return false;
 			}else{
 				buf.append('#').append(record.getId()).append('=');
 				record.define();
@@ -70,7 +70,8 @@ public final class ScmPair<A extends ScmObject,D extends ScmObject> extends ScmP
 		buf.append("(");
 		DatumRecord.toExternalRepresentation(car,buf,refs);
 		ScmObject next=cdr;
-		while(next instanceof ScmPair){
+		boolean noCycle=true;
+		while(next instanceof ScmPair&&!refs.get(next).isReused()){
 			buf.append(" ");
 			DatumRecord.toExternalRepresentation(((ScmPair)next).getCar(),buf,refs);
 			next=((ScmPair)next).getCdr();
@@ -80,6 +81,7 @@ public final class ScmPair<A extends ScmObject,D extends ScmObject> extends ScmP
 			DatumRecord.toExternalRepresentation(next,buf,refs);
 		}
 		buf.append(")");
+		return true;
 	}
 	public static ScmPairOrNil toList(List<? extends ScmObject> list){
 		if(list.isEmpty())

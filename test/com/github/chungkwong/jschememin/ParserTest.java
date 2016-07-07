@@ -113,9 +113,8 @@ public class ParserTest{
 		check("#1=#t #1# #1#",ScmBoolean.TRUE,ScmBoolean.TRUE,ScmBoolean.TRUE);
 		check("#1=(a b) #1#",ScmPair.toList(new ScmSymbol("a"),new ScmSymbol("b")),ScmPair.toList(new ScmSymbol("a"),new ScmSymbol("b")));
 		ScmObject obj=new Parser("#1=(#1#)").nextDatum();
-		//obj.toString();
-		Assert.assertTrue(obj instanceof ScmPair&&((ScmPair)obj).getCdr()==obj);
-		/*obj=new Parser("#1=(() . #1#)").nextDatum();
+		Assert.assertTrue(obj instanceof ScmPair&&((ScmPair)obj).getCar()==obj);
+		obj=new Parser("#1=(() . #1#)").nextDatum();
 		Assert.assertTrue(obj instanceof ScmPair&&((ScmPair)obj).getCdr().equals(obj));
 		obj=new Parser("#1=#(#1#)").nextDatum();
 		Assert.assertTrue(obj instanceof ScmVector&&((ScmVector)obj).get(0).equals(obj));
@@ -123,7 +122,7 @@ public class ParserTest{
 		Assert.assertTrue(obj instanceof ScmVector&&((ScmVector)obj).get(1).equals(obj));
 		obj=new Parser("#(#11=(#11#) #11#)").nextDatum();
 		Assert.assertTrue(obj instanceof ScmVector&&((ScmVector)obj).get(0).equals(((ScmVector)obj).get(1)));
-		Assert.assertTrue(((ScmVector)obj).get(0).equals(((ScmPair)((ScmVector)obj).get(0)).getCar()));*/
+		Assert.assertTrue(((ScmVector)obj).get(0).equals(((ScmPair)((ScmVector)obj).get(0)).getCar()));
 		expectSyntaxException("#1=3 #20#");
 		expectSyntaxException("#1=#t #1=#t");
 		expectSyntaxException("#1=(1 #1=a)");

@@ -65,12 +65,14 @@ public class DatumRecord{
 			collectReference(((ScmPair)object).getCdr(),map);
 		}
 	}
-	public static void toExternalRepresentation(ScmObject obj,StringBuilder buf,IdentityHashMap<ScmObject,DatumRecord> refs){
+	public static boolean  toExternalRepresentation(ScmObject obj,StringBuilder buf,IdentityHashMap<ScmObject,DatumRecord> refs){
 		if(obj instanceof ScmVector){
-			((ScmVector)obj).toExternalRepresentation(buf,refs);
+			return ((ScmVector)obj).toExternalRepresentation(buf,refs);
 		}else if(obj instanceof ScmPair){
-			((ScmPair)obj).toExternalRepresentation(buf,refs);
-		}else
+			return ((ScmPair)obj).toExternalRepresentation(buf,refs);
+		}else{
 			buf.append(obj.toExternalRepresentation());
+			return true;
+		}
 	}
 }
