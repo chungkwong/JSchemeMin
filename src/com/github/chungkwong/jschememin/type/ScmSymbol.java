@@ -20,6 +20,9 @@ public final class ScmSymbol extends ScmObject implements Token{
 	public ScmSymbol(String id){
 		this.id=id;
 	}
+	public String getValue(){
+		return id;
+	}
 	@Override
 	public boolean equals(Object obj){
 		return obj instanceof ScmSymbol&&((ScmSymbol)obj).id.equals(id);

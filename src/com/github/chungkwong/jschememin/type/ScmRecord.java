@@ -15,11 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.type;
-
+import java.util.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class ScmRecord{
+public class ScmRecord extends ScmObject{
+	private final ScmRecordType type;
+	private final ScmObject[] fields;
+	public ScmRecord(ScmRecordType type,ScmObject[] fields){
+		this.type=type;
+		this.fields=fields;
+	}
+	ScmObject get(int i){
+		return fields[i];
+	}
+	void set(int i,ScmObject obj){
+		fields[i]=obj;
+	}
+	public ScmRecordType getType(){
+		return type;
+	}
+	@Override
+	public String toExternalRepresentation(){
+		StringBuilder buf=new StringBuilder();
+		buf.append('(').append(type.getName().getValue()).append(' ');
+		for(Map.Entry<ScmSymbol,Integer> entry:type.indices.entrySet())
+			buf.append('(').append(entry.getKey().getValue()).append(' ').append(fields[entry.getValue()]).append(')');
+		buf.append(')');
+		return buf.toString();
+	}
+	@Override
+	public boolean isSelfevaluating(){
+		return false;
+	}
 
 }

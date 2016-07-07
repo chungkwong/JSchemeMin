@@ -14,19 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.chungkwong.jschememin;
-import com.github.chungkwong.jschememin.type.*;
+package com.github.chungkwong.jschememin.primitive;
+
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Library{
-	private final ScmPairOrNil name;
-	public Library(ScmPairOrNil name){
-		this.name=name;
-	}
+public class DefineValues{
 
-	public void exportTo(Environment env){
-
-	}
 }

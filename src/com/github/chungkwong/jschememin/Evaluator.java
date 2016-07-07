@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin;
+import com.github.chungkwong.jschememin.primitive.*;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
 /**
@@ -24,12 +25,19 @@ import java.util.*;
 public class Evaluator{
 	private final Environment env;
 	private final HashSet<ScmPair> imported=new HashSet<>();
-	private final boolean repl;
-	private Continuation cont;
+	private final Continuation cont=new Continuation();
 	private static final ScmSymbol ok=new ScmSymbol("ok"),fail=new ScmSymbol("fail");
-	public Evaluator(Environment env,boolean repl){
-		this.env=env;
-		this.repl=repl;
+	public Evaluator(boolean repl){
+		this.env=new Environment(repl);
+		env.addPrimitiveType(If.INSTANCE);
+		env.addPrimitiveType(Assignment.INSTANCE);
+		env.addPrimitiveType(Lambda.INSTANCE);
+		env.addPrimitiveType(Include.INSTANCE);
+		env.addPrimitiveType(Include.INSTANCE_CI);
+		env.addPrimitiveType(Quote.INSTANCE);
+		env.addPrimitiveType(Begin.INSTANCE);
+		env.addPrimitiveType(Define.INSTANCE);
+		env.addPrimitiveType(DefineRecordType.INSTANCE);
 	}
 	public ScmObject eval(ScmObject expr){
 		cont.callInit(ExpressionEvaluator.INSTANCE,expr);
@@ -39,5 +47,12 @@ public class Evaluator{
 	}
 	public Environment getEnvironment(){
 		return env;
+	}
+	public static void main(String[] args) throws Exception{
+		Scanner in=new Scanner(System.in);
+		Evaluator eval=new Evaluator(true);
+		while(in.hasNextLine()){
+			new Parser(in.nextLine()).getRemainingDatums().forEach((d)->System.out.println(eval.eval(d)));
+		}
 	}
 }

@@ -14,19 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.chungkwong.jschememin;
+package com.github.chungkwong.jschememin.primitive;
+import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Library{
-	private final ScmPairOrNil name;
-	public Library(ScmPairOrNil name){
-		this.name=name;
+public class Assignment extends PrimitiveType{
+	public static final Assignment INSTANCE=new Assignment();
+	private Assignment(){
+		super(new ScmSymbol("set!"));
+	}
+	@Override
+	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
+		if(pointer==null){
+			ScmPair remain=(ScmPair)expr;
+			cont.replaceCurrent(this);
+			cont.call(ExpressionEvaluator.INSTANCE,(ScmSymbol)remain.getCar(),((ScmPair)remain.getCdr()).getCar());
+		}else{
+			env.set((ScmSymbol)pointer,expr);
+			cont.ret(expr);
+		}
 	}
 
-	public void exportTo(Environment env){
-
-	}
 }

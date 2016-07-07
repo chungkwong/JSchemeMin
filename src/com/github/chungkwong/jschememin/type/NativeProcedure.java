@@ -14,19 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.chungkwong.jschememin;
-import com.github.chungkwong.jschememin.type.*;
+package com.github.chungkwong.jschememin.type;
+import com.github.chungkwong.jschememin.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Library{
-	private final ScmPairOrNil name;
-	public Library(ScmPairOrNil name){
-		this.name=name;
+public abstract class NativeProcedure extends ScmObject implements Evaluable{
+	@Override
+	public String toExternalRepresentation(){
+		return this.getClass().getCanonicalName();
 	}
-
-	public void exportTo(Environment env){
-
+	@Override
+	public boolean isSelfevaluating(){
+		return false;
 	}
+	@Override
+	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
+		cont.ret(call(param));
+	}
+	public abstract ScmObject call(ScmObject param);
 }

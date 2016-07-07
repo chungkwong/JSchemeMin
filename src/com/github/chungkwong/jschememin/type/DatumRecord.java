@@ -52,7 +52,7 @@ public class DatumRecord{
 	public String toString(){
 		return super.toString(); //To change body of generated methods, choose Tools | Templates.
 	}
-	public static void collectReference(ScmObject object,HashMap<ScmObject,DatumRecord> map){
+	public static void collectReference(ScmObject object,IdentityHashMap<ScmObject,DatumRecord> map){
 		if(map.containsKey(object))
 			map.get(object).reuse();
 		else if(object instanceof ScmVector){
@@ -65,7 +65,7 @@ public class DatumRecord{
 			collectReference(((ScmPair)object).getCdr(),map);
 		}
 	}
-	public static void toExternalRepresentation(ScmObject obj,StringBuilder buf,HashMap<ScmObject,DatumRecord> refs){
+	public static void toExternalRepresentation(ScmObject obj,StringBuilder buf,IdentityHashMap<ScmObject,DatumRecord> refs){
 		if(obj instanceof ScmVector){
 			((ScmVector)obj).toExternalRepresentation(buf,refs);
 		}else if(obj instanceof ScmPair){

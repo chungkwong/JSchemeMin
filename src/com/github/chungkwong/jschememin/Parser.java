@@ -125,7 +125,9 @@ public final class Parser{
 		Object end;
 		boolean last, pop;
 		public ListLevel(ScmObject car){
-			pop=last=true;
+			//pop=last=true;
+			pop=true;
+			last=false;
 			end=first=new ScmPair(car,ScmNil.NIL);
 		}
 		public ListLevel(){

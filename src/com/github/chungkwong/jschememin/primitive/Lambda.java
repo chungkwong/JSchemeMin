@@ -14,19 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.chungkwong.jschememin;
+package com.github.chungkwong.jschememin.primitive;
+import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Library{
-	private final ScmPairOrNil name;
-	public Library(ScmPairOrNil name){
-		this.name=name;
+public class Lambda extends PrimitiveType{
+	public static final Lambda INSTANCE=new Lambda();
+	private Lambda(){
+		super(new ScmSymbol("lambda"));
 	}
-
-	public void exportTo(Environment env){
-
+	@Override
+	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
+		ScmPair list=(ScmPair)expr;
+		cont.ret(new ScmProcedure(list.getCar(),(ScmPair)list.getCdr(),env));
 	}
 }

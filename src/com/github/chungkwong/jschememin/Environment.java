@@ -23,22 +23,33 @@ import java.util.*;
  */
 public class Environment{
 	private final Environment parent;
+	private final boolean repl;
 	private final HashMap<ScmSymbol,ScmObject> bindings=new HashMap<>();
-	public Environment(){
+	public static final ScmSymbol UNBOUNDED=new ScmSymbol("unbound");
+	public Environment(boolean repl){
 		this.parent=null;
+		this.repl=repl;
 	}
 	public Environment(Environment parent){
 		this.parent=parent;
+		this.repl=parent.repl;
 	}
-	public ScmObject get(ScmSymbol id){
+	public Optional<ScmObject> getOptional(ScmSymbol id){
 		Environment env=this;
 		while(env!=null){
 			ScmObject obj=env.bindings.get(id);
 			if(obj!=null)
-				return obj;
+				return Optional.of(obj);
 			env=env.parent;
 		}
-		return null;
+		return Optional.empty();
+	}
+	public ScmObject get(ScmSymbol id){
+		Optional<ScmObject> obj=getOptional(id);
+		if(obj.isPresent())
+			return obj.get();
+		else
+			return repl?UNBOUNDED:null;
 	}
 	public void set(ScmSymbol id,ScmObject obj){
 		Environment env=this;
@@ -49,8 +60,19 @@ public class Environment{
 			}
 			env=env.parent;
 		}
+		if(repl)
+			add(id,obj);
 	}
 	public void add(ScmSymbol id,ScmObject obj){
 		bindings.put(id,obj);
+	}
+	public void remove(ScmSymbol id){
+		bindings.remove(id);
+	}
+	public void addPrimitiveType(PrimitiveType keyword){
+		add(keyword.getKeyword(),keyword);
+	}
+	public boolean isREPL(){
+		return repl;
 	}
 }

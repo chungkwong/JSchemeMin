@@ -42,19 +42,21 @@ public final class ScmPair<A extends ScmObject,D extends ScmObject> extends ScmP
 	@Override
 	public int hashCode(){
 		int hash=7;
-		hash=13*hash+Objects.hashCode(this.car);
-		hash=13*hash+Objects.hashCode(this.cdr);
+		if(!(car instanceof ScmPair||car instanceof ScmVector))
+			hash=13*hash+Objects.hashCode(this.car);
+		if(!(cdr instanceof ScmPair||cdr instanceof ScmVector))
+			hash=13*hash+Objects.hashCode(this.cdr);
 		return hash;
 	}
 	@Override
 	public String toExternalRepresentation(){
 		StringBuilder buf=new StringBuilder();
-		HashMap<ScmObject,DatumRecord> refs=new HashMap<>();
+		IdentityHashMap<ScmObject,DatumRecord> refs=new IdentityHashMap<>();
 		DatumRecord.collectReference(this,refs);
 		toExternalRepresentation(buf,refs);
 		return buf.toString();
 	}
-	void toExternalRepresentation(StringBuilder buf,HashMap<ScmObject,DatumRecord> refs){
+	void toExternalRepresentation(StringBuilder buf,IdentityHashMap<ScmObject,DatumRecord> refs){
 		DatumRecord record=refs.get(this);
 		if(record!=null&&record.isReused()){
 			if(record.isDefined()){

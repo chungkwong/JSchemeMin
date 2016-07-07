@@ -20,13 +20,21 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Library{
-	private final ScmPairOrNil name;
-	public Library(ScmPairOrNil name){
-		this.name=name;
+public abstract class PrimitiveType extends ScmObject implements Evaluable{
+	private final ScmSymbol keyword;
+	public PrimitiveType(ScmSymbol keyword){
+		this.keyword=keyword;
+	}
+	public ScmSymbol getKeyword(){
+		return keyword;
+	}
+	@Override
+	public boolean isSelfevaluating(){
+		return false;
+	}
+	@Override
+	public String toExternalRepresentation(){
+		return keyword.getValue();
 	}
 
-	public void exportTo(Environment env){
-
-	}
 }

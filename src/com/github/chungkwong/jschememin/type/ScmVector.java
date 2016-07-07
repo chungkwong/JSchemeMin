@@ -50,12 +50,12 @@ public final class ScmVector extends ScmObject{
 	@Override
 	public String toExternalRepresentation(){
 		StringBuilder buf=new StringBuilder();
-		HashMap<ScmObject,DatumRecord> refs=new HashMap<>();
+		IdentityHashMap<ScmObject,DatumRecord> refs=new IdentityHashMap<>();
 		DatumRecord.collectReference(this,refs);
 		toExternalRepresentation(buf,refs);
 		return buf.toString();
 	}
-	void toExternalRepresentation(StringBuilder buf,HashMap<ScmObject,DatumRecord> refs){
+	void toExternalRepresentation(StringBuilder buf,IdentityHashMap<ScmObject,DatumRecord> refs){
 		DatumRecord record=refs.get(this);
 		if(record!=null&&record.isReused()){
 			if(record.isDefined()){

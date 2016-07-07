@@ -52,6 +52,10 @@ public class Continuation extends ScmObject{
 		pointers.push(null);
 		this.arguments=arguments;
 	}
+	public void replaceCurrent(Evaluable proc){
+		actives.pop();
+		actives.push(proc);
+	}
 	public void ret(ScmObject retValue){
 		actives.pop();
 		pointers.pop();
@@ -66,10 +70,9 @@ public class Continuation extends ScmObject{
 	}
 	public void evalNext(Environment env){
 		actives.peek().call(env,this,pointers.peek(),arguments);
-		arguments=null;
 	}
 	public boolean hasNext(){
-		return pointers.isEmpty();
+		return !pointers.isEmpty();
 	}
 	public ScmObject getValue(){
 		return arguments;
