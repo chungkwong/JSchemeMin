@@ -41,29 +41,51 @@ public class Import extends PrimitiveType{
 	}
 	public void importLibrary(Environment env,ScmPair spec){
 		ImportSet set=getImportSet(spec);
-		LibraryLoader.getLibrary(set.libName).exportTo(env,set.ex2in);
+		set.lib.exportTo(env,set.ex2im);
 	}
 	public ImportSet getImportSet(ScmPair list){
 		if(list.getCdr() instanceof ScmPair&&((ScmPair)list.getCdr()).getCar() instanceof ScmPair){
 			ScmObject car=list.getCar();
-			ImportSet set=getImportSet((ScmPair)((ScmPair)list.getCdr()).getCar());
+			ImportSet set=getImportSet((ScmPair)list.getCadr());
+			list=(ScmPair)list.getCddr();
 			if(car.equals(PREFIX)){
-
+				ScmSymbol prefix=(ScmSymbol)list.getCar();
+				for(Map.Entry<ScmSymbol,ScmSymbol> entry:set.ex2im.entrySet()){
+					entry.setValue(new ScmSymbol(prefix.getValue()+entry.getValue()));
+				}
 			}else if(car.equals(RENAME)){
-
+				HashMap<ScmSymbol,ScmSymbol> rename=new HashMap<ScmSymbol,ScmSymbol>();
+				list.forEach((c)->rename.put((ScmSymbol)((ScmPair)c).getCar(),(ScmSymbol)((ScmPair)c).getCadr()));
+				for(Map.Entry<ScmSymbol,ScmSymbol> entry:set.ex2im.entrySet())
+					if(rename.containsKey(entry.getValue()))
+						entry.setValue(rename.get(entry.getValue()));
 			}else if(car.equals(EXCEPT)){
-
+				HashSet<ScmSymbol> remain=new HashSet<>();
+				list.forEach((c)->remain.add((ScmSymbol)c));
+				Iterator<Map.Entry<ScmSymbol,ScmSymbol>> iter=set.ex2im.entrySet().iterator();
+				while(iter.hasNext())
+					if(remain.contains(iter.next().getValue()))
+						iter.remove();
 			}else if(car.equals(ONLY)){
-
+				HashSet<ScmSymbol> remain=new HashSet<>();
+				list.forEach((c)->remain.add((ScmSymbol)c));
+				Iterator<Map.Entry<ScmSymbol,ScmSymbol>> iter=set.ex2im.entrySet().iterator();
+				while(iter.hasNext())
+					if(!remain.contains(iter.next().getValue()))
+						iter.remove();
 			}
+			return set;
 		}else
 			return new ImportSet(list);
 	}
 	static class ImportSet{
-		final ScmPair libName;
-		final HashMap<ScmSymbol,ScmSymbol> ex2in=new HashMap<>();
+		final Library lib;
+		final HashMap<ScmSymbol,ScmSymbol> ex2im=new HashMap<>();
 		public ImportSet(ScmPair libName){
-			this.libName=libName;
+			this.lib=LibraryLoader.getLibrary(libName);
+			lib.getExportSet().stream().forEach((exportName)->{
+				ex2im.put(exportName,exportName);
+			});
 		}
 	}
 }

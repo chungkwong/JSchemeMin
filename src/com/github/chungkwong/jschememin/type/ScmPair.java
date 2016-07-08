@@ -16,6 +16,7 @@
  */
 package com.github.chungkwong.jschememin.type;
 import java.util.*;
+import java.util.function.*;
 public final class ScmPair<A extends ScmObject,D extends ScmObject> extends ScmPairOrNil{
 	private A car;
 	private D cdr;
@@ -29,11 +30,24 @@ public final class ScmPair<A extends ScmObject,D extends ScmObject> extends ScmP
 	public D getCdr(){
 		return cdr;
 	}
+	public ScmObject getCadr(){
+		return ((ScmPair)cdr).getCar();
+	}
+	public ScmObject getCddr(){
+		return ((ScmPair)cdr).getCdr();
+	}
 	public void setCar(A car){
 		this.car=car;
 	}
 	public void setCdr(D cdr){
 		this.cdr=cdr;
+	}
+	public void forEach(Consumer<ScmObject> proc){
+		ScmObject pair=this;
+		while(pair instanceof ScmPair){
+			proc.accept(((ScmPair)pair).getCar());
+			pair=((ScmPair)pair).getCdr();
+		}
 	}
 	@Override
 	public boolean equals(Object obj){

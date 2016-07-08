@@ -32,7 +32,13 @@ public class Include extends PrimitiveType{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
-		cont.callTail(ExpressionEvaluator.INSTANCE,getFileContent(((ScmString)((ScmPair)expr).getCar()).getValue(),foldingCase));
+		if(pointer==null){
+			call(env,cont,expr,null);
+		}else if(((ScmPair)pointer).getCdr()==ScmNil.NIL){
+			cont.callTail(ExpressionEvaluator.INSTANCE,getFileContent(((ScmString)((ScmPair)expr).getCar()).getValue(),foldingCase));
+		}else{
+			cont.call(ExpressionEvaluator.INSTANCE,((ScmPair)pointer).getCdr(),getFileContent(((ScmString)((ScmPair)expr).getCar()).getValue(),foldingCase));
+		}
 	}
 	private ScmPair getFileContent(String file,boolean foldingCase){
 		try{
