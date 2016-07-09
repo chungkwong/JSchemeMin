@@ -14,23 +14,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.chungkwong.jschememin.primitive;
+package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
+import com.github.chungkwong.jschememin.primitive.*;
 import com.github.chungkwong.jschememin.type.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class DefineSyntax extends PrimitiveType{
-	public static final DefineSyntax INSTANCE=new DefineSyntax();
-	public DefineSyntax(){
-		super(new ScmSymbol("define-syntax"));
+public class Base extends NativeLibrary{
+	public static final Base INSTANCE=new Base();
+	public Base(){
+		super((ScmPair)ScmPair.toList(new ScmString("scheme"),new ScmString("base")));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
-		ScmSyntaxRule rule=new ScmSyntaxRule((ScmPair)((ScmPair)expr).getCadr());
-		env.add((ScmSymbol)((ScmPair)expr).getCar(),rule);
-		cont.ret(rule);
+	protected void init(Library lib){
+		addPrimitiveType(If.INSTANCE);
+		addPrimitiveType(Assignment.INSTANCE);
+		addPrimitiveType(Lambda.INSTANCE);
+		addPrimitiveType(Include.INSTANCE);
+		addPrimitiveType(Include.INSTANCE_CI);
+		addPrimitiveType(Quote.INSTANCE);
+		addPrimitiveType(Begin.INSTANCE);
+		addPrimitiveType(Define.INSTANCE);
+		addPrimitiveType(DefineSyntax.INSTANCE);
+		addPrimitiveType(DefineRecordType.INSTANCE);
+		addPrimitiveType(DefineLibrary.INSTANCE);
+		addPrimitiveType(Import.INSTANCE);
 	}
 
 }

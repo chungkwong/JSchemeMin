@@ -21,7 +21,7 @@ import java.util.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Library{
+public class Library extends ScmObject{
 	private final ScmPair name;
 	private final HashMap<ScmSymbol,ScmSymbol> export;
 	private final Environment internal;
@@ -37,7 +37,24 @@ public class Library{
 	public Set<ScmSymbol> getExportSet(){
 		return export.keySet();
 	}
+	public HashMap<ScmSymbol,ScmSymbol> getExportMap(){
+		return export;
+	}
+	public void exportTo(Environment env){
+		export.forEach((ex,im)->env.add(ex,internal.get(im)));
+	}
 	public void exportTo(Environment env,HashMap<ScmSymbol,ScmSymbol> importset){
 		importset.forEach((ex,im)->env.add(im,internal.get(export.get(ex))));
+	}
+	public Environment getInternalEnvironment(){
+		return internal;
+	}
+	@Override
+	public String toExternalRepresentation(){
+		return name.toString();
+	}
+	@Override
+	public boolean isSelfevaluating(){
+		return false;
 	}
 }

@@ -36,6 +36,15 @@ public final class ScmPair<A extends ScmObject,D extends ScmObject> extends ScmP
 	public ScmObject getCddr(){
 		return ((ScmPair)cdr).getCdr();
 	}
+	public ScmObject getCaddr(){
+		return ((ScmPair)((ScmPair)cdr).getCdr()).getCar();
+	}
+	public ScmPair getLastListNode(){
+		ScmPair node=this;
+		while(node.getCdr() instanceof ScmPair)
+			node=(ScmPair)node.getCdr();
+		return node;
+	}
 	public void setCar(A car){
 		this.car=car;
 	}

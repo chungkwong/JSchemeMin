@@ -28,7 +28,10 @@ public class Evaluator{
 	private final Continuation cont=new Continuation();
 	private static final ScmSymbol ok=new ScmSymbol("ok"),fail=new ScmSymbol("fail");
 	public Evaluator(boolean repl){
-		this.env=new Environment(repl);
+		this(new Environment(repl));
+	}
+	public Evaluator(Environment env){
+		this.env=env;
 		env.addPrimitiveType(If.INSTANCE);
 		env.addPrimitiveType(Assignment.INSTANCE);
 		env.addPrimitiveType(Lambda.INSTANCE);
@@ -37,7 +40,10 @@ public class Evaluator{
 		env.addPrimitiveType(Quote.INSTANCE);
 		env.addPrimitiveType(Begin.INSTANCE);
 		env.addPrimitiveType(Define.INSTANCE);
+		env.addPrimitiveType(DefineSyntax.INSTANCE);
 		env.addPrimitiveType(DefineRecordType.INSTANCE);
+		env.addPrimitiveType(DefineLibrary.INSTANCE);
+		env.addPrimitiveType(Import.INSTANCE);
 	}
 	public ScmObject eval(ScmObject expr){
 		cont.callInit(ExpressionEvaluator.INSTANCE,expr);

@@ -14,32 +14,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.chungkwong.jschememin;
-import com.github.chungkwong.jschememin.lib.*;
+package com.github.chungkwong.jschememin.lib;
+import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class LibraryLoader{
-	private static final HashMap<ScmPair,Library> LIBRARIES=new HashMap<ScmPair,Library>();
-	private static final HashMap<ScmPair,NativeLibrary> NATIVE_LIBRARIES=new HashMap<ScmPair,NativeLibrary>();
-	static{
-		addNativeLibrary(Base.INSTANCE);
+public abstract class NativeLibrary{
+	private Library lib=null;
+	private final ScmPair name;
+	public NativeLibrary(ScmPair name){
+		this.name=name;
 	}
-	private static void addNativeLibrary(NativeLibrary lib){
-		NATIVE_LIBRARIES.put(lib.getName(),lib);
+	public ScmPair getName(){
+		return name;
 	}
-	public static void addLibrary(Library lib){
-		LIBRARIES.put(lib.getName(),lib);
+	public Library getLibrary(){
+		if(lib==null){
+			lib=new Library(name,new HashMap<>(),new Environment(false));
+			init(lib);
+		}
+		return lib;
 	}
-	public static Library getLibrary(ScmPair name){
-		if(LIBRARIES.containsKey(name))
-			return LIBRARIES.get(name);
-		else if(NATIVE_LIBRARIES.containsKey(name))
-			return NATIVE_LIBRARIES.get(name).getLibrary();
-		else
-			throw new RuntimeException();
+	protected void addNative(ScmSymbol name,ScmObject obj){
+		lib.getInternalEnvironment().add(name,obj);
+		lib.getExportMap().put(name,name);
 	}
+	protected void addPrimitiveType(PrimitiveType type){
+		lib.getInternalEnvironment().addPrimitiveType(type);
+		lib.getExportMap().put(type.getKeyword(),type.getKeyword());
+	}
+	protected abstract void init(Library lib);
 }

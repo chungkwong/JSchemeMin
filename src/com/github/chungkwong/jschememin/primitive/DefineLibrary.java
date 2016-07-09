@@ -36,20 +36,44 @@ public class DefineLibrary extends PrimitiveType{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
-		if(pointer==null){
-			ScmPair name=(ScmPair)((ScmPair)expr).getCar();
-			expr=((ScmPair)expr).getCdr();
-			Environment libEnv=new Environment(env);
-			Library lib=new Library(name,new HashMap<ScmSymbol,ScmSymbol>(),env);
-			call(env,cont,pointer,expr);
-			while(expr instanceof ScmPair){
-				ScmPair declaration=(ScmPair)((ScmPair)expr).getCar();
-				//ScmSymbol dir=declaration.getCar();
-
-				expr=((ScmPair)expr).getCdr();
+		ScmPair name=(ScmPair)((ScmPair)expr).getCar();
+		expr=((ScmPair)expr).getCdr();
+		Library lib=new Library(name,new HashMap<>(),new Environment(env));
+		while(expr instanceof ScmPair){
+			ScmPair declaration=(ScmPair)((ScmPair)expr).getCar();
+			ScmObject dir=declaration.getCar();
+			if(dir.equals(IMPORT)){
+				Import.INSTANCE.importLibraries(lib.getInternalEnvironment(),declaration.getCdr());
+			}else if(dir.equals(EXPORT)){
+				addExportSet(lib,declaration.getCdr());
+			}else if(dir.equals(INCLUDE_LIBRARY)){
+				ScmPair content=Include.INSTANCE.getFileContent((ScmPair)declaration.getCdr());
+				if(content.getCdr()instanceof ScmPair){
+					content.getLastListNode().setCdr(((ScmPair)expr).getCdr());
+					expr=content;
+				}
+			}else if(dir.equals(COND_EXPAND)){
+				ScmPair content=(ScmPair)((ScmSyntaxRule)env.get(COND_EXPAND)).tranform((ScmPairOrNil)declaration.getCdr());
+				if(content.getCdr()instanceof ScmPair){
+					content.getLastListNode().setCdr(((ScmPair)expr).getCdr());
+					expr=content;
+				}
+			}else{
+				new Evaluator(lib.getInternalEnvironment()).eval(declaration);
 			}
-		}else{
-
+			expr=((ScmPair)expr).getCdr();
+		}
+		cont.ret(lib);
+	}
+	void addExportSet(Library lib,ScmObject list){
+		while(list instanceof ScmPair){
+			ScmObject spec=((ScmPair)list).getCar();
+			if(spec instanceof ScmSymbol)
+				lib.getExportMap().put((ScmSymbol)spec,(ScmSymbol)spec);
+			else{
+				lib.getExportMap().put((ScmSymbol)((ScmPair)spec).getCaddr(),(ScmSymbol)((ScmPair)spec).getCadr());
+			}
+			list=((ScmPair)list).getCdr();
 		}
 	}
 }

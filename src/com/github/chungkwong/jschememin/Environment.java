@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin;
+import com.github.chungkwong.jschememin.lib.*;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
 /**
@@ -29,6 +30,8 @@ public class Environment{
 	public Environment(boolean repl){
 		this.parent=null;
 		this.repl=repl;
+		if(repl)
+			Base.INSTANCE.getLibrary().exportTo(this);
 	}
 	public Environment(Environment parent){
 		this.parent=parent;

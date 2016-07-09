@@ -20,6 +20,9 @@ package com.github.chungkwong.jschememin.type;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmSyntaxRule extends ScmObject{
+	public ScmSyntaxRule(ScmPair spec){
+	}
+
 	@Override
 	public String toExternalRepresentation(){
 		return "'macro";

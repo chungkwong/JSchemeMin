@@ -32,18 +32,19 @@ public class Include extends PrimitiveType{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
-		if(pointer==null){
-			call(env,cont,expr,null);
-		}else if(((ScmPair)pointer).getCdr()==ScmNil.NIL){
-			cont.callTail(ExpressionEvaluator.INSTANCE,getFileContent(((ScmString)((ScmPair)expr).getCar()).getValue(),foldingCase));
-		}else{
-			cont.call(ExpressionEvaluator.INSTANCE,((ScmPair)pointer).getCdr(),getFileContent(((ScmString)((ScmPair)expr).getCar()).getValue(),foldingCase));
-		}
+		cont.callTail(ExpressionEvaluator.INSTANCE,getFileContent((ScmPair)expr));
 	}
-	private ScmPair getFileContent(String file,boolean foldingCase){
+	ScmPair getFileContent(ScmPair files){
+		ScmPair content=new ScmPair(new ScmSymbol("begin"),ScmNil.NIL);
+		files.forEach((file)->{
+			content.getLastListNode().setCdr(getFileContent(((ScmString)file).getValue()));
+		});//Low performance
+		return content;
+	}
+	ScmPairOrNil getFileContent(String file){
 		try{
 			Parser parser=new Parser(new Lex(new InputStreamReader(new FileInputStream(file),"UTF-8"),foldingCase));
-			return new ScmPair(new ScmSymbol("begin"),ScmPair.toList(parser.getRemainingDatums()));
+			return ScmPair.toList(parser.getRemainingDatums());
 		}catch(FileNotFoundException|UnsupportedEncodingException ex){
 			throw new RuntimeException();
 		}
