@@ -1,100 +1,4 @@
-
-(define-syntax cond
-  (syntax-rules (else =>)
-    ((cond (else result1 result2 ...))
-     (begin result1 result2 ...))
-    ((cond (test => result))
-     (let ((temp test))
-       (if temp (result temp))))
-    ((cond (test => result) clause1 clause2 ...)
-     (let ((temp test))
-       (if temp
-           (result temp)
-           (cond clause1 clause2 ...))))
-    ((cond (test)) test)
-    ((cond (test) clause1 clause2 ...)
-     (let ((temp test))
-       (if temp
-           temp
-           (cond clause1 clause2 ...))))
-    ((cond (test result1 result2 ...))
-     (if test (begin result1 result2 ...)))
-    ((cond (test result1 result2 ...)
-           clause1 clause2 ...)
-     (if test
-         (begin result1 result2 ...)
-         (cond clause1 clause2 ...)))))
-
-
-
-(define-syntax case
-  (syntax-rules (else =>)
-    ((case (key ...)
-       clauses ...)
-     (let ((atom-key (key ...)))
-       (case atom-key clauses ...)))
-    ((case key
-       (else => result))
-     (result key))
-    ((case key
-       (else result1 result2 ...))
-     (begin result1 result2 ...))
-    ((case key
-       ((atoms ...) result1 result2 ...))
-     (if (memv key '(atoms ...))
-         (begin result1 result2 ...)))
-    ((case key
-       ((atoms ...) => result))
-     (if (memv key '(atoms ...))
-         (result key)))
-    ((case key
-       ((atoms ...) => result)
-       clause clauses ...)
-     (if (memv key '(atoms ...))
-         (result key)
-         (case key clause clauses ...)))
-    ((case key
-       ((atoms ...) result1 result2 ...)
-       clause clauses ...)
-     (if (memv key '(atoms ...))
-         (begin result1 result2 ...)
-         (case key clause clauses ...)))))
-
-
-
-(define-syntax and
-  (syntax-rules ()
-    ((and) t)
-    ((and test) test)
-    ((and test1 test2 ...)
-     (if test1 (and test2 ...) f))))
-
-
-
-(define-syntax or
-  (syntax-rules ()
-    ((or) f)
-    ((or test) test)
-    ((or test1 test2 ...)
-     (let ((x test1))
-       (if x x (or test2 ...))))))
-
-
-
-(define-syntax when
-  (syntax-rules ()
-    ((when test result1 result2 ...)
-     (if test
-         (begin result1 result2 ...)))))
-
-
-
-(define-syntax unless
-  (syntax-rules ()
-    ((unless test result1 result2 ...)
-     (if (not test)
-         (begin result1 result2 ...)))))
-
+(define define-syntax define)
 
 (define-syntax let
   (syntax-rules ()
@@ -122,12 +26,12 @@
 (define-syntax letrec
   (syntax-rules ()
     ((letrec ((var1 init1) ...) body ...)
-     (letrec "generate\_temp\_names"
+     (letrec "generate_temp_names"
        (var1 ...)
        ()
        ((var1 init1) ...)
        body ...))
-    ((letrec "generate\_temp\_names"
+    ((letrec "generate_temp_names"
        ()
        (temp1 ...)
        ((var1 init1) ...)
@@ -137,12 +41,12 @@
          (set! var1 temp1)
          ...
          body ...)))
-    ((letrec "generate\_temp\_names"
+    ((letrec "generate_temp_names"
        (x y ...)
        (temp ...)
        ((var1 init1) ...)
        body ...)
-     (letrec "generate\_temp\_names"
+     (letrec "generate_temp_names"
        (y ...)
        (newtemp temp ...)
        ((var1 init1) ...)
@@ -156,7 +60,7 @@
      (let ((var1 <undefined>) ...)
        (set! var1 init1)
        ...
-       (let () body1 body2 ...)))))%
+       (let () body1 body2 ...)))))
 
 
 
@@ -250,6 +154,108 @@
                          list)))))
 
 
+(define let-syntax let)
+(define letrec-syntax letrec)
+
+(define-syntax cond
+  (syntax-rules (else =>)
+    ((cond (else result1 result2 ...))
+     (begin result1 result2 ...))
+    ((cond (test => result))
+     (let ((temp test))
+       (if temp (result temp))))
+    ((cond (test => result) clause1 clause2 ...)
+     (let ((temp test))
+       (if temp
+           (result temp)
+           (cond clause1 clause2 ...))))
+    ((cond (test)) test)
+    ((cond (test) clause1 clause2 ...)
+     (let ((temp test))
+       (if temp
+           temp
+           (cond clause1 clause2 ...))))
+    ((cond (test result1 result2 ...))
+     (if test (begin result1 result2 ...)))
+    ((cond (test result1 result2 ...)
+           clause1 clause2 ...)
+     (if test
+         (begin result1 result2 ...)
+         (cond clause1 clause2 ...)))))
+
+
+
+(define-syntax case
+  (syntax-rules (else =>)
+    ((case (key ...)
+       clauses ...)
+     (let ((atom-key (key ...)))
+       (case atom-key clauses ...)))
+    ((case key
+       (else => result))
+     (result key))
+    ((case key
+       (else result1 result2 ...))
+     (begin result1 result2 ...))
+    ((case key
+       ((atoms ...) result1 result2 ...))
+     (if (memv key '(atoms ...))
+         (begin result1 result2 ...)))
+    ((case key
+       ((atoms ...) => result))
+     (if (memv key '(atoms ...))
+         (result key)))
+    ((case key
+       ((atoms ...) => result)
+       clause clauses ...)
+     (if (memv key '(atoms ...))
+         (result key)
+         (case key clause clauses ...)))
+    ((case key
+       ((atoms ...) result1 result2 ...)
+       clause clauses ...)
+     (if (memv key '(atoms ...))
+         (begin result1 result2 ...)
+         (case key clause clauses ...)))))
+
+
+
+(define-syntax and
+  (syntax-rules ()
+    ((and) #t)
+    ((and test) test)
+    ((and test1 test2 ...)
+     (if test1 (and test2 ...) f))))
+
+
+
+(define-syntax or
+  (syntax-rules ()
+    ((or) #f)
+    ((or test) test)
+    ((or test1 test2 ...)
+     (let ((x test1))
+       (if x x (or test2 ...))))))
+
+
+
+(define-syntax when
+  (syntax-rules ()
+    ((when test result1 result2 ...)
+     (if test
+         (begin result1 result2 ...)))))
+
+
+
+(define-syntax unless
+  (syntax-rules ()
+    ((unless test result1 result2 ...)
+     (if (not test)
+         (begin result1 result2 ...)))))
+
+
+
+
 
 (define-syntax begin
   (syntax-rules ()
@@ -295,18 +301,18 @@
 (define-syntax delay-force
   (syntax-rules ()
     ((delay-force expression)
-     (make-promise #f (lambda () expression)))))%
+     (make-promise #f (lambda () expression)))))
 
 
 
 (define-syntax delay
   (syntax-rules ()
     ((delay expression)
-     (delay-force (make-promise #t expression)))))%
+     (delay-force (make-promise #t expression)))))
 
 (define make-promise
   (lambda (done? proc)
-    (list (cons done? proc))))%
+    (list (cons done? proc))))
 
 (define (force promise)
   (if (promise-done? promise)
@@ -314,7 +320,7 @@
       (let ((promise* ((promise-value promise))))
         (unless (promise-done? promise)
           (promise-update! promise* promise))
-        (force promise))))%
+        (force promise))))
 
 (define promise-done?
   (lambda (x) (car (car x))))
@@ -324,7 +330,7 @@
   (lambda (new old)
     (set-car! (car old) (promise-done? new))
     (set-cdr! (car old) (promise-value new))
-    (set-car! new (car old))))%
+    (set-car! new (car old))))
 
 
 (define (make-parameter init . o)
@@ -340,7 +346,7 @@
        ((eq? (car args) <param-convert>)
         converter)
        (else
-        (error "bad parameter syntax"))))))%
+        (error "bad parameter syntax"))))))
 
 
 (define-syntax parameterize

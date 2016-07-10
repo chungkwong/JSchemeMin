@@ -54,6 +54,9 @@ public class Environment{
 		else
 			return repl?UNBOUNDED:null;
 	}
+	public HashMap<ScmSymbol,ScmObject> getBindings(){
+		return bindings;
+	}
 	public void set(ScmSymbol id,ScmObject obj){
 		Environment env=this;
 		while(env!=null){

@@ -14,33 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.chungkwong.jschememin.type;
+package com.github.chungkwong.jschememin.primitive;
+import com.github.chungkwong.jschememin.*;
+import com.github.chungkwong.jschememin.type.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class ScmSyntaxRule extends ScmObject{
-	private static final ScmSymbol ELLIPSIS=new ScmSymbol("...");
-	private final ScmSymbol ellipsis;
-	public ScmSyntaxRule(ScmPair spec){
-		if(spec.getCar() instanceof ScmSymbol){
-			ellipsis=(ScmSymbol)spec.getCar();
-			spec=(ScmPair)spec.getCdr();
-		}else
-			ellipsis=ELLIPSIS;
-
-	}
-
-	@Override
-	public String toExternalRepresentation(){
-		return "'macro";
+public class SyntaxRule extends PrimitiveType{
+	public static final SyntaxRule INSTANCE=new SyntaxRule();
+	public SyntaxRule(){
+		super(new ScmSymbol("syntax-rules"));
 	}
 	@Override
-	public boolean isSelfevaluating(){
-		return false;
-	}
-	public ScmObject tranform(ScmPairOrNil argument){
-		//TODO
-		return ScmNil.NIL;
+	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
+		cont.ret(new ScmSyntaxRule((ScmPair)param));
 	}
 }

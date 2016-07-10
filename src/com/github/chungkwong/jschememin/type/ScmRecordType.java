@@ -43,6 +43,16 @@ public class ScmRecordType extends ScmObject{
 	public boolean isSelfevaluating(){
 		return false;
 	}
+	@Override
+	public boolean equals(Object obj){
+		return obj instanceof ScmRecordType&&((ScmRecordType)obj).name.equals(name);
+	}
+	@Override
+	public int hashCode(){
+		int hash=7;
+		hash=73*hash+Objects.hashCode(this.name);
+		return hash;
+	}
 	public NativeProcedure getConstractor(){
 		return new Constructor();
 	}

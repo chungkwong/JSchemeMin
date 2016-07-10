@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin;
-import com.github.chungkwong.jschememin.primitive.*;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
 /**
@@ -32,18 +31,6 @@ public class Evaluator{
 	}
 	public Evaluator(Environment env){
 		this.env=env;
-		env.addPrimitiveType(If.INSTANCE);
-		env.addPrimitiveType(Assignment.INSTANCE);
-		env.addPrimitiveType(Lambda.INSTANCE);
-		env.addPrimitiveType(Include.INSTANCE);
-		env.addPrimitiveType(Include.INSTANCE_CI);
-		env.addPrimitiveType(Quote.INSTANCE);
-		env.addPrimitiveType(Begin.INSTANCE);
-		env.addPrimitiveType(Define.INSTANCE);
-		env.addPrimitiveType(DefineSyntax.INSTANCE);
-		env.addPrimitiveType(DefineRecordType.INSTANCE);
-		env.addPrimitiveType(DefineLibrary.INSTANCE);
-		env.addPrimitiveType(Import.INSTANCE);
 	}
 	public ScmObject eval(ScmObject expr){
 		cont.callInit(ExpressionEvaluator.INSTANCE,expr);

@@ -17,7 +17,9 @@
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
+import java.io.*;
 import java.util.*;
+import java.util.logging.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -45,6 +47,18 @@ public abstract class NativeLibrary{
 	protected void addPrimitiveType(PrimitiveType type){
 		lib.getInternalEnvironment().addPrimitiveType(type);
 		lib.getExportMap().put(type.getKeyword(),type.getKeyword());
+	}
+	protected void addDeriveFile(String file){
+		try{
+			Parser parser=new Parser(new Lex(new InputStreamReader(NativeLibrary.class.getResourceAsStream(file),"UTF-8")));
+			Environment internal=lib.getInternalEnvironment();
+			Environment tmp=new Environment(internal);
+			Evaluator evaluator=new Evaluator(tmp);
+			parser.getRemainingDatums().forEach((d)->evaluator.eval(d));
+			tmp.getBindings().forEach((id,obj)->{addNative(id,obj);});
+		}catch(UnsupportedEncodingException ex){
+			Logger.getGlobal().log(Level.SEVERE,null,ex);
+		}
 	}
 	protected abstract void init(Library lib);
 }

@@ -49,5 +49,16 @@ public class ScmRecord extends ScmObject{
 	public boolean isSelfevaluating(){
 		return false;
 	}
-
+	@Override
+	public boolean equals(Object obj){
+		return obj instanceof ScmRecord&&((ScmRecord)obj).type.equals(type)
+				&&Arrays.equals(((ScmRecord)obj).fields,fields);
+	}
+	@Override
+	public int hashCode(){
+		int hash=5;
+		hash=83*hash+Objects.hashCode(this.type);
+		hash=83*hash+Arrays.deepHashCode(this.fields);
+		return hash;
+	}
 }

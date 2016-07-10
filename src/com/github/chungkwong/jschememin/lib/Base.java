@@ -35,12 +35,14 @@ public class Base extends NativeLibrary{
 		addPrimitiveType(Include.INSTANCE);
 		addPrimitiveType(Include.INSTANCE_CI);
 		addPrimitiveType(Quote.INSTANCE);
-		addPrimitiveType(Begin.INSTANCE);
 		addPrimitiveType(Define.INSTANCE);
-		addPrimitiveType(DefineSyntax.INSTANCE);
 		addPrimitiveType(DefineRecordType.INSTANCE);
 		addPrimitiveType(DefineLibrary.INSTANCE);
 		addPrimitiveType(Import.INSTANCE);
+		addPrimitiveType(SyntaxRule.INSTANCE);
+		addDeriveFile("/com/github/chungkwong/jschememin/lib/base_derive.scm");
 	}
-
+	public static void main(String[] args){
+		INSTANCE.getLibrary();
+	}
 }

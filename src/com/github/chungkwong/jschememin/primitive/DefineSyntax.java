@@ -28,7 +28,7 @@ public class DefineSyntax extends PrimitiveType{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
-		ScmSyntaxRule rule=new ScmSyntaxRule((ScmPair)((ScmPair)expr).getCadr());
+		ScmSyntaxRule rule=new ScmSyntaxRule((ScmPair)((ScmPair)expr).getCddr());
 		env.add((ScmSymbol)((ScmPair)expr).getCar(),rule);
 		cont.ret(rule);
 	}
