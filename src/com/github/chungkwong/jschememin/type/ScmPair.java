@@ -51,6 +51,7 @@ public final class ScmPair<A extends ScmObject,D extends ScmObject> extends ScmP
 	public void setCdr(D cdr){
 		this.cdr=cdr;
 	}
+	@Override
 	public void forEach(Consumer<ScmObject> proc){
 		ScmObject pair=this;
 		while(pair instanceof ScmPair){

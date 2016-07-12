@@ -27,6 +27,7 @@ public class Environment{
 	private final boolean repl;
 	private final HashMap<ScmSymbol,ScmObject> bindings=new HashMap<>();
 	public static final ScmSymbol UNBOUNDED=new ScmSymbol("unbound");
+	private static int count=0;
 	public Environment(boolean repl){
 		this.parent=null;
 		this.repl=repl;
@@ -80,5 +81,11 @@ public class Environment{
 	}
 	public boolean isREPL(){
 		return repl;
+	}
+	public ScmSymbol getUnusedVariable(){
+		ScmSymbol id=new ScmSymbol(Integer.toString(++count));
+		while(getOptional(id).isPresent())
+			id=new ScmSymbol(Integer.toString(++count));
+		return id;
 	}
 }
