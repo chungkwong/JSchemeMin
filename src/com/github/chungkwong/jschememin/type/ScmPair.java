@@ -16,19 +16,21 @@
  */
 package com.github.chungkwong.jschememin.type;
 import java.util.*;
-import java.util.function.*;
-public final class ScmPair<A extends ScmObject,D extends ScmObject> extends ScmPairOrNil{
-	private A car;
-	private D cdr;
-	public ScmPair(A car,D cdr){
+public final class ScmPair extends ScmPairOrNil{
+	private ScmObject car;
+	private ScmObject cdr;
+	public ScmPair(ScmObject car,ScmObject cdr){
 		this.car=car;
 		this.cdr=cdr;
 	}
-	public A getCar(){
+	public ScmObject getCar(){
 		return car;
 	}
-	public D getCdr(){
+	public ScmObject getCdr(){
 		return cdr;
+	}
+	public ScmObject getCaar(){
+		return ((ScmPair)car).getCar();
 	}
 	public ScmObject getCadr(){
 		return ((ScmPair)cdr).getCar();
@@ -39,29 +41,19 @@ public final class ScmPair<A extends ScmObject,D extends ScmObject> extends ScmP
 	public ScmObject getCaddr(){
 		return ((ScmPair)((ScmPair)cdr).getCdr()).getCar();
 	}
-	public ScmPair getLastListNode(){
-		ScmPair node=this;
-		while(node.getCdr() instanceof ScmPair)
-			node=(ScmPair)node.getCdr();
-		return node;
-	}
-	public void setCar(A car){
+	public void setCar(ScmObject car){
 		this.car=car;
 	}
-	public void setCdr(D cdr){
+	public void setCdr(ScmObject cdr){
 		this.cdr=cdr;
-	}
-	@Override
-	public void forEach(Consumer<ScmObject> proc){
-		ScmObject pair=this;
-		while(pair instanceof ScmPair){
-			proc.accept(((ScmPair)pair).getCar());
-			pair=((ScmPair)pair).getCdr();
-		}
 	}
 	@Override
 	public boolean equals(Object obj){
 		return obj==this||ObjectPair.equals(this,obj,new HashSet<ObjectPair>());
+	}
+	@Override
+	public boolean equalsValue(ScmObject obj){
+		return this==obj;
 	}
 	@Override
 	public int hashCode(){
@@ -106,27 +98,5 @@ public final class ScmPair<A extends ScmObject,D extends ScmObject> extends ScmP
 		}
 		buf.append(")");
 		return true;
-	}
-	public static ScmPairOrNil toList(List<? extends ScmObject> list){
-		if(list.isEmpty())
-			return ScmNil.NIL;
-		ScmPair start=new ScmPair(list.get(0),ScmNil.NIL),end=start;
-		for(ScmObject o:list.subList(1,list.size())){
-			ScmPair newend=new ScmPair(o,ScmNil.NIL);
-			end.setCdr(newend);
-			end=newend;
-		}
-		return start;
-	}
-	public static ScmPairOrNil toList(ScmObject... list){
-		if(list.length==0)
-			return ScmNil.NIL;
-		ScmPair start=new ScmPair(list[0],ScmNil.NIL),end=start;
-		for(int i=1;i<list.length;i++){
-			ScmPair newend=new ScmPair(list[i],ScmNil.NIL);
-			end.setCdr(newend);
-			end=newend;
-		}
-		return start;
 	}
 }

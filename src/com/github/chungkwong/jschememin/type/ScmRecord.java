@@ -55,6 +55,10 @@ public class ScmRecord extends ScmObject{
 				&&Arrays.equals(((ScmRecord)obj).fields,fields);
 	}
 	@Override
+	public boolean equalsValue(ScmObject obj){
+		return this==obj;
+	}
+	@Override
 	public int hashCode(){
 		int hash=5;
 		hash=83*hash+Objects.hashCode(this.type);

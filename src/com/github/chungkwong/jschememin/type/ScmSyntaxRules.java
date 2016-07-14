@@ -33,8 +33,8 @@ public class ScmSyntaxRules extends ScmObject{
 			spec=(ScmPair)spec.getCdr();
 		}else
 			ellipsis=ELLIPSIS;
-		((ScmPairOrNil)spec.getCar()).forEach((id)->literals.add((ScmSymbol)id));
-		((ScmPairOrNil)spec.getCdr()).forEach((rule)->addSyntaxRule((ScmPair)rule));
+		ScmList.forEach((ScmPairOrNil)spec.getCar(),(id)->literals.add((ScmSymbol)id));
+		ScmList.forEach((ScmPairOrNil)spec.getCdr(),(rule)->addSyntaxRule((ScmPair)rule));
 	}
 	private void addSyntaxRule(ScmPair rule){
 		rules.add(new SyntaxRule(rule.getCar(),rule.getCadr()));
@@ -94,9 +94,14 @@ public class ScmSyntaxRules extends ScmObject{
 					split=i-1;
 			}
 			for(int i=0;i<split;i++)
-				if(!match(expr,patt.get(i),bind,env))
+				if(!match(exp.get(i),patt.get(i),bind,env))
 					return false;
-
+			for(int i=split;i<split+exp.getLength()-patt.getLength();i++)
+				if(!match(exp.get(i),patt.get(split),bind,env))
+					return false;
+			for(int i=split+1;i<patt.getLength();i++)
+				if(!match(exp.get(i+exp.getLength()-patt.getLength()),patt.get(i),bind,env))
+					return false;
 			return true;
 		}
 		private boolean matchList(ScmObject expr,ScmPairOrNil patt,HashMap<ScmSymbol,ScmObject> bind,Environment env){

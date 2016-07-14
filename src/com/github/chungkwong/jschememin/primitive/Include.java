@@ -36,15 +36,15 @@ public class Include extends PrimitiveType{
 	}
 	ScmPair getFileContent(ScmPair files){
 		ScmPair content=new ScmPair(new ScmSymbol("begin"),ScmNil.NIL);
-		files.forEach((file)->{
-			content.getLastListNode().setCdr(getFileContent(((ScmString)file).getValue()));
+		ScmList.forEach(files,(file)->{
+			ScmList.getLastListNode(content).setCdr(getFileContent(((ScmString)file).getValue()));
 		});//Low performance
 		return content;
 	}
 	ScmPairOrNil getFileContent(String file){
 		try{
 			Parser parser=new Parser(new Lex(new InputStreamReader(new FileInputStream(file),"UTF-8"),foldingCase));
-			return ScmPair.toList(parser.getRemainingDatums());
+			return ScmList.toList(parser.getRemainingDatums());
 		}catch(FileNotFoundException|UnsupportedEncodingException ex){
 			throw new RuntimeException();
 		}

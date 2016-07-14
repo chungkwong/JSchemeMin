@@ -58,20 +58,20 @@ public class Import extends PrimitiveType{
 				}
 			}else if(car.equals(RENAME)){
 				HashMap<ScmSymbol,ScmSymbol> rename=new HashMap<ScmSymbol,ScmSymbol>();
-				list.forEach((c)->rename.put((ScmSymbol)((ScmPair)c).getCar(),(ScmSymbol)((ScmPair)c).getCadr()));
+				ScmList.forEach(list,(c)->rename.put((ScmSymbol)((ScmPair)c).getCar(),(ScmSymbol)((ScmPair)c).getCadr()));
 				for(Map.Entry<ScmSymbol,ScmSymbol> entry:set.ex2im.entrySet())
 					if(rename.containsKey(entry.getValue()))
 						entry.setValue(rename.get(entry.getValue()));
 			}else if(car.equals(EXCEPT)){
 				HashSet<ScmSymbol> remain=new HashSet<>();
-				list.forEach((c)->remain.add((ScmSymbol)c));
+				ScmList.forEach(list,(c)->remain.add((ScmSymbol)c));
 				Iterator<Map.Entry<ScmSymbol,ScmSymbol>> iter=set.ex2im.entrySet().iterator();
 				while(iter.hasNext())
 					if(remain.contains(iter.next().getValue()))
 						iter.remove();
 			}else if(car.equals(ONLY)){
 				HashSet<ScmSymbol> remain=new HashSet<>();
-				list.forEach((c)->remain.add((ScmSymbol)c));
+				ScmList.forEach(list,(c)->remain.add((ScmSymbol)c));
 				Iterator<Map.Entry<ScmSymbol,ScmSymbol>> iter=set.ex2im.entrySet().iterator();
 				while(iter.hasNext())
 					if(!remain.contains(iter.next().getValue()))

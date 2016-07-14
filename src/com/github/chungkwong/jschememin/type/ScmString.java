@@ -34,6 +34,10 @@ public final class ScmString extends ScmObject implements Token{
 		return obj instanceof ScmString&&((ScmString)obj).val.equals(val);
 	}
 	@Override
+	public boolean equalsValue(ScmObject obj){
+		return this==obj;
+	}
+	@Override
 	public int hashCode(){
 		int hash=3;
 		hash=67*hash+Objects.hashCode(this.val);

@@ -21,4 +21,10 @@ public abstract class ScmObject{
 	public String toString(){
 		return toExternalRepresentation();
 	}
+	public boolean equalsValue(ScmObject obj){
+		return equals(obj);
+	}
+	public boolean equalsStrict(ScmObject obj){
+		return equalsValue(obj);
+	}
 }

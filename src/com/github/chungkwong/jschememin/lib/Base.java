@@ -25,7 +25,7 @@ import com.github.chungkwong.jschememin.type.*;
 public class Base extends NativeLibrary{
 	public static final Base INSTANCE=new Base();
 	public Base(){
-		super((ScmPair)ScmPair.toList(new ScmString("scheme"),new ScmString("base")));
+		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("base")));
 	}
 	@Override
 	protected void init(Library lib){

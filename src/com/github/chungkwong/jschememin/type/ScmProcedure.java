@@ -41,6 +41,10 @@ public final class ScmProcedure extends ScmObject implements Evaluable{
 				throw new SyntaxException();
 		}
 	}
+	@Override
+	public boolean equalsValue(ScmObject obj){
+		return this==obj;
+	}
 	private Environment extendEnvironment(ScmPairOrNil param){
 		Environment env=new Environment(parent);
 		if(formal instanceof ScmSymbol){
