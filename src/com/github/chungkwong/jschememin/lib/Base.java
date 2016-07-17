@@ -40,6 +40,7 @@ public class Base extends NativeLibrary{
 		addPrimitiveType(DefineLibrary.INSTANCE);
 		addPrimitiveType(Import.INSTANCE);
 		addPrimitiveType(SyntaxRule.INSTANCE);
+		addNativeProcedure("symbol?",(o)->ScmBoolean.valueOf(o instanceof ScmSymbol));
 		addDeriveFile("/com/github/chungkwong/jschememin/lib/base_derive.scm");
 	}
 	public static void main(String[] args){

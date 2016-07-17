@@ -14,13 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.chungkwong.jschememin.type;
+package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
+import com.github.chungkwong.jschememin.lib.NativeProcedure;
+import com.github.chungkwong.jschememin.type.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public abstract class NativeProcedure extends ScmObject implements Evaluable{
+public class NativeEvaluable extends ScmObject implements Evaluable{
+	private final NativeProcedure proc;
+	public NativeEvaluable(NativeProcedure proc){
+		this.proc=proc;
+	}
 	@Override
 	public String toExternalRepresentation(){
 		return this.getClass().getCanonicalName();
@@ -31,7 +37,6 @@ public abstract class NativeProcedure extends ScmObject implements Evaluable{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		cont.ret(call(param));
+		cont.ret(proc.call(param));
 	}
-	public abstract ScmObject call(ScmObject param);
 }

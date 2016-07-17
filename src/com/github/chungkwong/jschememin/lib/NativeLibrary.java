@@ -60,5 +60,10 @@ public abstract class NativeLibrary{
 			Logger.getGlobal().log(Level.SEVERE,null,ex);
 		}
 	}
+	protected void addNativeProcedure(String name,NativeProcedure proc){
+		ScmSymbol sym=new ScmSymbol(name);
+		lib.getInternalEnvironment().add(sym,new NativeEvaluable(proc));
+		lib.getExportMap().put(sym,sym);
+	}
 	protected abstract void init(Library lib);
 }
