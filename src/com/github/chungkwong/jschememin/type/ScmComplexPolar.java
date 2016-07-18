@@ -25,6 +25,22 @@ private final ScmReal abs,radius;
 		this.radius=imag;
 	}
 	@Override
+	public ScmReal getAngle(){
+		return radius;
+	}
+	@Override
+	public ScmReal getMagnitude(){
+		return abs;
+	}
+	@Override
+	public ScmReal getImag(){
+		return abs.multiply(radius.sin());
+	}
+	@Override
+	public ScmReal getReal(){
+		return abs.multiply(radius.cos());
+	}
+	@Override
 	public boolean equals(Object obj){
 		return obj instanceof ScmComplexPolar&&
 				((ScmComplexPolar)obj).abs.equals(abs)&&((ScmComplexPolar)obj).radius.equals(radius);
@@ -43,5 +59,9 @@ private final ScmReal abs,radius;
 	@Override
 	public String toExternalRepresentation(){
 		return abs.toExternalRepresentation()+"@"+radius.toExternalRepresentation();
+	}
+	@Override
+	public boolean isZero(){
+		return abs.isZero();
 	}
 }

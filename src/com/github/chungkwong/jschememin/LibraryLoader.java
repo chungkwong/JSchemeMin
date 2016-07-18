@@ -27,6 +27,7 @@ public class LibraryLoader{
 	private static final HashMap<ScmPair,NativeLibrary> NATIVE_LIBRARIES=new HashMap<ScmPair,NativeLibrary>();
 	static{
 		addNativeLibrary(Base.INSTANCE);
+		addNativeLibrary(Complex.INSTANCE);
 	}
 	private static void addNativeLibrary(NativeLibrary lib){
 		NATIVE_LIBRARIES.put(lib.getName(),lib);

@@ -25,6 +25,22 @@ public class ScmComplexRectangular extends ScmComplex{
 		this.imag=imag;
 	}
 	@Override
+	public ScmReal getReal(){
+		return real;
+	}
+	@Override
+	public ScmReal getImag(){
+		return imag;
+	}
+	@Override
+	public ScmReal getMagnitude(){
+		return real.multiply(real).add(imag.multiply(imag)).sqrt();
+	}
+	@Override
+	public ScmReal getAngle(){
+		throw new UnsupportedOperationException("Not supported yet."); //TODO
+	}
+	@Override
 	public boolean equals(Object obj){
 		return obj instanceof ScmComplexRectangular
 				&&((ScmComplexRectangular)obj).real.equals(real)&&((ScmComplexRectangular)obj).imag.equals(imag);
@@ -49,5 +65,9 @@ public class ScmComplexRectangular extends ScmComplex{
 		buf.append(imag.toExternalRepresentation());
 		buf.append("i");
 		return buf.toString();
+	}
+	@Override
+	public boolean isZero(){
+		return real.isZero()&&imag.isZero();
 	}
 }

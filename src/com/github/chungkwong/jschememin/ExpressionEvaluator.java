@@ -49,8 +49,8 @@ public class ExpressionEvaluator implements Evaluable{
 		}
 	}
 	private void evaluateRemaining(BackTrace b,ScmObject expr,Environment env,Continuation cont){
-		if(expr instanceof PrimitiveType){
-			((PrimitiveType)expr).call(env,cont,null,b.getAfter());
+		if(expr instanceof Evaluable){
+			((Evaluable)expr).call(env,cont,null,b.getAfter());
 		}else if(expr instanceof ScmSyntaxRules){
 			cont.callTail(this,((ScmSyntaxRules)expr).tranform((ScmPairOrNil)b.getAfter()));
 		}else if(b.getBefore()==null){

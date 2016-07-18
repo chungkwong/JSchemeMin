@@ -14,6 +14,35 @@
  */
 package com.github.chungkwong.jschememin.type;
 
-public abstract class ScmReal extends ScmNumber{
+public abstract class ScmReal extends ScmComplex{
 	public abstract boolean needPlusSign();
+	@Override
+	public ScmReal getMagnitude(){
+		return needPlusSign()?this:this.negate();
+	}
+	@Override
+	public ScmReal getAngle(){
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+	@Override
+	public ScmReal getReal(){
+		return this;
+	}
+	@Override
+	public ScmReal getImag(){
+		return ScmInteger.ZERO;
+	}
+	public abstract ScmReal negate();
+	public abstract ScmReal add(ScmReal num);
+	public abstract ScmReal subtract(ScmReal num);
+	public abstract ScmReal multiply(ScmReal num);
+	public abstract ScmReal divide(ScmReal num);
+	public abstract ScmReal sin();
+	public abstract ScmReal cos();
+	public abstract ScmReal sqrt();
+	public abstract int signum();
+	@Override
+	public boolean isZero(){
+		return signum()==0;
+	}
 }

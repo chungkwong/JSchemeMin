@@ -56,4 +56,37 @@ public final class ScmRational extends ScmReal{
 	public boolean needPlusSign(){
 		return numerator.needPlusSign()==denominator.needPlusSign();
 	}
+	@Override
+	public ScmRational negate(){
+		return new ScmRational(numerator.negate(),denominator);
+	}
+	public ScmRational add(ScmRational num){
+		return new ScmRational(numerator.multiply(num.denominator).add(denominator.multiply(num.numerator)),denominator.multiply(num.denominator));
+	}
+	public ScmRational subtract(ScmRational num){
+		return new ScmRational(numerator.multiply(num.denominator).subtract(denominator.multiply(num.numerator)),denominator.multiply(num.denominator));
+	}
+	public ScmRational multiply(ScmRational num){
+		return new ScmRational(numerator.multiply(num.numerator),denominator.multiply(num.denominator));
+	}
+	public ScmRational divide(ScmRational num){
+		return new ScmRational(numerator.multiply(num.denominator),denominator.multiply(num.numerator));
+	}
+	@Override
+	public boolean isInteger(){
+		simplify();
+		return denominator.equals(ScmInteger.ONE);
+	}
+	@Override
+	public ScmInteger toScmInteger(){
+		return numerator;
+	}
+	@Override
+	public boolean isRational(){
+		return true;
+	}
+	@Override
+	public ScmRational toScmRational(){
+		return this;
+	}
 }

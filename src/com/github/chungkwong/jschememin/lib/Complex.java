@@ -16,27 +16,26 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
+import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class NativeEvaluable extends ScmObject implements Evaluable{
-	private final NativeProcedure proc;
-	public NativeEvaluable(NativeProcedure proc){
-		this.proc=proc;
-	}
-	
-	@Override
-	public String toExternalRepresentation(){
-		return this.getClass().getCanonicalName();
+public class Complex extends NativeLibrary{
+	public static final Complex INSTANCE=new Complex();
+	public Complex(){
+		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("complex")));
 	}
 	@Override
-	public boolean isSelfevaluating(){
-		return false;
-	}
-	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		cont.ret(proc.call(param));
+	protected void init(Library lib){
+		addNativeProcedure("imag-part",(o)->((ScmComplex)car(o)).getReal());
+		addNativeProcedure("real-part",(o)->((ScmComplex)car(o)).getImag());
+		addNativeProcedure("angle",(o)->((ScmComplex)car(o)).getAngle());
+		addNativeProcedure("magnitude",(o)->((ScmComplex)car(o)).getMagnitude());
+		addNativeProcedure("make-rectangular",(o)->new ScmComplexRectangular(
+				((ScmComplex)car(o)).toScmReal(),((ScmComplex)car(o)).toScmReal()));
+		addNativeProcedure("make-polar",(o)->new ScmComplexPolar(
+				((ScmComplex)car(o)).toScmReal(),((ScmComplex)car(o)).toScmReal()));
 	}
 }

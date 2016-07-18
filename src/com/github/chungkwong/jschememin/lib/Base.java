@@ -16,6 +16,8 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
+import static com.github.chungkwong.jschememin.lib.Utility.cadr;
+import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.primitive.*;
 import com.github.chungkwong.jschememin.type.*;
 /**
@@ -40,7 +42,33 @@ public class Base extends NativeLibrary{
 		addPrimitiveType(DefineLibrary.INSTANCE);
 		addPrimitiveType(Import.INSTANCE);
 		addPrimitiveType(SyntaxRule.INSTANCE);
-		addNativeProcedure("symbol?",(o)->ScmBoolean.valueOf(o instanceof ScmSymbol));
+
+		addNativeProcedure("equal?",(o)->ScmBoolean.valueOf(car(o).equals(cadr(o))));
+		addNativeProcedure("eqv?",(o)->ScmBoolean.valueOf(car(o).equalsValue(cadr(o))));
+		addNativeProcedure("eq?",(o)->ScmBoolean.valueOf(car(o).equalsStrict(cadr(o))));
+
+		addNativeProcedure("number?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmNumber));
+		addNativeProcedure("complex?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmNumber));
+		addNativeProcedure("real?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmNumber));
+		addNativeProcedure("rational?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmNumber));
+		addNativeProcedure("integer?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmNumber));
+		addNativeProcedure("exact?",(o)->ScmBoolean.valueOf(((ScmNumber)car(o)).isExact()));
+		addNativeProcedure("inexact?",(o)->ScmBoolean.valueOf(!((ScmNumber)car(o)).isExact()));
+
+		addNativeProcedure("cons",(o)->new ScmPair(car(o),cadr(o)));
+		addNativeProcedure("car",(o)->((ScmPair)car(o)).getCar());
+		addNativeProcedure("cdr",(o)->((ScmPair)car(o)).getCdr());
+		addNativeProcedure("cadr",(o)->((ScmPair)car(o)).getCadr());
+		addNativeProcedure("cdar",(o)->((ScmPair)car(o)).getCdar());
+
+		addNativeProcedure("binary-port?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmBinaryInputPort
+				||car(o) instanceof ScmBinaryOutputPort));
+		addNativeProcedure("boolean?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmBoolean));
+		addNativeProcedure("null?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmNil));
+		addNativeProcedure("pair?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmPair));
+		addNativeProcedure("symbol?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmSymbol));
+		addNativeProcedure("vector?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmVector));
+
 		addDeriveFile("/com/github/chungkwong/jschememin/lib/base_derive.scm");
 	}
 	public static void main(String[] args){

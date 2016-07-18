@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.type;
+import com.github.chungkwong.jschememin.lib.*;
 import java.util.*;
 /**
  *
@@ -53,19 +54,19 @@ public class ScmRecordType extends ScmObject{
 		hash=73*hash+Objects.hashCode(this.name);
 		return hash;
 	}
-	public NativeProcedure getConstractor(){
-		return new Constructor();
+	public NativeEvaluable getConstractor(){
+		return new NativeEvaluable(new Constructor());
 	}
-	public NativeProcedure getPredicate(){
-		return new Predicate();
+	public NativeEvaluable getPredicate(){
+		return new NativeEvaluable(new Predicate());
 	}
-	public NativeProcedure getAccessor(ScmSymbol field){
-		return new Accessor(field);
+	public NativeEvaluable getAccessor(ScmSymbol field){
+		return new NativeEvaluable(new Accessor(field));
 	}
-	public NativeProcedure getModifier(ScmSymbol field){
-		return new Modifier(field);
+	public NativeEvaluable getModifier(ScmSymbol field){
+		return new NativeEvaluable(new Modifier(field));
 	}
-	class Constructor extends NativeProcedure{
+	class Constructor implements NativeProcedure{
 		@Override
 		public ScmObject call(ScmObject fields){
 			ScmObject[] data=new ScmObject[indices.size()];
@@ -77,7 +78,7 @@ public class ScmRecordType extends ScmObject{
 			return new ScmRecord(ScmRecordType.this,data);
 		}
 	}
-	class Predicate extends NativeProcedure{
+	class Predicate implements NativeProcedure{
 		private Predicate(){
 
 		}
@@ -86,7 +87,7 @@ public class ScmRecordType extends ScmObject{
 			return ScmBoolean.valueOf(((ScmRecord)((ScmPair)param).getCar()).getType()==ScmRecordType.this);
 		}
 	}
-	class Accessor extends NativeProcedure{
+	class Accessor implements NativeProcedure{
 		final int index;
 		private Accessor(ScmSymbol field){
 			index=indices.get(field);
@@ -96,7 +97,7 @@ public class ScmRecordType extends ScmObject{
 			return ((ScmRecord)((ScmPair)param).getCar()).get(index);
 		}
 	}
-	class Modifier extends NativeProcedure{
+	class Modifier implements NativeProcedure{
 		final int index;
 		private Modifier(ScmSymbol field){
 			index=indices.get(field);

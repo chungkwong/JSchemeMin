@@ -35,6 +35,9 @@ public final class ScmPair extends ScmPairOrNil{
 	public ScmObject getCadr(){
 		return ((ScmPair)cdr).getCar();
 	}
+	public ScmObject getCdar(){
+		return ((ScmPair)car).getCdr();
+	}
 	public ScmObject getCddr(){
 		return ((ScmPair)cdr).getCdr();
 	}

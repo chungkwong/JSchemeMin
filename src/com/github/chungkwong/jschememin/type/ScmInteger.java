@@ -74,4 +74,24 @@ public final class ScmInteger extends ScmReal{
 	public boolean needPlusSign(){
 		return value.signum()>=0;
 	}
+	@Override
+	public int signum(){
+		return value.signum();
+	}
+	@Override
+	public boolean isInteger(){
+		return true;
+	}
+	@Override
+	public ScmInteger toScmInteger(){
+		return this;
+	}
+	@Override
+	public boolean isRational(){
+		return true;
+	}
+	@Override
+	public ScmRational toScmRational(){
+		return new ScmRational(this,ONE);
+	}
 }
