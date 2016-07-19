@@ -613,14 +613,15 @@ public final class Lex{
 				exact=-1;
 		}
 		unreadIfNotEOF(prefix,in);
+		real=neg?real.negate():real;
 		if(exact==-1)
-			return new ScmFloatingPointNumber(neg?real.negate():real);
+			return new ScmFloatingPointNumber(real);
 		else{
 			try{
 				num=real.toBigIntegerExact();
-				return new ScmInteger(neg?num.negate():num);
+				return new ScmInteger(num);
 			}catch(RuntimeException e){
-				return new ScmFloatingPointNumber(neg?real.negate():real);
+				return new ScmFloatingPointNumber(real).toScmRational();
 			}
 		}
 	}

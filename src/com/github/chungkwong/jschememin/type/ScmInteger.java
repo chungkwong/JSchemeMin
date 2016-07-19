@@ -25,6 +25,7 @@ public final class ScmInteger extends ScmReal{
 	public static ScmInteger valueOf(long val){
 		return new ScmInteger(BigInteger.valueOf(val));
 	}
+	@Override
 	public ScmInteger negate(){
 		return new ScmInteger(value.negate());
 	}
@@ -46,8 +47,24 @@ public final class ScmInteger extends ScmReal{
 	public ScmInteger gcd(ScmInteger num){
 		return new ScmInteger(value.gcd(num.value));
 	}
+	public ScmInteger lcm(ScmInteger num){
+		return new ScmInteger(value.multiply(num.value).divide(value.gcd(num.value)));
+	}
 	public int compareTo(ScmInteger num){
 		return value.compareTo(num.value);
+	}
+	@Override
+	public int compareTo(ScmReal o){
+		if(o instanceof ScmInteger){
+			return compareTo((ScmInteger)o);
+		}else if(o instanceof ScmRational){
+			return toScmRational().compareTo((ScmRational)o);
+		}else if(o instanceof ScmFloatingPointNumber){
+			return toInExact().compareTo((ScmFloatingPointNumber)o);
+		}else{
+			assert o instanceof ScmFloatingPointNumber.SpecialValue;
+
+		}
 	}
 	public BigInteger getValue(){
 		return value;
@@ -93,5 +110,69 @@ public final class ScmInteger extends ScmReal{
 	@Override
 	public ScmRational toScmRational(){
 		return new ScmRational(this,ONE);
+	}
+	@Override
+	public ScmReal add(ScmReal num){
+		if(num instanceof ScmInteger){
+			return add((ScmInteger)num);
+		}else if(num instanceof ScmRational){
+			return toScmRational().add(((ScmRational)num));
+		}else{
+			assert num instanceof ScmFloatingPointNumber;
+			return toInExact().add(num);
+		}
+	}
+	@Override
+	public ScmReal subtract(ScmReal num){
+		if(num instanceof ScmInteger){
+			return subtract((ScmInteger)num);
+		}else if(num instanceof ScmRational){
+			return toScmRational().subtract(((ScmRational)num));
+		}else{
+			assert num instanceof ScmFloatingPointNumber;
+			return toInExact().subtract(num);
+		}
+	}
+	@Override
+	public ScmReal multiply(ScmReal num){
+		if(num instanceof ScmInteger){
+			return multiply((ScmInteger)num);
+		}else if(num instanceof ScmRational){
+			return toScmRational().multiply(((ScmRational)num));
+		}else{
+			assert num instanceof ScmFloatingPointNumber;
+			return toInExact().multiply(num);
+		}
+	}
+	@Override
+	public ScmReal divide(ScmReal num){
+		if(num instanceof ScmInteger){
+			return new ScmRational(this,(ScmInteger)num);
+		}else if(num instanceof ScmRational){
+			return toScmRational().divide(((ScmRational)num));
+		}else{
+			assert num instanceof ScmFloatingPointNumber;
+			return toInExact().divide(((ScmFloatingPointNumber)num));
+		}
+	}
+	@Override
+	public ScmReal sin(){
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+	@Override
+	public ScmReal cos(){
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+	@Override
+	public ScmReal sqrt(){
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+	@Override
+	public ScmReal toExact(){
+		return this;
+	}
+	@Override
+	public ScmFloatingPointNumber toInExact(){
+		return new ScmFloatingPointNumber(new BigDecimal(value));
 	}
 }

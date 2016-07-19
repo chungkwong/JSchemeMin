@@ -14,7 +14,7 @@
  */
 package com.github.chungkwong.jschememin.type;
 
-public abstract class ScmReal extends ScmComplex{
+public abstract class ScmReal extends ScmComplex implements Comparable<ScmReal>{
 	public abstract boolean needPlusSign();
 	@Override
 	public ScmReal getMagnitude(){
@@ -45,4 +45,9 @@ public abstract class ScmReal extends ScmComplex{
 	public boolean isZero(){
 		return signum()==0;
 	}
+	@Override
+	public abstract ScmReal toExact();
+	@Override
+	public abstract ScmFloatingPointNumber toInExact();
+
 }

@@ -13,16 +13,35 @@
  *
  */
 package com.github.chungkwong.jschememin.type;
+import java.math.*;
 import java.util.*;
 public final class ScmRational extends ScmReal{
 	private ScmInteger numerator,denominator;
 	private boolean simplified=false;
 	public ScmRational(ScmInteger numerator,ScmInteger denominator){
-		this.numerator=numerator;
-		this.denominator=denominator;
+		if(denominator.signum()==-1){
+			this.numerator=numerator.negate();
+			this.denominator=denominator.negate();
+		}else{
+			this.numerator=numerator;
+			this.denominator=denominator;
+		}
 	}
 	public int compareTo(ScmRational num){
 		return numerator.multiply(num.denominator).compareTo(denominator.multiply(num.numerator));
+	}
+	@Override
+	public int compareTo(ScmReal o){
+		if(o instanceof ScmInteger){
+			return compareTo(o.toScmRational());
+		}else if(o instanceof ScmRational){
+			return compareTo((ScmRational)o);
+		}else if(o instanceof ScmFloatingPointNumber){
+			return compareTo(o.toScmRational());
+		}else{
+			assert o instanceof ScmFloatingPointNumber.SpecialValue;
+
+		}
 	}
 	private void simplify(){
 		if(simplified||numerator.equals(ScmInteger.ZERO))
@@ -88,5 +107,58 @@ public final class ScmRational extends ScmReal{
 	@Override
 	public ScmRational toScmRational(){
 		return this;
+	}
+	@Override
+	public ScmReal toExact(){
+		return this;
+	}
+	@Override
+	public ScmFloatingPointNumber toInExact(){
+		return new ScmFloatingPointNumber(new BigDecimal(numerator.getValue())
+				.divide(new BigDecimal(denominator.getValue()),MathContext.DECIMAL64));
+	}
+	@Override
+	public ScmReal add(ScmReal num){
+		if(num instanceof ScmInteger){
+			return add(((ScmInteger)num).toScmRational());
+		}else if(num instanceof ScmRational){
+			return add(((ScmRational)num));
+		}else{
+			assert num instanceof ScmFloatingPointNumber;
+			return toInExact().add(num);
+		}
+	}
+	@Override
+	public ScmReal subtract(ScmReal num){
+		if(num instanceof ScmInteger){
+			return subtract(((ScmInteger)num).toScmRational());
+		}else if(num instanceof ScmRational){
+			return subtract(((ScmRational)num));
+		}else{
+			assert num instanceof ScmFloatingPointNumber;
+			return toInExact().subtract(num);
+		}
+	}
+	@Override
+	public ScmReal multiply(ScmReal num){
+		if(num instanceof ScmInteger){
+			return multiply(((ScmInteger)num).toScmRational());
+		}else if(num instanceof ScmRational){
+			return multiply(((ScmRational)num));
+		}else{
+			assert num instanceof ScmFloatingPointNumber;
+			return toInExact().multiply(num);
+		}
+	}
+	@Override
+	public ScmReal divide(ScmReal num){
+		if(num instanceof ScmInteger){
+			return divide(((ScmInteger)num).toScmRational());
+		}else if(num instanceof ScmRational){
+			return divide(((ScmRational)num));
+		}else{
+			assert num instanceof ScmFloatingPointNumber;
+			return toInExact().divide(num);
+		}
 	}
 }

@@ -70,4 +70,12 @@ public class ScmComplexRectangular extends ScmComplex{
 	public boolean isZero(){
 		return real.isZero()&&imag.isZero();
 	}
+	@Override
+	public ScmComplex toExact(){
+		return isExact()?this:new ScmComplexRectangular(real.toExact(),imag.toExact());
+	}
+	@Override
+	public ScmComplex toInExact(){
+		return isExact()?new ScmComplexRectangular(real.toInExact(),imag.toInExact()):this;
+	}
 }

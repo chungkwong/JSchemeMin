@@ -20,9 +20,9 @@ import java.util.*;
  */
 public class ScmComplexPolar extends ScmComplex{
 private final ScmReal abs,radius;
-	public ScmComplexPolar(ScmReal real,ScmReal imag){
-		this.abs=real;
-		this.radius=imag;
+	public ScmComplexPolar(ScmReal abs,ScmReal radius){
+		this.abs=abs;
+		this.radius=radius;
 	}
 	@Override
 	public ScmReal getAngle(){
@@ -63,5 +63,13 @@ private final ScmReal abs,radius;
 	@Override
 	public boolean isZero(){
 		return abs.isZero();
+	}
+	@Override
+	public ScmComplex toExact(){
+		return isExact()?this:new ScmComplexPolar(abs.toExact(),radius.toExact());
+	}
+	@Override
+	public ScmComplex toInExact(){
+		return isExact()?new ScmComplexPolar(abs.toInExact(),radius.toInExact()):this;
 	}
 }

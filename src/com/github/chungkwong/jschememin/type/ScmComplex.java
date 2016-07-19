@@ -18,6 +18,8 @@ public abstract class ScmComplex extends ScmNumber{
 	public abstract ScmReal getImag();
 	public abstract ScmReal getMagnitude();
 	public abstract ScmReal getAngle();
+	public abstract ScmComplex toExact();
+	public abstract ScmComplex toInExact();
 	public abstract boolean isZero();
 	public boolean isReal(){
 		return getImag().isZero();
@@ -57,5 +59,8 @@ public abstract class ScmComplex extends ScmNumber{
 	}
 	public ScmComplex divide(ScmComplex num){
 		return new ScmComplexPolar(num.getMagnitude().divide(getMagnitude()),getAngle().subtract(num.getAngle()));
+	}
+	public ScmComplex square(){
+		return multiply(this);
 	}
 }
