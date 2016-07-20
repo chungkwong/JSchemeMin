@@ -13,6 +13,7 @@
  *
  */
 package com.github.chungkwong.jschememin.type;
+import static com.github.chungkwong.jschememin.type.ScmComplexRectangular.I;
 public abstract class ScmComplex extends ScmNumber{
 	public abstract ScmReal getReal();
 	public abstract ScmReal getImag();
@@ -20,6 +21,12 @@ public abstract class ScmComplex extends ScmNumber{
 	public abstract ScmReal getAngle();
 	public abstract ScmComplex toExact();
 	public abstract ScmComplex toInExact();
+	public ScmComplex log(){
+		return new ScmComplexRectangular(getMagnitude().log(),getAngle());
+	}
+	public ScmComplex exp(){
+		return new ScmComplexPolar(getReal().exp(),getImag());
+	}
 	public abstract boolean isZero();
 	public boolean isReal(){
 		return getImag().isZero();
@@ -62,5 +69,32 @@ public abstract class ScmComplex extends ScmNumber{
 	}
 	public ScmComplex square(){
 		return multiply(this);
+	}
+	public ScmComplex log(ScmComplex base){
+		return log().divide(base.log());
+	}
+	public ScmComplex pow(ScmComplex e){
+		return log().multiply(e).exp();
+	}
+	public ScmComplex sqrt(){
+		return pow(ScmInteger.ONE.divide(ScmInteger.TWO));
+	}
+	public ScmComplex sin(){
+		return multiply(I).exp().subtract(negate().multiply(I).exp()).divide(ScmInteger.TWO.multiply(I));
+	}
+	public ScmComplex cos(){
+		return multiply(I).exp().add(negate().multiply(I).exp()).divide(ScmInteger.TWO);
+	}
+	public ScmComplex tan(){
+		return sin().divide(cos());
+	}
+	public ScmComplex arcsin(){
+		return ScmInteger.ONE.subtract(square()).sqrt().add(multiply(I)).multiply(I).negate();
+	}
+	public ScmComplex arccos(){
+		return ScmFloatingPointNumber.PI.divide(ScmInteger.TWO).subtract(arcsin());
+	}
+	public ScmComplex arctan(){
+		return multiply(I).add(ScmInteger.ONE).log().subtract(multiply(I).negate().add(ScmInteger.ONE).log()).divide(ScmInteger.TWO.multiply(I));
 	}
 }

@@ -15,7 +15,7 @@
 package com.github.chungkwong.jschememin.type;
 import java.math.*;
 import java.util.*;
-public final class ScmRational extends ScmReal{
+public final class ScmRational extends ScmNormalReal{
 	private ScmInteger numerator,denominator;
 	private boolean simplified=false;
 	public ScmRational(ScmInteger numerator,ScmInteger denominator){
@@ -31,16 +31,14 @@ public final class ScmRational extends ScmReal{
 		return numerator.multiply(num.denominator).compareTo(denominator.multiply(num.numerator));
 	}
 	@Override
-	public int compareTo(ScmReal o){
+	public int compareTo(ScmNormalReal o){
 		if(o instanceof ScmInteger){
 			return compareTo(o.toScmRational());
 		}else if(o instanceof ScmRational){
 			return compareTo((ScmRational)o);
-		}else if(o instanceof ScmFloatingPointNumber){
-			return compareTo(o.toScmRational());
 		}else{
-			assert o instanceof ScmFloatingPointNumber.SpecialValue;
-
+			assert o instanceof ScmFloatingPointNumber;
+			return compareTo(o.toScmRational());
 		}
 	}
 	private void simplify(){
@@ -123,9 +121,11 @@ public final class ScmRational extends ScmReal{
 			return add(((ScmInteger)num).toScmRational());
 		}else if(num instanceof ScmRational){
 			return add(((ScmRational)num));
-		}else{
-			assert num instanceof ScmFloatingPointNumber;
+		}else if(num instanceof ScmFloatingPointNumber){
 			return toInExact().add(num);
+		}else{
+			assert num instanceof ScmSpecialReal;
+			return num;
 		}
 	}
 	@Override
@@ -134,9 +134,11 @@ public final class ScmRational extends ScmReal{
 			return subtract(((ScmInteger)num).toScmRational());
 		}else if(num instanceof ScmRational){
 			return subtract(((ScmRational)num));
-		}else{
-			assert num instanceof ScmFloatingPointNumber;
+		}else if(num instanceof ScmFloatingPointNumber){
 			return toInExact().subtract(num);
+		}else{
+			assert num instanceof ScmSpecialReal;
+			return num.negate();
 		}
 	}
 	@Override
@@ -145,9 +147,11 @@ public final class ScmRational extends ScmReal{
 			return multiply(((ScmInteger)num).toScmRational());
 		}else if(num instanceof ScmRational){
 			return multiply(((ScmRational)num));
-		}else{
-			assert num instanceof ScmFloatingPointNumber;
+		}else if(num instanceof ScmFloatingPointNumber){
 			return toInExact().multiply(num);
+		}else{
+			assert num instanceof ScmSpecialReal;
+			return num.multiply(this);
 		}
 	}
 	@Override
@@ -156,9 +160,41 @@ public final class ScmRational extends ScmReal{
 			return divide(((ScmInteger)num).toScmRational());
 		}else if(num instanceof ScmRational){
 			return divide(((ScmRational)num));
-		}else{
-			assert num instanceof ScmFloatingPointNumber;
+		}else if(num instanceof ScmFloatingPointNumber){
 			return toInExact().divide(num);
+		}else{
+			assert num instanceof ScmSpecialReal;
+			return num.multiply(this);
 		}
+	}
+	@Override
+	public ScmInteger floor(){
+		return numerator.moduloQuotient(denominator);
+	}
+	@Override
+	public ScmInteger ceiling(){
+		ScmInteger q=numerator.moduloQuotient(denominator);
+		ScmInteger r=numerator.moduloRemainder(denominator);
+		return r.signum()==0?q:q.add(ScmInteger.ONE);
+	}
+	@Override
+	public ScmInteger truncate(){
+		return numerator.divide(denominator);
+	}
+	@Override
+	public ScmInteger round(){
+		ScmInteger q=numerator.moduloQuotient(denominator);
+		ScmInteger r=numerator.moduloRemainder(denominator);
+		int sign=r.multiply(ScmInteger.TWO).compareTo(denominator);
+		if(sign<0)
+			return q;
+		else if(sign>0||q.isOdd())
+			return q.add(ScmInteger.ONE);
+		else
+			return q;
+	}
+	@Override
+	public int signum(){
+		return numerator.signum();
 	}
 }

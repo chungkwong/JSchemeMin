@@ -19,9 +19,11 @@ import java.util.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class ScmFloatingPointNumber extends ScmReal{
+public class ScmFloatingPointNumber extends ScmNormalReal{
 	public static final ScmFloatingPointNumber ZERO=new ScmFloatingPointNumber(BigDecimal.ZERO);
 	public static final ScmFloatingPointNumber ONE=new ScmFloatingPointNumber(BigDecimal.ONE);
+	public static final ScmFloatingPointNumber PI=new ScmFloatingPointNumber(BigDecimal.valueOf(Math.PI));
+	public static final ScmFloatingPointNumber HALF=new ScmFloatingPointNumber(BigDecimal.valueOf(0.5));
 	private final BigDecimal value;
 	public ScmFloatingPointNumber(BigDecimal value){
 		this.value=value;
@@ -44,34 +46,32 @@ public class ScmFloatingPointNumber extends ScmReal{
 	}
 	@Override
 	public ScmReal add(ScmReal num){
-		return add(num.toInExact());
+		return num instanceof ScmSpecialReal?num:add((ScmFloatingPointNumber)num.toInExact());
 	}
 	@Override
 	public ScmReal subtract(ScmReal num){
-		return subtract(num.toInExact());
+		return num instanceof ScmSpecialReal?num.negate():subtract((ScmFloatingPointNumber)num.toInExact());
 	}
 	@Override
 	public ScmReal multiply(ScmReal num){
-		return multiply(num.toInExact());
+		return num instanceof ScmSpecialReal?num.multiply(this):multiply((ScmFloatingPointNumber)num.toInExact());
 	}
 	@Override
 	public ScmReal divide(ScmReal num){
-		return divide(num.toInExact());
+		return num instanceof ScmSpecialReal?num.multiply(this):divide((ScmFloatingPointNumber)num.toInExact());
 	}
 	public int compareTo(ScmFloatingPointNumber num){
 		return value.compareTo(num.value);
 	}
 	@Override
-	public int compareTo(ScmReal o){
+	public int compareTo(ScmNormalReal o){
 		if(o instanceof ScmInteger){
-			return compareTo(o.toInExact());
+			return compareTo((ScmFloatingPointNumber)o.toInExact());
 		}else if(o instanceof ScmRational){
 			return toScmRational().compareTo((ScmRational)o);
-		}else if(o instanceof ScmFloatingPointNumber){
-			return compareTo((ScmFloatingPointNumber)o);
 		}else{
-			assert o instanceof ScmFloatingPointNumber.SpecialValue;
-
+			assert o instanceof ScmFloatingPointNumber;
+			return compareTo((ScmFloatingPointNumber)o);
 		}
 	}
 	public BigDecimal getValue(){
@@ -132,46 +132,32 @@ public class ScmFloatingPointNumber extends ScmReal{
 	public ScmFloatingPointNumber toInExact(){
 		return this;
 	}
-	public static final PositiveNaN POSITIVE_NAN=new PositiveNaN();
-	public static final NegativeNaN NEGATIVE_NAN=new NegativeNaN();
-	public static final PositiveInf POSITIVE_INF=new PositiveInf();
-	public static final NegativeInf NEGATIVE_INF=new NegativeInf();
-	public static class PositiveNaN extends SpecialValue{
-		@Override
-		public String toExternalRepresentation(){
-			return "+nan.0";
-		}
+	@Override
+	public ScmInteger floor(){
+		return new ScmInteger(value.setScale(0,RoundingMode.FLOOR).toBigInteger());
 	}
-	public static class NegativeNaN extends SpecialValue{
-		@Override
-		public String toExternalRepresentation(){
-			return "-nan.0";
-		}
+	@Override
+	public ScmInteger ceiling(){
+		return new ScmInteger(value.setScale(0,RoundingMode.CEILING).toBigInteger());
 	}
-	public static class PositiveInf extends SpecialValue{
-		@Override
-		public String toExternalRepresentation(){
-			return "+inf.0";
-		}
+	@Override
+	public ScmInteger truncate(){
+		return new ScmInteger(value.setScale(0,RoundingMode.DOWN).toBigInteger());
 	}
-	public static class NegativeInf extends SpecialValue{
-		@Override
-		public String toExternalRepresentation(){
-			return "-inf.0";
-		}
+	@Override
+	public ScmInteger round(){
+		return new ScmInteger(value.setScale(0,RoundingMode.HALF_EVEN).toBigInteger());
 	}
-	public static abstract class SpecialValue extends ScmReal{
-		@Override
-		public boolean isExact(){
-			return false;
-		}
-		@Override
-		public boolean needPlusSign(){
-			return false;
-		}
-		@Override
-		public String toString(){
-			return toExternalRepresentation();
-		}
+	@Override
+	public int signum(){
+		return value.signum();
+	}
+	@Override
+	public ScmFloatingPointNumber exp(){
+		return new ScmFloatingPointNumber(BigDecimal.valueOf(Math.exp(value.doubleValue())));
+	}
+	@Override
+	public ScmFloatingPointNumber log(){
+		return new ScmFloatingPointNumber(BigDecimal.valueOf(Math.log(value.doubleValue())));
 	}
 }

@@ -15,9 +15,10 @@
 package com.github.chungkwong.jschememin.type;
 import java.math.*;
 import java.util.*;
-public final class ScmInteger extends ScmReal{
+public final class ScmInteger extends ScmNormalReal{
 	public static final ScmInteger ZERO=new ScmInteger(BigInteger.ZERO);
 	public static final ScmInteger ONE=new ScmInteger(BigInteger.ONE);
+	public static final ScmInteger TWO=new ScmInteger(BigInteger.valueOf(2));
 	private final BigInteger value;
 	public ScmInteger(BigInteger value){
 		this.value=value;
@@ -42,6 +43,12 @@ public final class ScmInteger extends ScmReal{
 		return new ScmInteger(value.divide(num.value));
 	}
 	public ScmInteger remainder(ScmInteger num){
+		return new ScmInteger(value.remainder(num.value));
+	}
+	public ScmInteger moduloQuotient(ScmInteger num){
+		return new ScmInteger(value.subtract(value.mod(num.value)).divide(num.value));
+	}
+	public ScmInteger moduloRemainder(ScmInteger num){
 		return new ScmInteger(value.mod(num.value));
 	}
 	public ScmInteger gcd(ScmInteger num){
@@ -54,16 +61,14 @@ public final class ScmInteger extends ScmReal{
 		return value.compareTo(num.value);
 	}
 	@Override
-	public int compareTo(ScmReal o){
+	public int compareTo(ScmNormalReal o){
 		if(o instanceof ScmInteger){
 			return compareTo((ScmInteger)o);
 		}else if(o instanceof ScmRational){
 			return toScmRational().compareTo((ScmRational)o);
-		}else if(o instanceof ScmFloatingPointNumber){
-			return toInExact().compareTo((ScmFloatingPointNumber)o);
 		}else{
-			assert o instanceof ScmFloatingPointNumber.SpecialValue;
-
+			assert o instanceof ScmFloatingPointNumber;
+			return toInExact().compareTo((ScmFloatingPointNumber)o);
 		}
 	}
 	public BigInteger getValue(){
@@ -117,9 +122,11 @@ public final class ScmInteger extends ScmReal{
 			return add((ScmInteger)num);
 		}else if(num instanceof ScmRational){
 			return toScmRational().add(((ScmRational)num));
-		}else{
-			assert num instanceof ScmFloatingPointNumber;
+		}else if(num instanceof ScmFloatingPointNumber){
 			return toInExact().add(num);
+		}else{
+			assert num instanceof ScmSpecialReal;
+			return num;
 		}
 	}
 	@Override
@@ -128,9 +135,11 @@ public final class ScmInteger extends ScmReal{
 			return subtract((ScmInteger)num);
 		}else if(num instanceof ScmRational){
 			return toScmRational().subtract(((ScmRational)num));
-		}else{
-			assert num instanceof ScmFloatingPointNumber;
+		}else if(num instanceof ScmFloatingPointNumber){
 			return toInExact().subtract(num);
+		}else{
+			assert num instanceof ScmSpecialReal;
+			return num.negate();
 		}
 	}
 	@Override
@@ -139,9 +148,11 @@ public final class ScmInteger extends ScmReal{
 			return multiply((ScmInteger)num);
 		}else if(num instanceof ScmRational){
 			return toScmRational().multiply(((ScmRational)num));
-		}else{
-			assert num instanceof ScmFloatingPointNumber;
+		}else if(num instanceof ScmFloatingPointNumber){
 			return toInExact().multiply(num);
+		}else{
+			assert num instanceof ScmSpecialReal;
+			return num.multiply(this);
 		}
 	}
 	@Override
@@ -150,22 +161,28 @@ public final class ScmInteger extends ScmReal{
 			return new ScmRational(this,(ScmInteger)num);
 		}else if(num instanceof ScmRational){
 			return toScmRational().divide(((ScmRational)num));
-		}else{
-			assert num instanceof ScmFloatingPointNumber;
+		}else if(num instanceof ScmFloatingPointNumber){
 			return toInExact().divide(((ScmFloatingPointNumber)num));
+		}else{
+			assert num instanceof ScmSpecialReal;
+			return num.multiply(this);
 		}
 	}
 	@Override
-	public ScmReal sin(){
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public ScmInteger floor(){
+		return this;
 	}
 	@Override
-	public ScmReal cos(){
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public ScmInteger ceiling(){
+		return this;
 	}
 	@Override
-	public ScmReal sqrt(){
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public ScmInteger truncate(){
+		return this;
+	}
+	@Override
+	public ScmInteger round(){
+		return this;
 	}
 	@Override
 	public ScmReal toExact(){
@@ -174,5 +191,11 @@ public final class ScmInteger extends ScmReal{
 	@Override
 	public ScmFloatingPointNumber toInExact(){
 		return new ScmFloatingPointNumber(new BigDecimal(value));
+	}
+	public boolean isEven(){
+		return !isOdd();
+	}
+	public boolean isOdd(){
+		return value.testBit(0);
 	}
 }

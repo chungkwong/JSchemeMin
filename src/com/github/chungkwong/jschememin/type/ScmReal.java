@@ -14,7 +14,7 @@
  */
 package com.github.chungkwong.jschememin.type;
 
-public abstract class ScmReal extends ScmComplex implements Comparable<ScmReal>{
+public abstract class ScmReal extends ScmComplex{
 	public abstract boolean needPlusSign();
 	@Override
 	public ScmReal getMagnitude(){
@@ -32,22 +32,22 @@ public abstract class ScmReal extends ScmComplex implements Comparable<ScmReal>{
 	public ScmReal getImag(){
 		return ScmInteger.ZERO;
 	}
+	@Override
 	public abstract ScmReal negate();
 	public abstract ScmReal add(ScmReal num);
 	public abstract ScmReal subtract(ScmReal num);
 	public abstract ScmReal multiply(ScmReal num);
 	public abstract ScmReal divide(ScmReal num);
-	public abstract ScmReal sin();
-	public abstract ScmReal cos();
-	public abstract ScmReal sqrt();
-	public abstract int signum();
-	@Override
-	public boolean isZero(){
-		return signum()==0;
-	}
 	@Override
 	public abstract ScmReal toExact();
 	@Override
-	public abstract ScmFloatingPointNumber toInExact();
-
+	public abstract ScmReal toInExact();
+	@Override
+	public abstract ScmReal exp();
+	@Override
+	public abstract ScmReal log();
+	@Override
+	public abstract ScmReal sin();
+	@Override
+	public abstract ScmReal cos();
 }

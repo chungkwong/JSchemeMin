@@ -19,6 +19,7 @@ import java.util.*;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmComplexRectangular extends ScmComplex{
+	public static final ScmComplexRectangular I=new ScmComplexRectangular(ScmInteger.ZERO,ScmInteger.ONE);
 	private final ScmReal real,imag;
 	public ScmComplexRectangular(ScmReal real,ScmReal imag){
 		this.real=real;
@@ -34,7 +35,7 @@ public class ScmComplexRectangular extends ScmComplex{
 	}
 	@Override
 	public ScmReal getMagnitude(){
-		return real.multiply(real).add(imag.multiply(imag)).sqrt();
+		return real.multiply(real).add(imag.multiply(imag)).sqrt().toScmReal();
 	}
 	@Override
 	public ScmReal getAngle(){
