@@ -19,10 +19,15 @@ import java.util.*;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmComplexPolar extends ScmComplex{
-private final ScmReal abs,radius;
+	private static final ScmFloatingPointNumber TWOPI=ScmFloatingPointNumber.PI.multiply(ScmInteger.TWO.toInExact());
+	private final ScmReal abs,radius;
 	public ScmComplexPolar(ScmReal abs,ScmReal radius){
 		this.abs=abs;
-		this.radius=radius;
+		if(radius instanceof ScmSpecialReal){
+			this.radius=radius;
+		}else{
+			this.radius=radius.subtract(((ScmFloatingPointNumber)radius.divide(TWOPI)).round().multiply(TWOPI));
+		}
 	}
 	@Override
 	public ScmReal getAngle(){
@@ -71,5 +76,13 @@ private final ScmReal abs,radius;
 	@Override
 	public ScmComplex toInExact(){
 		return isExact()?new ScmComplexPolar(abs.toInExact(),radius.toInExact()):this;
+	}
+	@Override
+	public boolean isFinite(){
+		return abs.isFinite();
+	}
+	@Override
+	public boolean isInfinite(){
+		return abs.isInfinite();
 	}
 }

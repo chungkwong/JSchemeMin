@@ -27,6 +27,12 @@ public final class ScmRational extends ScmNormalReal{
 			this.denominator=denominator;
 		}
 	}
+	public ScmInteger getDenominator(){
+		return denominator;
+	}
+	public ScmInteger getNumerator(){
+		return numerator;
+	}
 	public int compareTo(ScmRational num){
 		return numerator.multiply(num.denominator).compareTo(denominator.multiply(num.numerator));
 	}
@@ -196,5 +202,8 @@ public final class ScmRational extends ScmNormalReal{
 	@Override
 	public int signum(){
 		return numerator.signum();
+	}
+	public static ScmRational rationalize(ScmReal x,ScmReal error){
+
 	}
 }

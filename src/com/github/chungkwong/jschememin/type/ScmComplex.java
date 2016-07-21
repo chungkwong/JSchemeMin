@@ -22,7 +22,7 @@ public abstract class ScmComplex extends ScmNumber{
 	public abstract ScmComplex toExact();
 	public abstract ScmComplex toInExact();
 	public ScmComplex log(){
-		return new ScmComplexRectangular(getMagnitude().log(),getAngle());
+		return new ScmComplexRectangular(getMagnitude().log().toScmReal(),getAngle());
 	}
 	public ScmComplex exp(){
 		return new ScmComplexPolar(getReal().exp(),getImag());
@@ -97,4 +97,6 @@ public abstract class ScmComplex extends ScmNumber{
 	public ScmComplex arctan(){
 		return multiply(I).add(ScmInteger.ONE).log().subtract(multiply(I).negate().add(ScmInteger.ONE).log()).divide(ScmInteger.TWO.multiply(I));
 	}
+	public abstract boolean isFinite();
+	public abstract boolean isInfinite();
 }

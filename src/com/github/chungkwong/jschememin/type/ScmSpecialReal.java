@@ -56,6 +56,22 @@ public abstract class ScmSpecialReal extends ScmReal{
 	public String toString(){
 		return toExternalRepresentation();
 	}
+	@Override
+	public ScmReal floor(){
+		return this;
+	}
+	@Override
+	public ScmReal ceiling(){
+		return this;
+	}
+	@Override
+	public ScmReal truncate(){
+		return this;
+	}
+	@Override
+	public ScmReal round(){
+		return this;
+	}
 	public static class PositiveNaN extends ScmSpecialReal{
 		@Override
 		public String toExternalRepresentation(){
@@ -79,39 +95,39 @@ public abstract class ScmSpecialReal extends ScmReal{
 		}
 		@Override
 		public ScmReal divide(ScmReal num){
-			throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-		}
-		@Override
-		public ScmReal sin(){
-			throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-		}
-		@Override
-		public ScmReal cos(){
-			throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+			return POSITIVE_NAN;
 		}
 		@Override
 		public ScmReal sqrt(){
-			throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-		}
-		@Override
-		public int signum(){
-			throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-		}
-		@Override
-		public ScmReal toExact(){
-			throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-		}
-		@Override
-		public ScmFloatingPointNumber toInExact(){
-			throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+			return POSITIVE_NAN;
 		}
 		@Override
 		public ScmReal exp(){
-			throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+			return POSITIVE_NAN;
 		}
 		@Override
 		public ScmReal log(){
-			throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+			return POSITIVE_NAN;
+		}
+		@Override
+		public ScmReal getAngle(){
+			return POSITIVE_NAN;
+		}
+		@Override
+		public boolean isFinite(){
+			return false;
+		}
+		@Override
+		public boolean isInfinite(){
+			return false;
+		}
+		@Override
+		public boolean isPositive(){
+			return false;
+		}
+		@Override
+		public boolean isNegative(){
+			return false;
 		}
 	}
 	public static class PositiveInf extends ScmSpecialReal{
@@ -131,6 +147,53 @@ public abstract class ScmSpecialReal extends ScmReal{
 		public ScmReal subtract(ScmReal num){
 			return num instanceof PositiveNaN||num instanceof PositiveInf?POSITIVE_NAN:POSITIVE_INF;
 		}
+		@Override
+		public ScmReal multiply(ScmReal num){
+			if(num instanceof ScmNormalReal)
+				if(num.isZero())
+					return POSITIVE_NAN;
+				else
+					return ((ScmNormalReal)num).signum()>0?POSITIVE_INF:NEGATIVE_INF;
+			else if(num instanceof PositiveNaN)
+				return POSITIVE_NAN;
+			else if(num instanceof PositiveInf)
+				return POSITIVE_INF;
+			else
+				return NEGATIVE_INF;
+
+		}
+		@Override
+		public ScmReal divide(ScmReal num){
+			return multiply(num);
+		}
+		@Override
+		public ScmReal exp(){
+			return POSITIVE_INF;
+		}
+		@Override
+		public ScmReal log(){
+			return POSITIVE_INF;
+		}
+		@Override
+		public ScmReal getAngle(){
+			return ScmInteger.ZERO;
+		}
+		@Override
+		public boolean isFinite(){
+			return false;
+		}
+		@Override
+		public boolean isInfinite(){
+			return true;
+		}
+		@Override
+		public boolean isPositive(){
+			return true;
+		}
+		@Override
+		public boolean isNegative(){
+			return false;
+		}
 	}
 	public static class NegativeInf extends ScmSpecialReal{
 		@Override
@@ -140,6 +203,61 @@ public abstract class ScmSpecialReal extends ScmReal{
 		@Override
 		public ScmReal negate(){
 			return POSITIVE_INF;
+		}
+		@Override
+		public ScmReal add(ScmReal num){
+			return num instanceof PositiveNaN||num instanceof PositiveInf?POSITIVE_NAN:NEGATIVE_INF;
+		}
+		@Override
+		public ScmReal subtract(ScmReal num){
+			return num instanceof PositiveNaN||num instanceof NegativeInf?POSITIVE_NAN:NEGATIVE_INF;
+		}
+		@Override
+		public ScmReal multiply(ScmReal num){
+			if(num instanceof ScmNormalReal)
+				if(num.isZero())
+					return POSITIVE_NAN;
+				else
+					return ((ScmNormalReal)num).signum()>0?NEGATIVE_INF:POSITIVE_INF;
+			else if(num instanceof PositiveNaN)
+				return POSITIVE_NAN;
+			else if(num instanceof PositiveInf)
+				return NEGATIVE_INF;
+			else
+				return POSITIVE_INF;
+
+		}
+		@Override
+		public ScmReal divide(ScmReal num){
+			return multiply(num);
+		}
+		@Override
+		public ScmReal exp(){
+			return ScmInteger.ZERO;
+		}
+		@Override
+		public ScmComplex log(){
+			return new ScmComplexRectangular(POSITIVE_INF,ScmFloatingPointNumber.PI);
+		}
+		@Override
+		public ScmReal getAngle(){
+			return ScmFloatingPointNumber.PI;
+		}
+		@Override
+		public boolean isFinite(){
+			return false;
+		}
+		@Override
+		public boolean isInfinite(){
+			return true;
+		}
+		@Override
+		public boolean isPositive(){
+			return false;
+		}
+		@Override
+		public boolean isNegative(){
+			return true;
 		}
 	}
 }

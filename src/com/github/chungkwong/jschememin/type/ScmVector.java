@@ -77,6 +77,9 @@ public final class ScmVector extends ScmObject{
 	public static ScmVector toVector(ScmObject... obj){
 		return new ScmVector(Arrays.asList(obj));
 	}
+	public static ScmVector fillVector(int count,ScmObject o){
+		return new ScmVector(Collections.nCopies(count,o));
+	}
 	@Override
 	public boolean isSelfevaluating(){
 		return true;

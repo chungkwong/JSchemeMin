@@ -21,9 +21,13 @@ package com.github.chungkwong.jschememin.type;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public abstract class ScmNormalReal extends ScmReal implements Comparable<ScmNormalReal>{
+	@Override
 	public abstract ScmInteger floor();
+	@Override
 	public abstract ScmInteger ceiling();
+	@Override
 	public abstract ScmInteger truncate();
+	@Override
 	public abstract ScmInteger round();
 	public abstract int signum();
 	@Override
@@ -33,7 +37,15 @@ public abstract class ScmNormalReal extends ScmReal implements Comparable<ScmNor
 		return signum()==0;
 	}
 	@Override
-	public ScmReal log(){
+	public boolean isPositive(){
+		return signum()>0;
+	}
+	@Override
+	public boolean isNegative(){
+		return signum()<0;
+	}
+	@Override
+	public ScmComplex log(){
 		return toInExact().log();
 	}
 	@Override
@@ -47,5 +59,23 @@ public abstract class ScmNormalReal extends ScmReal implements Comparable<ScmNor
 	@Override
 	public ScmReal cos(){
 		return toInExact().cos();
+	}
+	@Override
+	public ScmReal getAngle(){
+		int sign=signum();
+		if(sign>0)
+			return ScmInteger.ZERO;
+		else if(sign<0)
+			return ScmFloatingPointNumber.PI;
+		else
+			return ScmSpecialReal.POSITIVE_NAN;
+	}
+	@Override
+	public boolean isFinite(){
+		return true;
+	}
+	@Override
+	public boolean isInfinite(){
+		return false;
 	}
 }

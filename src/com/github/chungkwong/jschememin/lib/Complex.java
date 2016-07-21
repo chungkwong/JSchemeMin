@@ -16,6 +16,7 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
+import static com.github.chungkwong.jschememin.lib.Utility.cadr;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
 /**
@@ -34,8 +35,8 @@ public class Complex extends NativeLibrary{
 		addNativeProcedure("angle",(o)->((ScmComplex)car(o)).getAngle());
 		addNativeProcedure("magnitude",(o)->((ScmComplex)car(o)).getMagnitude());
 		addNativeProcedure("make-rectangular",(o)->new ScmComplexRectangular(
-				((ScmComplex)car(o)).toScmReal(),((ScmComplex)car(o)).toScmReal()));
+				((ScmComplex)car(o)).toScmReal(),((ScmComplex)cadr(o)).toScmReal()));
 		addNativeProcedure("make-polar",(o)->new ScmComplexPolar(
-				((ScmComplex)car(o)).toScmReal(),((ScmComplex)car(o)).toScmReal()));
+				((ScmComplex)car(o)).toScmReal(),((ScmComplex)cadr(o)).toScmReal()));
 	}
 }

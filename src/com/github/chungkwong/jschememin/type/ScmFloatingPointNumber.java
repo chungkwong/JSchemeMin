@@ -41,8 +41,21 @@ public class ScmFloatingPointNumber extends ScmNormalReal{
 	public ScmFloatingPointNumber multiply(ScmFloatingPointNumber num){
 		return new ScmFloatingPointNumber(value.multiply(num.value));
 	}
-	public ScmFloatingPointNumber divide(ScmFloatingPointNumber num){
-		return new ScmFloatingPointNumber(value.divide(num.value));
+	public ScmReal divide(ScmFloatingPointNumber num){
+		if(num.isZero()){
+			int sign=signum();
+			if(sign>0)
+				return ScmSpecialReal.POSITIVE_INF;
+			else if(sign<0)
+				return ScmSpecialReal.NEGATIVE_INF;
+			else
+				return ScmSpecialReal.POSITIVE_NAN;
+		}else
+			try{
+				return new ScmFloatingPointNumber(value.divide(num.value));
+			}catch(ArithmeticException e){
+				return new ScmFloatingPointNumber(value.divide(num.value,MathContext.DECIMAL64));
+			}
 	}
 	@Override
 	public ScmReal add(ScmReal num){
@@ -153,11 +166,44 @@ public class ScmFloatingPointNumber extends ScmNormalReal{
 		return value.signum();
 	}
 	@Override
+	public ScmFloatingPointNumber sin(){
+		return new ScmFloatingPointNumber(BigDecimal.valueOf(Math.sin(value.doubleValue())));
+	}
+	@Override
+	public ScmFloatingPointNumber cos(){
+		return new ScmFloatingPointNumber(BigDecimal.valueOf(Math.cos(value.doubleValue())));
+	}
+	@Override
 	public ScmFloatingPointNumber exp(){
 		return new ScmFloatingPointNumber(BigDecimal.valueOf(Math.exp(value.doubleValue())));
 	}
 	@Override
-	public ScmFloatingPointNumber log(){
-		return new ScmFloatingPointNumber(BigDecimal.valueOf(Math.log(value.doubleValue())));
+	public ScmComplex log(){
+		int sign=signum();
+		if(sign>0)
+			return new ScmFloatingPointNumber(BigDecimal.valueOf(Math.log(value.doubleValue())));
+		else if(sign<0)
+			return new ScmComplexRectangular(negate().log().toScmReal(),PI);
+		else
+			return ScmSpecialReal.POSITIVE_NAN;
+	}
+	public static ScmReal valueOf(double d){
+		if(Double.isNaN(d))
+			return ScmSpecialReal.POSITIVE_NAN;
+		else if(Double.isInfinite(d))
+			return d>0?ScmSpecialReal.POSITIVE_INF:ScmSpecialReal.NEGATIVE_INF;
+		else
+			return new ScmFloatingPointNumber(BigDecimal.valueOf(d));
+	}
+	public static double toDouble(ScmReal d){
+		d=d.toInExact();
+		if(d instanceof ScmFloatingPointNumber)
+			return ((ScmFloatingPointNumber)d).getValue().doubleValue();
+		else if(d instanceof ScmSpecialReal.PositiveInf){
+			return Double.POSITIVE_INFINITY;
+		}else if(d instanceof ScmSpecialReal.NegativeInf){
+			return Double.NEGATIVE_INFINITY;
+		}else
+			return Double.NaN;
 	}
 }

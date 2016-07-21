@@ -20,6 +20,9 @@ public final class ScmInteger extends ScmNormalReal{
 	public static final ScmInteger ONE=new ScmInteger(BigInteger.ONE);
 	public static final ScmInteger TWO=new ScmInteger(BigInteger.valueOf(2));
 	private final BigInteger value;
+	public ScmInteger(long value){
+		this.value=BigInteger.valueOf(value);
+	}
 	public ScmInteger(BigInteger value){
 		this.value=value;
 	}
@@ -45,17 +48,36 @@ public final class ScmInteger extends ScmNormalReal{
 	public ScmInteger remainder(ScmInteger num){
 		return new ScmInteger(value.remainder(num.value));
 	}
+	public ScmInteger[] divideAndRemainder(ScmInteger num){
+		BigInteger[] qr=value.divideAndRemainder(num.value);
+		return new ScmInteger[]{new ScmInteger(qr[0]),new ScmInteger(qr[1])};
+	}
 	public ScmInteger moduloQuotient(ScmInteger num){
 		return new ScmInteger(value.subtract(value.mod(num.value)).divide(num.value));
 	}
 	public ScmInteger moduloRemainder(ScmInteger num){
 		return new ScmInteger(value.mod(num.value));
 	}
+	public ScmInteger[] quotientAndRemainder(ScmInteger num){
+		BigInteger r=value.mod(num.value);
+		BigInteger q=value.subtract(r).divide(num.value);
+		return new ScmInteger[]{new ScmInteger(q),new ScmInteger(r)};
+	}
 	public ScmInteger gcd(ScmInteger num){
 		return new ScmInteger(value.gcd(num.value));
 	}
 	public ScmInteger lcm(ScmInteger num){
 		return new ScmInteger(value.multiply(num.value).divide(value.gcd(num.value)));
+	}
+	public ScmInteger[] sqrtExact(){
+		BigInteger root=BigInteger.ZERO;
+		for(int bit=(value.bitCount()-1)/2;bit>=0;bit--){
+			BigInteger cand=root.setBit(bit);
+			if(cand.multiply(cand).compareTo(value)<=0){
+				root=cand;
+			}
+		}
+		return new ScmInteger[]{new ScmInteger(root),new ScmInteger(value.subtract(root.multiply(root)))};
 	}
 	public int compareTo(ScmInteger num){
 		return value.compareTo(num.value);

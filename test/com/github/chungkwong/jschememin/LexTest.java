@@ -146,10 +146,10 @@ public class LexTest{
 		check("-1.e-10",new ScmFloatingPointNumber(new BigDecimal("-1e-10")));
 		check("#e-1.e+10",new ScmInteger(new BigInteger("-10000000000")));
 		check("-.5e10",new ScmFloatingPointNumber(new BigDecimal("-5000000000")));
-		check("+nan.0",ScmFloatingPointNumber.POSITIVE_NAN);
-		check("-nan.0",ScmFloatingPointNumber.NEGATIVE_NAN);
-		check("+inf.0",ScmFloatingPointNumber.POSITIVE_INF);
-		check("-inf.0",ScmFloatingPointNumber.NEGATIVE_INF);
+		check("+nan.0",ScmSpecialReal.POSITIVE_NAN);
+		check("-nan.0",ScmSpecialReal.POSITIVE_NAN);
+		check("+inf.0",ScmSpecialReal.POSITIVE_INF);
+		check("-inf.0",ScmSpecialReal.NEGATIVE_INF);
 		check("0)",new ScmInteger(BigInteger.valueOf(0)),SimpleToken.getToken(")"));
 		check("13)",new ScmInteger(BigInteger.valueOf(13)),SimpleToken.getToken(")"));
 		check("#b1101)",new ScmInteger(BigInteger.valueOf(13)),SimpleToken.getToken(")"));
@@ -162,7 +162,7 @@ public class LexTest{
 		check("23.670)",new ScmFloatingPointNumber(new BigDecimal("23.67")),SimpleToken.getToken(")"));
 		check(".670)",new ScmFloatingPointNumber(new BigDecimal(".67")),SimpleToken.getToken(")"));
 		check("1.e-10)",new ScmFloatingPointNumber(new BigDecimal("1e-10")),SimpleToken.getToken(")"));
-		check("+nan.0)",ScmFloatingPointNumber.POSITIVE_NAN,SimpleToken.getToken(")"));
+		check("+nan.0)",ScmSpecialReal.POSITIVE_NAN,SimpleToken.getToken(")"));
 	}
 	@Test
 	public void testComplexNumber(){
@@ -172,27 +172,27 @@ public class LexTest{
 		check("-2.5e-1i",new ScmComplexRectangular(ScmInteger.ZERO,new ScmFloatingPointNumber(new BigDecimal(-0.25))));
 		check("1/2-i",new ScmComplexRectangular(new ScmRational(ScmInteger.ONE,ScmInteger.ONE.add(ScmInteger.ONE)),ScmInteger.ONE.negate()));
 		check("1+i",new ScmComplexRectangular(ScmInteger.ONE,ScmInteger.ONE));
-		check("1+nan.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmFloatingPointNumber.POSITIVE_NAN));
-		check("1-nan.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmFloatingPointNumber.NEGATIVE_NAN));
-		check("1+inf.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmFloatingPointNumber.POSITIVE_INF));
-		check("1-inf.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmFloatingPointNumber.NEGATIVE_INF));
+		check("1+nan.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.POSITIVE_NAN));
+		check("1-nan.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.POSITIVE_NAN));
+		check("1+inf.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.POSITIVE_INF));
+		check("1-inf.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.NEGATIVE_INF));
 		check("2+3i",new ScmComplexRectangular(new ScmInteger(BigInteger.valueOf(2)),new ScmInteger(BigInteger.valueOf(3))));
 		check("#b1101+11i",new ScmComplexRectangular(new ScmInteger(BigInteger.valueOf(13)),new ScmInteger(BigInteger.valueOf(3))));
 		check("#b1101-11i",new ScmComplexRectangular(new ScmInteger(BigInteger.valueOf(13)),new ScmInteger(BigInteger.valueOf(-3))));
 		check("2-3i",new ScmComplexRectangular(new ScmInteger(BigInteger.valueOf(2)),new ScmInteger(BigInteger.valueOf(-3))));
 		check("2@3",new ScmComplexPolar(new ScmInteger(BigInteger.valueOf(2)),new ScmInteger(BigInteger.valueOf(3))));
 		check("2@-3",new ScmComplexPolar(new ScmInteger(BigInteger.valueOf(2)),new ScmInteger(BigInteger.valueOf(-3))));
-		check("+nan.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmFloatingPointNumber.POSITIVE_NAN));
-		check("-nan.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmFloatingPointNumber.NEGATIVE_NAN));
-		check("+inf.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmFloatingPointNumber.POSITIVE_INF));
-		check("-inf.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmFloatingPointNumber.NEGATIVE_INF));
+		check("+nan.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.POSITIVE_NAN));
+		check("-nan.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.POSITIVE_NAN));
+		check("+inf.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.POSITIVE_INF));
+		check("-inf.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.NEGATIVE_INF));
 		check("+i)",new ScmComplexRectangular(ScmInteger.ZERO,ScmInteger.ONE),SimpleToken.getToken(")"));
 		check("+40i)",new ScmComplexRectangular(ScmInteger.ZERO,new ScmInteger(BigInteger.valueOf(40))),SimpleToken.getToken(")"));
 		check("1+i)",new ScmComplexRectangular(ScmInteger.ONE,ScmInteger.ONE),SimpleToken.getToken(")"));
-		check("1+nan.0i)",new ScmComplexRectangular(ScmInteger.ONE,ScmFloatingPointNumber.POSITIVE_NAN),SimpleToken.getToken(")"));
+		check("1+nan.0i)",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.POSITIVE_NAN),SimpleToken.getToken(")"));
 		check("2-3i)",new ScmComplexRectangular(new ScmInteger(BigInteger.valueOf(2)),new ScmInteger(BigInteger.valueOf(-3))),SimpleToken.getToken(")"));
 		check("2@-3)",new ScmComplexPolar(new ScmInteger(BigInteger.valueOf(2)),new ScmInteger(BigInteger.valueOf(-3))),SimpleToken.getToken(")"));
-		check("+nan.0i)",new ScmComplexRectangular(ScmInteger.ZERO,ScmFloatingPointNumber.POSITIVE_NAN),SimpleToken.getToken(")"));
+		check("+nan.0i)",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.POSITIVE_NAN),SimpleToken.getToken(")"));
 	}
 	@Test
 	public void testString(){

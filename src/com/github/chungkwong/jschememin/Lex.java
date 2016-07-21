@@ -580,7 +580,7 @@ public final class Lex{
 				prefix=in.read();
 				if(prefix=='n'||prefix=='N'){
 					expectIgnoreCase("f.0",in);
-					return neg?ScmFloatingPointNumber.NEGATIVE_INF:ScmFloatingPointNumber.POSITIVE_INF;
+					return neg?ScmSpecialReal.NEGATIVE_INF:ScmSpecialReal.POSITIVE_INF;
 				}else{
 					unreadIfNotEOF(prefix,in);
 					in.unread('i');
@@ -589,7 +589,7 @@ public final class Lex{
 			}
 		}else if((!ate)&&(prefix=='n'||prefix=='N')){
 			expectIgnoreCase("an.0",in);
-			return neg?ScmFloatingPointNumber.NEGATIVE_NAN:ScmFloatingPointNumber.POSITIVE_NAN;
+			return ScmSpecialReal.POSITIVE_NAN;
 		}else
 			real=new BigDecimal(num);
 		if(!ate)

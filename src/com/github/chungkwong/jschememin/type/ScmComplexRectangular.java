@@ -39,7 +39,8 @@ public class ScmComplexRectangular extends ScmComplex{
 	}
 	@Override
 	public ScmReal getAngle(){
-		throw new UnsupportedOperationException("Not supported yet."); //TODO
+		return ScmFloatingPointNumber.valueOf(Math.atan2(ScmFloatingPointNumber.toDouble(imag)
+				,ScmFloatingPointNumber.toDouble(real)));
 	}
 	@Override
 	public boolean equals(Object obj){
@@ -78,5 +79,13 @@ public class ScmComplexRectangular extends ScmComplex{
 	@Override
 	public ScmComplex toInExact(){
 		return isExact()?new ScmComplexRectangular(real.toInExact(),imag.toInExact()):this;
+	}
+	@Override
+	public boolean isFinite(){
+		return real.isFinite()&&imag.isFinite();
+	}
+	@Override
+	public boolean isInfinite(){
+		return real.isInfinite()||imag.isInfinite();
 	}
 }

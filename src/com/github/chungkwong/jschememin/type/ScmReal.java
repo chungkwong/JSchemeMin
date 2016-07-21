@@ -21,10 +21,6 @@ public abstract class ScmReal extends ScmComplex{
 		return needPlusSign()?this:this.negate();
 	}
 	@Override
-	public ScmReal getAngle(){
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-	@Override
 	public ScmReal getReal(){
 		return this;
 	}
@@ -45,9 +41,13 @@ public abstract class ScmReal extends ScmComplex{
 	@Override
 	public abstract ScmReal exp();
 	@Override
-	public abstract ScmReal log();
-	@Override
 	public abstract ScmReal sin();
 	@Override
 	public abstract ScmReal cos();
+	public abstract ScmReal floor();
+	public abstract ScmReal ceiling();
+	public abstract ScmReal truncate();
+	public abstract ScmReal round();
+	public abstract boolean isPositive();
+	public abstract boolean isNegative();
 }

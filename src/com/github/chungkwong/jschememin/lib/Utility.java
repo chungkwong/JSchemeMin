@@ -24,7 +24,16 @@ public class Utility{
 	static final ScmObject car(ScmObject o){
 		return ((ScmPair)o).getCar();
 	}
+	static final ScmObject cdr(ScmObject o){
+		return ((ScmPair)o).getCdr();
+	}
 	static final ScmObject cadr(ScmObject o){
 		return ((ScmPair)o).getCadr();
+	}
+	static final boolean chainCompare(){
+
+	}
+	static final ScmObject reduce(ScmPairOrNil list,ScmObject def){
+
 	}
 }
