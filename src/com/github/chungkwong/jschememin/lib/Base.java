@@ -18,7 +18,6 @@ package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
 import static com.github.chungkwong.jschememin.lib.Utility.cadr;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
-import static com.github.chungkwong.jschememin.lib.Utility.cdr;
 import com.github.chungkwong.jschememin.primitive.*;
 import com.github.chungkwong.jschememin.type.*;
 /**
@@ -62,18 +61,9 @@ public class Base extends NativeLibrary{
 	private void initCharacter(){
 		addNativeProcedure("char?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmCharacter));
 		//compare
-		addNativeProcedure("char-alphabetic?",(o)->ScmBoolean.valueOf(((ScmCharacter)car(o)).isAlphabetic()));
-		addNativeProcedure("char-numeric?",(o)->ScmBoolean.valueOf(((ScmCharacter)car(o)).isNumeric()));
-		addNativeProcedure("char-whitespace?",(o)->ScmBoolean.valueOf(((ScmCharacter)car(o)).isWhiteSpace()));
-		addNativeProcedure("char-upper-case?",(o)->ScmBoolean.valueOf(((ScmCharacter)car(o)).isLowerCase()));
-		addNativeProcedure("char-lower-case?",(o)->ScmBoolean.valueOf(((ScmCharacter)car(o)).isUpperCase()));
-		addNativeProcedure("digit-value",(o)->new ScmInteger(((ScmCharacter)car(o)).getDigitValue()));
-		addNativeProcedure("char-upcase",(o)->((ScmCharacter)car(o)).upCase());
-		addNativeProcedure("char-downcase",(o)->((ScmCharacter)car(o)).downCase());
-		addNativeProcedure("char-foldcase",(o)->((ScmCharacter)car(o)).foldCase());
 		addNativeProcedure("char->integer",(o)->new ScmInteger(((ScmCharacter)car(o)).getCodePoint()));
 		addNativeProcedure("integer->char",(o)->new ScmCharacter(((ScmComplex)car(o)).toScmInteger().getValue().intValueExact()));
-		
+
 	}
 	private void initSymbol(){
 		addNativeProcedure("symbol?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmSymbol));
@@ -104,9 +94,6 @@ public class Base extends NativeLibrary{
 		addNativeProcedure("exact?",(o)->ScmBoolean.valueOf(((ScmComplex)car(o)).isExact()));
 		addNativeProcedure("inexact?",(o)->ScmBoolean.valueOf(!((ScmNumber)car(o)).isExact()));
 		addNativeProcedure("exact-integer?",(o)->ScmBoolean.valueOf(((ScmNumber)car(o)).isExact()&&((ScmComplex)car(o)).isInteger()));
-		addNativeProcedure("finite?",(o)->ScmBoolean.valueOf(((ScmComplex)car(o)).isFinite()));
-		addNativeProcedure("infinite?",(o)->ScmBoolean.valueOf(((ScmComplex)car(o)).isInfinite()));
-		addNativeProcedure("nan?",(o)->ScmBoolean.valueOf(car(o)instanceof ScmSpecialReal.PositiveInf));
 		//compare
 		addNativeProcedure("zero?",(o)->ScmBoolean.valueOf(((ScmComplex)car(o)).isZero()));
 		addNativeProcedure("positive?",(o)->ScmBoolean.valueOf(((ScmComplex)car(o)).toScmReal().isPositive()));
@@ -131,17 +118,8 @@ public class Base extends NativeLibrary{
 		addNativeProcedure("ceiling",(o)->((ScmComplex)car(o)).toScmReal().ceiling());
 		addNativeProcedure("round",(o)->((ScmComplex)car(o)).toScmReal().round());
 		addNativeProcedure("truncate",(o)->((ScmComplex)car(o)).toScmReal().truncate());
-		addNativeProcedure("log",(o)->cdr(o)instanceof ScmNil?((ScmComplex)car(o)).log():((ScmComplex)car(o)).log((ScmComplex)cadr(o)));
-		addNativeProcedure("exp",(o)->((ScmComplex)car(o)).exp());
-		addNativeProcedure("sin",(o)->((ScmComplex)car(o)).sin());
-		addNativeProcedure("cos",(o)->((ScmComplex)car(o)).cos());
-		addNativeProcedure("tan",(o)->((ScmComplex)car(o)).tan());
-		addNativeProcedure("asin",(o)->((ScmComplex)car(o)).arcsin());
-		addNativeProcedure("acos",(o)->((ScmComplex)car(o)).arccos());
-		addNativeProcedure("atan",(o)->cdr(o)instanceof ScmNil?((ScmComplex)car(o)).arctan():
-				new ScmComplexRectangular(((ScmComplex)cadr(o)).toScmReal(),((ScmComplex)car(o)).toScmReal()).getAngle());
 		addNativeProcedure("square",(o)->((ScmComplex)car(o)).square());
-		addNativeProcedure("sqrt",(o)->((ScmComplex)car(o)).sqrt());
+
 		addNativeProcedure("exact-integer-sqrt",(o)->ScmList.toList(((ScmComplex)car(o)).toScmInteger().sqrtExact()));
 		addNativeProcedure("expt",(o)->((ScmComplex)car(o)).pow((ScmComplex)cadr(o)));
 		addNativeProcedure("exact",(o)->((ScmComplex)car(o)).toExact());
@@ -179,6 +157,6 @@ public class Base extends NativeLibrary{
 				||car(o) instanceof ScmBinaryOutputPort));
 	}
 	private void initSystem(){
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		addNativeProcedure("features",(o)->Feature.getAll());
 	}
 }

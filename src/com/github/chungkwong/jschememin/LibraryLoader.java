@@ -27,7 +27,20 @@ public class LibraryLoader{
 	private static final HashMap<ScmPair,NativeLibrary> NATIVE_LIBRARIES=new HashMap<ScmPair,NativeLibrary>();
 	static{
 		addNativeLibrary(Base.INSTANCE);
+		addNativeLibrary(CaseLambda.INSTANCE);
+		addNativeLibrary(Char.INSTANCE);
 		addNativeLibrary(Complex.INSTANCE);
+		addNativeLibrary(CxR.INSTANCE);
+		addNativeLibrary(Eval.INSTANCE);
+		addNativeLibrary(File.INSTANCE);
+		addNativeLibrary(Inexact.INSTANCE);
+		addNativeLibrary(Lazy.INSTANCE);
+		addNativeLibrary(Load.INSTANCE);
+		addNativeLibrary(ProcessContext.INSTANCE);
+		addNativeLibrary(REPL.INSTANCE);
+		addNativeLibrary(Read.INSTANCE);
+		addNativeLibrary(Time.INSTANCE);
+		addNativeLibrary(Write.INSTANCE);
 	}
 	private static void addNativeLibrary(NativeLibrary lib){
 		NATIVE_LIBRARIES.put(lib.getName(),lib);

@@ -13,6 +13,7 @@
  *
  */
 package com.github.chungkwong.jschememin;
+import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
 /**
  *
@@ -24,7 +25,7 @@ public class Feature{
 		FEATURES.add("r7rs");
 		FEATURES.add("exact-closed");
 		FEATURES.add("exact-complex");
-		FEATURES.add("ieee-float");
+		//FEATURES.add("ieee-float");
 		FEATURES.add("full-unicode");
 		FEATURES.add("ratios");
 		FEATURES.add("jvm");
@@ -35,5 +36,8 @@ public class Feature{
 	}
 	public static boolean contains(String feature){
 		return FEATURES.contains(feature);
+	}
+	public static ScmPairOrNil getAll(){
+		return ScmList.toList(FEATURES.stream().map((feature)->new ScmString(feature)).toArray(ScmObject[]::new));
 	}
 }
