@@ -17,7 +17,7 @@ import com.github.chungkwong.jschememin.*;
 import java.util.*;
 public final class ScmCharacter extends ScmObject implements Comparable<ScmCharacter>,Token{
 	static final HashMap<Integer,Integer> caseFoldMap=new HashMap<>();
-	int codepoint;
+	private final int codepoint;
 	static{
 		Scanner in=new Scanner(ScmCharacter.class.getResourceAsStream("/com/github/chungkwong/jschememin/type/CaseFolding.txt"));
 		in.useRadix(16);

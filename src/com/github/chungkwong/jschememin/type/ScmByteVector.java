@@ -14,6 +14,8 @@
  */
 package com.github.chungkwong.jschememin.type;
 import java.math.*;
+import java.nio.*;
+import java.nio.charset.*;
 import java.util.*;
 public final class ScmByteVector extends ScmObject{
 	private final byte[] vector;
@@ -31,6 +33,15 @@ public final class ScmByteVector extends ScmObject{
 		if(b>=0&&b<256)
 			vector[index]=(byte)b;
 	}
+	public ScmByteVector copy(int start,int end){
+		return new ScmByteVector(Arrays.copyOfRange(vector,start,end));
+	}
+	public ScmByteVector copyTo(ScmByteVector to,int at,int start,int end){
+		while(start<end)
+			to.vector[at++]=vector[start++];
+		return to;
+	}
+
 	public byte[] getByteArray(){
 		return vector;
 	}
@@ -44,6 +55,14 @@ public final class ScmByteVector extends ScmObject{
 			buf.append(' ').append(Byte.toUnsignedInt(vector[i]));
 		buf.append(')');
 		return buf.toString();
+	}
+	public static ScmByteVector fill(ScmInteger byt,int size){
+		int b=byt.getValue().intValueExact();
+		if(b<0||b>255)
+			throw new RuntimeException();
+		byte[] data=new byte[size];
+		Arrays.fill(data,(byte)b);
+		return new ScmByteVector(data);
 	}
 	@Override
 	public boolean equals(Object obj){
@@ -65,5 +84,8 @@ public final class ScmByteVector extends ScmObject{
 	@Override
 	public boolean isSelfevaluating(){
 		return true;
+	}
+	public ScmString decodeUTF8(int start,int end){
+		return new ScmString(StandardCharsets.UTF_8.decode(ByteBuffer.wrap(vector,start,end-start)).toString());
 	}
 }

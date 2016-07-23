@@ -21,5 +21,5 @@ import com.github.chungkwong.jschememin.type.*;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public interface NativeProcedure{
-	ScmObject call(ScmObject param);
+	ScmObject call(ScmObject param) throws Exception;
 }

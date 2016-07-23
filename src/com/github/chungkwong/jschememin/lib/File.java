@@ -16,6 +16,7 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
+import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
 /**
  *
@@ -28,5 +29,11 @@ public class File extends NativeLibrary{
 	}
 	@Override
 	protected void init(Library lib){
+		addNativeProcedure("file-exists?",(o)->ScmBoolean.valueOf(new java.io.File(((ScmString)car(o)).getValue()).exists()));
+		addNativeProcedure("file-delete",(o)->ScmBoolean.valueOf(new java.io.File(((ScmString)car(o)).getValue()).delete()));
+		addNativeProcedure("open-input-file",(o)->new ScmTextualInputPort(((ScmString)car(o)).getValue()));
+		addNativeProcedure("open-binary-input-file",(o)->new ScmBinaryInputPort(((ScmString)car(o)).getValue()));
+		addNativeProcedure("open-output-file",(o)->new ScmTextualOutputPort(((ScmString)car(o)).getValue()));
+		addNativeProcedure("open-binary-output-file",(o)->new ScmBinaryOutputPort(((ScmString)car(o)).getValue()));
 	}
 }

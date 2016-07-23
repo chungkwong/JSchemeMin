@@ -15,32 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.lib;
-import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
+import java.util.function.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class NativeEvaluable extends ScmObject implements Evaluable{
+public class NativeProcedureDefault implements NativeProcedure{
 	private final NativeProcedure proc;
-	public NativeEvaluable(NativeProcedure proc){
+	private final Function<ScmPairOrNil,ScmObject>[] def;
+	public NativeProcedureDefault(NativeProcedure proc,Function<ScmPairOrNil,ScmObject>... def){
 		this.proc=proc;
+		this.def=def;
+	}
+	@Override
+	public ScmObject call(ScmObject param) throws Exception{
+		//TODO fill default
+
+		return proc.call(param);
 	}
 
-	@Override
-	public String toExternalRepresentation(){
-		return this.getClass().getCanonicalName();
-	}
-	@Override
-	public boolean isSelfevaluating(){
-		return false;
-	}
-	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		try{
-			cont.ret(proc.call(param));
-		}catch(Exception ex){
-			throw new RuntimeException(ex);
-		}
-	}
 }

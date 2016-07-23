@@ -199,7 +199,6 @@ vector?
 with-exception-handler
 write-char
 write-u8
-Case-Lambda Library
 remainder
 round
 set-car!
