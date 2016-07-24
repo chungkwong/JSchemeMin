@@ -97,6 +97,9 @@ public abstract class ScmComplex extends ScmNumber{
 	public ScmComplex arctan(){
 		return multiply(I).add(ScmInteger.ONE).log().subtract(multiply(I).negate().add(ScmInteger.ONE).log()).divide(ScmInteger.TWO.multiply(I));
 	}
+	public int intValueExact(){
+		return toScmInteger().getValue().intValueExact();
+	}
 	public abstract boolean isFinite();
 	public abstract boolean isInfinite();
 }

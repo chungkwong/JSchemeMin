@@ -14,29 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.chungkwong.jschememin.lib;
-import com.github.chungkwong.jschememin.type.*;
+package com.github.chungkwong.jschememin.type;
+
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Utility{
-	static final ScmObject car(ScmObject o){
-		return ((ScmPair)o).getCar();
+public class ScmListBuilder{
+	private ScmPairOrNil start=ScmNil.NIL;
+	private ScmPair end=null;
+	public ScmListBuilder(){
+		
 	}
-	static final ScmObject cdr(ScmObject o){
-		return ((ScmPair)o).getCdr();
+	public void add(ScmObject item){
+		ScmPair fresh=new ScmPair(item,ScmNil.NIL);
+		if(end==null){
+			start=end=fresh;
+		}else{
+			end.setCdr(fresh);
+			end=fresh;
+		}
 	}
-	static final ScmObject cadr(ScmObject o){
-		return ((ScmPair)o).getCadr();
-	}
-	static final ScmObject caddr(ScmObject o){
-		return ((ScmPair)((ScmPair)o).getCddr()).getCar();
-	}
-	static final ScmObject cadddr(ScmObject o){
-		return ((ScmPair)((ScmPair)o).getCddr()).getCadr();
-	}
-	static final ScmObject caddddr(ScmObject o){
-		return ((ScmPair)((ScmPair)((ScmPair)o).getCddr()).getCddr()).getCar();
+	public ScmPairOrNil toList(){
+		return start;
 	}
 }

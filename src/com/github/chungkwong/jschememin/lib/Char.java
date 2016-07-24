@@ -38,6 +38,9 @@ public class Char extends NativeLibrary{
 		addNativeProcedure("char-upcase",(o)->((ScmCharacter)car(o)).upCase());
 		addNativeProcedure("char-downcase",(o)->((ScmCharacter)car(o)).downCase());
 		addNativeProcedure("char-foldcase",(o)->((ScmCharacter)car(o)).foldCase());
-		
+		addNativeProcedure("string-upcase",(o)->((ScmString)car(o)).toUpperCase());
+		addNativeProcedure("string-downcase",(o)->((ScmString)car(o)).toLowerCase());
+		addNativeProcedure("string-foldcase",(o)->((ScmString)car(o)).toFoldingCase());
+
 	}
 }

@@ -16,6 +16,9 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
+import static com.github.chungkwong.jschememin.lib.Utility.caddddr;
+import static com.github.chungkwong.jschememin.lib.Utility.cadddr;
+import static com.github.chungkwong.jschememin.lib.Utility.caddr;
 import static com.github.chungkwong.jschememin.lib.Utility.cadr;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.primitive.*;
@@ -53,10 +56,88 @@ public class Base extends NativeLibrary{
 	}
 	private void initVector(){
 		addNativeProcedure("vector?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmVector));
-		//addNativeProcedure("make-vector",(o)->ScmVector.ScmBoolean.valueOf(car(o) instanceof ScmVector));
+		addNativeProcedure("make-vector",new NativeProcedureDefault(
+				(o)->ScmVector.fill(cadr(o),((ScmComplex)car(o)).intValueExact()),
+				(o)->car(o),
+				(o)->ScmNil.NIL
+		));
+		addNativeProcedure("vector",(o)->ScmVector.toVector((ScmPairOrNil)o));
+		addNativeProcedure("vector-length",(o)->new ScmInteger(((ScmVector)car(o)).getLength()));
+		addNativeProcedure("vector-ref",(o)->((ScmVector)car(o)).get(((ScmComplex)cadr(o)).intValueExact()));
+		addNativeProcedure("vector-set!",(o)->((ScmVector)car(o)).set(((ScmComplex)cadr(o)).intValueExact(),caddr(o)));
+		addNativeProcedure("vector-append",(o)->ScmVector.append((ScmPairOrNil)o));
+		addNativeProcedure("vector->list",new NativeProcedureDefault(
+				(o)->((ScmVector)car(o)).toList(((ScmComplex)cadr(o)).intValueExact(),((ScmComplex)caddr(o)).intValueExact()),
+				(o)->car(o),
+				(o)->ScmInteger.ZERO,
+				(o)->new ScmInteger(((ScmVector)car(o)).getLength())
+		));
+		addNativeProcedure("list->vector",(o)->ScmVector.toVector((ScmPairOrNil)o));
+		//vector->string string->vector
+		addNativeProcedure("vector-copy",new NativeProcedureDefault(
+				(o)->((ScmVector)car(o)).copy(((ScmComplex)cadr(o)).intValueExact(),((ScmComplex)caddr(o)).intValueExact()),
+				(o)->car(o),
+				(o)->ScmInteger.ZERO,
+				(o)->new ScmInteger(((ScmVector)car(o)).getLength())
+		));
+		addNativeProcedure("vector-copy!",new NativeProcedureDefault(
+				(o)->((ScmVector)caddr(o)).copyTo((ScmVector)car(o),((ScmComplex)cadr(o)).intValueExact(),((ScmComplex)cadddr(o)).intValueExact(),((ScmComplex)caddddr(o)).intValueExact()),
+				(o)->car(o),
+				(o)->cadr(o),
+				(o)->caddr(o),
+				(o)->ScmInteger.ZERO,
+				(o)->new ScmInteger(((ScmVector)caddr(o)).getLength())
+		));
+		addNativeProcedure("vector-fill!",new NativeProcedureDefault(
+				(o)->((ScmVector)car(o)).setRange(cadr(o),((ScmComplex)caddr(o)).intValueExact(),((ScmComplex)cadddr(o)).intValueExact()),
+				(o)->car(o),
+				(o)->cadr(o),
+				(o)->ScmInteger.ZERO,
+				(o)->new ScmInteger(((ScmVector)car(o)).getLength())
+		));
 	}
 	private void initString(){
 		addNativeProcedure("string?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmString));
+		addNativeProcedure("make-string",new NativeProcedureDefault(
+				(o)->ScmString.fill((ScmCharacter)cadr(o),((ScmComplex)car(o)).intValueExact()),
+				(o)->car(o),
+				(o)->new ScmCharacter(' ')
+		));
+		addNativeProcedure("string",(o)->ScmString.toScmString((ScmPairOrNil)o));
+		addNativeProcedure("string-length",(o)->new ScmInteger(((ScmString)car(o)).length()));
+		addNativeProcedure("string-ref",(o)->((ScmString)car(o)).get(((ScmComplex)cadr(o)).intValueExact()));
+		addNativeProcedure("string-set!",(o)->((ScmString)car(o)).set(((ScmComplex)cadr(o)).intValueExact(),(ScmCharacter)caddr(o)));
+		addNativeProcedure("substring",(o)->((ScmString)car(o)).substring(((ScmComplex)cadr(o)).intValueExact(),((ScmComplex)caddr(o)).intValueExact()));
+		addNativeProcedure("string-append",(o)->ScmString.append((ScmPairOrNil)o));
+		addNativeProcedure("string->list",new NativeProcedureDefault(
+				(o)->((ScmString)car(o)).toList(((ScmComplex)cadr(o)).intValueExact(),((ScmComplex)caddr(o)).intValueExact()),
+				(o)->car(o),
+				(o)->ScmInteger.ZERO,
+				(o)->new ScmInteger(((ScmString)car(o)).length())
+		));
+		addNativeProcedure("list->string",(o)->ScmString.toScmString((ScmPairOrNil)o));
+		addNativeProcedure("string-copy",new NativeProcedureDefault(
+				(o)->((ScmString)car(o)).copy(((ScmComplex)cadr(o)).intValueExact(),((ScmComplex)caddr(o)).intValueExact()),
+				(o)->car(o),
+				(o)->ScmInteger.ZERO,
+				(o)->new ScmInteger(((ScmString)car(o)).length())
+		));
+		addNativeProcedure("string-copy!",new NativeProcedureDefault(
+				(o)->((ScmString)caddr(o)).copyTo((ScmString)car(o),((ScmComplex)cadr(o)).intValueExact(),((ScmComplex)cadddr(o)).intValueExact(),((ScmComplex)caddddr(o)).intValueExact()),
+				(o)->car(o),
+				(o)->cadr(o),
+				(o)->caddr(o),
+				(o)->ScmInteger.ZERO,
+				(o)->new ScmInteger(((ScmString)caddr(o)).length())
+		));
+		addNativeProcedure("string-fill!",new NativeProcedureDefault(
+				(o)->((ScmString)car(o)).setRange((ScmCharacter)cadr(o),((ScmComplex)caddr(o)).intValueExact(),((ScmComplex)cadddr(o)).intValueExact()),
+				(o)->car(o),
+				(o)->cadr(o),
+				(o)->ScmInteger.ZERO,
+				(o)->new ScmInteger(((ScmString)car(o)).length())
+		));
+
 	}
 	private void initCharacter(){
 		addNativeProcedure("char?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmCharacter));
@@ -75,8 +156,12 @@ public class Base extends NativeLibrary{
 		addNativeProcedure("cons",(o)->new ScmPair(car(o),cadr(o)));
 		addNativeProcedure("car",(o)->((ScmPair)car(o)).getCar());
 		addNativeProcedure("cdr",(o)->((ScmPair)car(o)).getCdr());
+		addNativeProcedure("car",(o)->((ScmPair)car(o)).getCaar());
 		addNativeProcedure("cadr",(o)->((ScmPair)car(o)).getCadr());
 		addNativeProcedure("cdar",(o)->((ScmPair)car(o)).getCdar());
+		addNativeProcedure("cddr",(o)->((ScmPair)car(o)).getCddr());
+		addNativeProcedure("set-car!",(o)->{((ScmPair)car(o)).setCar(cadr(o));return car(o);});
+		addNativeProcedure("set-cdr!",(o)->{((ScmPair)car(o)).setCdr(cadr(o));return car(o);});
 		addNativeProcedure("null?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmNil));
 		addNativeProcedure("pair?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmPair));
 	}
@@ -144,17 +229,23 @@ public class Base extends NativeLibrary{
 		addPrimitiveType(SyntaxRule.INSTANCE);
 	}
 	private void initControl(){
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
 	}
 	private void initException(){
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
 	}
 	private void initEval(){
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
 	}
 	private void initIO(){
 		addNativeProcedure("binary-port?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmBinaryInputPort
 				||car(o) instanceof ScmBinaryOutputPort));
+		addNativeProcedure("textual-port?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmTextualInputPort
+				||car(o) instanceof ScmTextualOutputPort));
+		addNativeProcedure("input-port?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmBinaryInputPort
+				||car(o) instanceof ScmTextualInputPort));
+		addNativeProcedure("output-port?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmBinaryOutputPort
+				||car(o) instanceof ScmTextualOutputPort));
 	}
 	private void initSystem(){
 		addNativeProcedure("features",(o)->Feature.getAll());

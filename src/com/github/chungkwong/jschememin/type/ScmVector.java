@@ -31,12 +31,19 @@ public final class ScmVector extends ScmObject{
 	public ScmObject get(int index){
 		return vector.get(index);
 	}
-	public void set(int index,ScmObject element){
+	public ScmVector set(int index,ScmObject element){
 		vector.set(index,element);
+		return this;
 	}
 	public Stream<ScmObject> stream(){
 		return vector.stream();
 	}
+
+	/**
+	 *
+	 * @param obj
+	 * @return
+	 */
 	@Override
 	public boolean equals(Object obj){
 		return obj==this||ObjectPair.equals(this,obj,new HashSet<ObjectPair>());
@@ -77,11 +84,39 @@ public final class ScmVector extends ScmObject{
 	public static ScmVector toVector(ScmObject... obj){
 		return new ScmVector(Arrays.asList(obj));
 	}
-	public static ScmVector fillVector(int count,ScmObject o){
-		return new ScmVector(Collections.nCopies(count,o));
+	public static ScmVector toVector(ScmPairOrNil list){
+		int len=ScmList.getLength(list);
+		ArrayList<ScmObject> vec=new ArrayList<>(len);
+		ScmList.forEach(list,(item)->vec.add(item));
+		return new ScmVector(vec);
+	}
+	public static ScmVector append(ScmPairOrNil list){
+		return new ScmVector(ScmList.asStream(list).map((str)->((ScmVector)str).vector)
+				.collect(ArrayList<ScmObject>::new,ArrayList<ScmObject>::addAll,ArrayList<ScmObject>::addAll));
+	}
+	public ScmPairOrNil toList(int start,int end){
+		ScmListBuilder buf=new ScmListBuilder();
+		for(int i=start;i<end;i++)
+			buf.add(vector.get(i));
+		return buf.toList();
+	}
+	public static ScmVector fill(ScmObject o,int count){
+		return new ScmVector(new ArrayList(Collections.nCopies(count,o)));
 	}
 	@Override
 	public boolean isSelfevaluating(){
 		return true;
+	}
+	public ScmVector setRange(ScmObject item,int start,int end){
+		for(int i=start;i<end;i++)
+			vector.set(i,item);
+		return this;
+	}
+	public ScmVector copyTo(ScmVector to,int at,int start,int end){
+
+		return to;
+	}
+	public ScmVector copy(int start,int end){
+		return new ScmVector(new ArrayList<>(vector.subList(start,end)));
 	}
 }

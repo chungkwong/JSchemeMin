@@ -59,7 +59,7 @@ public final class ScmString extends ScmObject implements Token,Comparable<ScmSt
 	public ScmCharacter get(int index){
 		return new ScmCharacter(val.offsetByCodePoints(0,index));
 	}
-	public ScmString set(ScmCharacter c,int index){
+	public ScmString set(int index,ScmCharacter c){
 		return setRange(c,index,index+1);
 	}
 	public ScmString setRange(ScmCharacter c,int start,int end){
@@ -75,6 +75,10 @@ public final class ScmString extends ScmObject implements Token,Comparable<ScmSt
 	}
 	public ScmString substring(int start,int end){
 		return copy(start,end);
+	}
+	public static ScmString append(ScmPairOrNil list){
+		return new ScmString(ScmList.asStream(list).map((str)->((ScmString)str).getValue())
+				.collect(StringBuilder::new,StringBuilder::append,StringBuilder::append).toString());
 	}
 	public ScmString copy(int start,int end){
 		return new ScmString(val.substring(val.offsetByCodePoints(0,start),val.offsetByCodePoints(0,end)));
