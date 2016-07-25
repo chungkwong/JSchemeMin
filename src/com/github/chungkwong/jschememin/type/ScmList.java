@@ -78,22 +78,16 @@ public class ScmList{
 		}
 		return start;
 	}
-	public static ScmPairOrNil fillList(ScmObject obj,ScmInteger count){
-		return fillList(obj,count.getValue().intValueExact());
-	}
-	public static ScmPairOrNil fillList(ScmObject obj,int len){
+	public static ScmPairOrNil fill(ScmObject obj,int len){
 		ScmPairOrNil curr=ScmNil.NIL;
 		while(--len>=0)
 			curr=new ScmPair(obj,curr);
 		return curr;
 	}
-	public static ScmObject get(ScmPair obj,ScmInteger index){
-		return get(obj,index.getValue().intValueExact());
-	}
-	public static ScmObject get(ScmPair obj,int index){
+	public static ScmObject get(ScmPairOrNil obj,int index){
 		while(--index>=0)
-			obj=(ScmPair)obj.getCdr();
-		return obj.getCar();
+			obj=(ScmPairOrNil)((ScmPair)obj).getCdr();
+		return ((ScmPair)obj).getCar();
 	}
 	public static ScmPairOrNil reverse(ScmPairOrNil list){
 		ScmPairOrNil rev=ScmNil.NIL;
@@ -103,22 +97,10 @@ public class ScmList{
 		}
 		return rev;
 	}
-	public static ScmPairOrNil append(ScmPairOrNil... lists){
-		ScmPairOrNil start=ScmNil.NIL,last=ScmNil.NIL;
-		for(ScmPairOrNil list:lists){
-			while(list instanceof ScmPair){
-				ScmObject item=((ScmPair)list).getCar();
-				if(last==ScmNil.NIL){
-					start=last=new ScmPair(item,ScmNil.NIL);
-				}else{
-					ScmPair toAdd=new ScmPair(item,ScmNil.NIL);
-					((ScmPair)last).setCdr(toAdd);
-					last=toAdd;
-				}
-				list=(ScmPairOrNil)((ScmPair)list).getCdr();
-			}
-		}
-		return start;
+	public static ScmPairOrNil append(ScmPairOrNil lists){
+		ScmListBuilder buf=new ScmListBuilder();
+		ScmList.asStream(lists).forEach((list)->buf.addAll((ScmPairOrNil)list));
+		return buf.toList();
 	}
 	public static ScmPairOrNil copy(ScmPairOrNil list){
 		if(list instanceof ScmPair){
@@ -134,13 +116,39 @@ public class ScmList{
 		}else
 			return ScmNil.NIL;
 	}
-	public static void set(ScmPair list,ScmInteger index,ScmObject obj){
-		set(list,index.getValue().intValueExact(),obj);
-	}
 	public static void set(ScmPair list,int index,ScmObject obj){
 		while(--index>=0)
 			list=(ScmPair)list.getCdr();
 		list.setCar(obj);
+	}
+	public static ScmObject tail(ScmPairOrNil list,int index){
+		while(--index>=0)
+			list=(ScmPairOrNil)((ScmPair)list).getCdr();
+		return list;
+	}
+	public static ScmObject memq(ScmPairOrNil list,ScmObject obj){
+		while(list instanceof ScmPair){
+			if(((ScmPair)list).getCar().equalsStrict(obj))
+				return list;
+			list=(ScmPairOrNil)((ScmPair)list).getCdr();
+		}
+		return ScmBoolean.FALSE;
+	}
+	public static ScmObject memv(ScmPairOrNil list,ScmObject obj){
+		while(list instanceof ScmPair){
+			if(((ScmPair)list).getCar().equalsValue(obj))
+				return list;
+			list=(ScmPairOrNil)((ScmPair)list).getCdr();
+		}
+		return ScmBoolean.FALSE;
+	}
+	public static ScmObject member(ScmPairOrNil list,ScmObject obj){
+		while(list instanceof ScmPair){
+			if(((ScmPair)list).getCar().equals(obj))
+				return list;
+			list=(ScmPairOrNil)((ScmPair)list).getCdr();
+		}
+		return ScmBoolean.FALSE;
 	}
 	public static ScmPair getLastListNode(ScmPair scmPair){
 		ScmPair node=scmPair;

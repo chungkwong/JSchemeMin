@@ -39,4 +39,13 @@ public class Utility{
 	static final ScmObject caddddr(ScmObject o){
 		return ((ScmPair)((ScmPair)((ScmPair)o).getCddr()).getCddr()).getCar();
 	}
+	static final ScmObject getEnvironmentVariable(ScmString key){
+		String value=System.getenv(key.getValue());
+		return value==null?ScmBoolean.FALSE:new ScmString(value);
+	}
+	static final ScmPairOrNil getEnvironmentVariables(){
+		ScmListBuilder buf=new ScmListBuilder();
+		System.getenv().forEach((key,value)->buf.add(new ScmPair(new ScmString(key),new ScmString(value))));
+		return buf.toList();
+	}
 }

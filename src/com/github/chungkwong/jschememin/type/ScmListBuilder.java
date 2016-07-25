@@ -24,7 +24,7 @@ public class ScmListBuilder{
 	private ScmPairOrNil start=ScmNil.NIL;
 	private ScmPair end=null;
 	public ScmListBuilder(){
-		
+
 	}
 	public void add(ScmObject item){
 		ScmPair fresh=new ScmPair(item,ScmNil.NIL);
@@ -34,6 +34,9 @@ public class ScmListBuilder{
 			end.setCdr(fresh);
 			end=fresh;
 		}
+	}
+	public void addAll(ScmPairOrNil list){
+		ScmList.forEach(list,(item)->add(item));
 	}
 	public ScmPairOrNil toList(){
 		return start;

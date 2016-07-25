@@ -113,10 +113,15 @@ public final class ScmVector extends ScmObject{
 		return this;
 	}
 	public ScmVector copyTo(ScmVector to,int at,int start,int end){
-
+		while(start<end)
+			to.vector.set(at++,vector.get(start++));
 		return to;
 	}
 	public ScmVector copy(int start,int end){
 		return new ScmVector(new ArrayList<>(vector.subList(start,end)));
+	}
+	public ScmString toScmString(int start,int end){
+		return new ScmString(vector.subList(start,end).stream().mapToInt((c)->((ScmCharacter)c).getCodePoint()).
+				collect(StringBuilder::new,StringBuilder::appendCodePoint,StringBuilder::append).toString());
 	}
 }

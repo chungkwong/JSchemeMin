@@ -138,7 +138,18 @@ public final class ScmString extends ScmObject implements Token,Comparable<ScmSt
 	public int compareToIgnoreCase(ScmString o){
 		return val.compareToIgnoreCase(o.val);
 	}
-	public ScmByteVector toScmByteVector(){
-		return new ScmByteVector(StandardCharsets.UTF_8.encode(val).array());
+	public ScmByteVector toScmByteVector(int start,int end){
+		start=val.offsetByCodePoints(0,start);
+		end=val.offsetByCodePoints(0,end);
+		return new ScmByteVector(StandardCharsets.UTF_8.encode(val.substring(start,end)).array());
+	}
+	public ScmVector toScmVector(int start,int end){
+		ArrayList<ScmObject> vector=new ArrayList<>(end-start);
+		int offset=val.offsetByCodePoints(0,start);
+		while(++start<=end){
+			vector.add(new ScmCharacter(val.codePointAt(offset)));
+			offset=val.offsetByCodePoints(offset,1);
+		}
+		return new ScmVector(vector);
 	}
 }

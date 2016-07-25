@@ -28,10 +28,9 @@ public final class ScmByteVector extends ScmObject{
 	public ScmInteger get(int index){
 		return new ScmInteger(BigInteger.valueOf(index));
 	}
-	public void set(int index,ScmInteger element){
-		int b=element.getValue().intValueExact();
-		if(b>=0&&b<256)
-			vector[index]=(byte)b;
+	public ScmByteVector set(int index,ScmComplex element){
+		vector[index]=byteValueExact(element);
+		return this;
 	}
 	public ScmByteVector copy(int start,int end){
 		return new ScmByteVector(Arrays.copyOfRange(vector,start,end));
@@ -41,7 +40,24 @@ public final class ScmByteVector extends ScmObject{
 			to.vector[at++]=vector[start++];
 		return to;
 	}
-
+	public static ScmByteVector append(ScmPairOrNil list){
+		int len=ScmList.asStream(list).mapToInt((bv)->((ScmByteVector)bv).getLength()).sum();
+		byte[] data=new byte[len];
+		int i=0;
+		while(list instanceof ScmPair){
+			for(byte b:((ScmByteVector)((ScmPair)list).getCar()).vector)
+				data[i++]=b;
+			list=(ScmPairOrNil)((ScmPair)list).getCdr();
+		}
+		return new ScmByteVector(data);
+	}
+	private static byte byteValueExact(ScmComplex i){
+		int b=i.intValueExact();
+		if(b>=0&&b<256)
+			return (byte)b;
+		else
+			throw new RuntimeException();
+	}
 	public byte[] getByteArray(){
 		return vector;
 	}
@@ -57,9 +73,7 @@ public final class ScmByteVector extends ScmObject{
 		return buf.toString();
 	}
 	public static ScmByteVector fill(ScmInteger byt,int size){
-		int b=byt.getValue().intValueExact();
-		if(b<0||b>255)
-			throw new RuntimeException();
+		int b=byteValueExact(byt);
 		byte[] data=new byte[size];
 		Arrays.fill(data,(byte)b);
 		return new ScmByteVector(data);
@@ -84,6 +98,15 @@ public final class ScmByteVector extends ScmObject{
 	@Override
 	public boolean isSelfevaluating(){
 		return true;
+	}
+	public static ScmByteVector toByteVector(ScmPairOrNil list){
+		int len=ScmList.getLength(list);
+		byte[] data=new byte[len];
+		for(int i=0;i<len;i++){
+			data[i]=byteValueExact((ScmComplex)((ScmPair)list).getCar());
+			list=(ScmPairOrNil)((ScmPair)list).getCdr();
+		}
+		return new ScmByteVector(data);
 	}
 	public ScmString decodeUTF8(int start,int end){
 		return new ScmString(StandardCharsets.UTF_8.decode(ByteBuffer.wrap(vector,start,end-start)).toString());
