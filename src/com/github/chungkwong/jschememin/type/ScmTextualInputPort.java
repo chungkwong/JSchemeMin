@@ -85,11 +85,17 @@ public class ScmTextualInputPort extends ScmPort{
 	public ScmBoolean ready() throws IOException{
 		return ScmBoolean.valueOf(in.ready());
 	}
-	public void close() throws IOException{
+	@Override
+	public ScmTextualInputPort close()throws IOException{
+		super.close();
 		in.close();
+		return this;
 	}
 	@Override
 	public String toExternalRepresentation(){
 		return in.toString();
+	}
+	public PushbackReader getReader(){
+		return in;
 	}
 }

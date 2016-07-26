@@ -16,6 +16,8 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
+import static com.github.chungkwong.jschememin.lib.Utility.cadr;
+import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
 /**
  *
@@ -28,5 +30,13 @@ public class Write extends NativeLibrary{
 	}
 	@Override
 	protected void init(Library lib){
-	}
+		addNativeProcedure("write",new NativeProcedureDefault((o)->((ScmTextualOutputPort)cadr(o)).write(car(o)),
+			(o)->car(o),(o)->ScmPort.CURRENT_OUTPUT));
+		addNativeProcedure("write-shared",new NativeProcedureDefault((o)->((ScmTextualOutputPort)cadr(o)).writeShared(car(o)),
+			(o)->car(o),(o)->ScmPort.CURRENT_OUTPUT));
+		addNativeProcedure("write-simple",new NativeProcedureDefault((o)->((ScmTextualOutputPort)cadr(o)).writeSimple(car(o)),
+			(o)->car(o),(o)->ScmPort.CURRENT_OUTPUT));
+		addNativeProcedure("display",new NativeProcedureDefault((o)->((ScmTextualOutputPort)cadr(o)).display(car(o)),
+			(o)->car(o),(o)->ScmPort.CURRENT_OUTPUT));
+		}
 }

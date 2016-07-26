@@ -41,6 +41,15 @@ public class Char extends NativeLibrary{
 		addNativeProcedure("string-upcase",(o)->((ScmString)car(o)).toUpperCase());
 		addNativeProcedure("string-downcase",(o)->((ScmString)car(o)).toLowerCase());
 		addNativeProcedure("string-foldcase",(o)->((ScmString)car(o)).toFoldingCase());
-
+		addNativeProcedure("char-ci=?",Utility.chainComparator((a,b)->((ScmCharacter)a).compareToIgnoreCase((ScmCharacter)b)==0));
+		addNativeProcedure("char-ci<?",Utility.chainComparator((a,b)->((ScmCharacter)a).compareToIgnoreCase((ScmCharacter)b)<0));
+		addNativeProcedure("char-ci<=?",Utility.chainComparator((a,b)->((ScmCharacter)a).compareToIgnoreCase((ScmCharacter)b)<=0));
+		addNativeProcedure("char-ci>?",Utility.chainComparator((a,b)->((ScmCharacter)a).compareToIgnoreCase((ScmCharacter)b)>0));
+		addNativeProcedure("char-ci>=?",Utility.chainComparator((a,b)->((ScmCharacter)a).compareToIgnoreCase((ScmCharacter)b)>=0));
+		addNativeProcedure("string-ci=?",Utility.chainComparator((a,b)->((ScmString)a).compareToIgnoreCase((ScmString)b)==0));
+		addNativeProcedure("string-ci<?",Utility.chainComparator((a,b)->((ScmString)a).compareToIgnoreCase((ScmString)b)<0));
+		addNativeProcedure("string-ci<=?",Utility.chainComparator((a,b)->((ScmString)a).compareToIgnoreCase((ScmString)b)<=0));
+		addNativeProcedure("string-ci>?",Utility.chainComparator((a,b)->((ScmString)a).compareToIgnoreCase((ScmString)b)>0));
+		addNativeProcedure("string-ci>=?",Utility.chainComparator((a,b)->((ScmString)a).compareToIgnoreCase((ScmString)b)>=0));
 	}
 }

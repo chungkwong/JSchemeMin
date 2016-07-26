@@ -36,11 +36,12 @@ public class Import extends PrimitiveType{
 		importLibraries(env,list);
 		cont.ret(new ScmSymbol("ok"));
 	}
-	public void importLibraries(Environment env,ScmObject list){
+	public Environment importLibraries(Environment env,ScmObject list){
 		while(list instanceof ScmPair){
 			importLibrary(env,(ScmPair)((ScmPair)list).getCar());
 			list=((ScmPair)list).getCdr();
 		}
+		return env;
 	}
 	public void importLibrary(Environment env,ScmPair spec){
 		ImportSet set=getImportSet(spec);

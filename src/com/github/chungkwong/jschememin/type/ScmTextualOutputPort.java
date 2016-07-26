@@ -32,39 +32,56 @@ public class ScmTextualOutputPort extends ScmPort{
 	public ScmTextualOutputPort(String file) throws FileNotFoundException, UnsupportedEncodingException{
 		this.out=new OutputStreamWriter(new FileOutputStream(file),"UTF-8");
 	}
-	public void writeShared(ScmObject obj) throws IOException{
+	public ScmTextualOutputPort writeShared(ScmObject obj) throws IOException{
 		out.write(obj.toExternalRepresentation());
+		return this;
 	}
-	public void writeSimple(ScmObject obj) throws IOException{
+	public ScmTextualOutputPort writeSimple(ScmObject obj) throws IOException{
 		out.write(toSimpleRepresentation(this));
+		return this;
 	}
-	public void write(ScmObject obj) throws IOException{
+	public ScmTextualOutputPort write(ScmObject obj) throws IOException{
 		out.write(obj.toExternalRepresentation());//TODO
+		return this;
 	}
-	public void writeCharacter(ScmCharacter obj) throws IOException{
+	public ScmTextualOutputPort writeCharacter(ScmCharacter obj) throws IOException{
 		out.write(new String(new int[]{obj.getCodePoint()},0,1));
+		return this;
 	}
-	public void writeString(ScmString obj,ScmInteger start,ScmInteger end) throws IOException{
-		int off=start.getValue().intValueExact();
-		int len=end.getValue().intValueExact()-off;
+	public ScmTextualOutputPort writeString(ScmString obj,int start,int end) throws IOException{
+		int off=start;
+		int len=end-off;
 		out.write(obj.getValue(),off,len);
+		return this;
 	}
-	public void display(ScmObject obj) throws IOException{
+	public ScmTextualOutputPort display(ScmObject obj) throws IOException{
 		if(obj instanceof ScmString)
 			out.write(((ScmString)obj).getValue());
 		else if(obj instanceof ScmCharacter)
 			out.write(new String(new int[]{((ScmCharacter)obj).getCodePoint()},0,1));
 		else
 			out.write(obj.toExternalRepresentation());
+		return this;
 	}
-	public void newline() throws IOException{
+	public String getString(){
+		if(out instanceof StringWriter)
+			return ((StringWriter)out).toString();
+		else
+			throw new RuntimeException();
+	}
+	public ScmTextualOutputPort newline() throws IOException{
 		out.write(LINE_SEPARATOR);
+		return this;
 	}
-	public void flush()throws IOException{
+	public ScmTextualOutputPort flush()throws IOException{
 		out.flush();
+		return this;
 	}
-	public void close()throws IOException{
+	@Override
+	public ScmTextualOutputPort close()throws IOException{
+		super.close();
 		out.close();
+		return this;
 	}
 	@Override
 	public String toExternalRepresentation(){

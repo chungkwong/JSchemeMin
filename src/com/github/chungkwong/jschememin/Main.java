@@ -13,17 +13,21 @@
  *
  */
 package com.github.chungkwong.jschememin;
-
+import com.github.chungkwong.jschememin.type.*;
+import java.util.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Main {
+	public static ScmPairOrNil COMMAND_LINE;
 	/**
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-	// TODO code application logic here
+		ScmListBuilder buf=new ScmListBuilder();
+		Arrays.stream(args).map((arg)->new ScmString(arg)).forEach((arg)->buf.add(arg));
+		COMMAND_LINE=buf.toList();
 	}
 
 }

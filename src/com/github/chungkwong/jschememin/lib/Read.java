@@ -16,6 +16,7 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
+import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
 /**
  *
@@ -28,5 +29,7 @@ public class Read extends NativeLibrary{
 	}
 	@Override
 	protected void init(Library lib){
+		addNativeProcedure("read",new NativeProcedureDefault((o)->new Parser(new Lex(((ScmTextualInputPort)car(o)).getReader())).nextDatum(),
+				(o)->ScmPort.CURRENT_INPUT));
 	}
 }

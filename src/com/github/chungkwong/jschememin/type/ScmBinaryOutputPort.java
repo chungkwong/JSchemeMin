@@ -28,23 +28,33 @@ public class ScmBinaryOutputPort extends ScmPort{
 	public ScmBinaryOutputPort(String file) throws FileNotFoundException, UnsupportedEncodingException{
 		this.out=new FileOutputStream(file);
 	}
-	public void writeByte(ScmInteger obj) throws IOException{
+	public ScmBinaryOutputPort writeByte(ScmInteger obj) throws IOException{
 		int b=obj.getValue().intValueExact();
 		if(b>=0&&b<256)
 			out.write(b);
 		else
 			throw new RuntimeException("A byte is expected");
+		return this;
 	}
-	public void writeByteVector(ScmByteVector obj,ScmInteger start,ScmInteger end) throws IOException{
-		int off=start.getValue().intValueExact();
-		int len=end.getValue().intValueExact()-off;
-		out.write(obj.getByteArray(),off,len);
+	public ScmBinaryOutputPort writeByteVector(ScmByteVector obj,int start,int end) throws IOException{
+		out.write(obj.getByteArray(),start,end-start);
+		return this;
 	}
-	public void flush()throws IOException{
+	public byte[] getByteArray(){
+		if(out instanceof ByteArrayOutputStream)
+			return ((ByteArrayOutputStream)out).toByteArray();
+		else
+			throw new RuntimeException();
+	}
+	public ScmBinaryOutputPort flush()throws IOException{
 		out.flush();
+		return this;
 	}
-	public void close()throws IOException{
+	@Override
+	public ScmBinaryOutputPort close()throws IOException{
+		super.close();
 		out.close();
+		return this;
 	}
 	@Override
 	public String toExternalRepresentation(){

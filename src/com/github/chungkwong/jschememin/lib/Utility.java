@@ -15,7 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.lib;
+import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
+import java.util.function.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -47,5 +49,60 @@ public class Utility{
 		ScmListBuilder buf=new ScmListBuilder();
 		System.getenv().forEach((key,value)->buf.add(new ScmPair(new ScmString(key),new ScmString(value))));
 		return buf.toList();
+	}
+	static final NativeProcedure chainComparator(BiPredicate<ScmObject,ScmObject> comparator){
+		return (list)->{
+			ScmObject prev=car(list);
+			list=cdr(list);
+			while(list instanceof ScmPair){
+				ScmObject curr=car(list);
+				if(!comparator.test(prev,curr))
+					return ScmBoolean.FALSE;
+				prev=curr;
+				list=cdr(list);
+			}
+			return ScmBoolean.TRUE;
+		};
+	}
+	static final NativeProcedure reducer(BiFunction<ScmObject,ScmObject,ScmObject> f){
+		return (list)->{
+			ScmObject result=car(list);
+			list=cdr(list);
+			while(list instanceof ScmPair){
+				result=f.apply(result,car(list));
+				list=cdr(list);
+			}
+			return result;
+		};
+	}
+	static final NativeProcedure reducer(BiFunction<ScmObject,ScmObject,ScmObject> f,ScmObject id){
+		return (list)->{
+			ScmObject result=id;
+			while(list instanceof ScmPair){
+				result=f.apply(result,car(list));
+				list=cdr(list);
+			}
+			return result;
+		};
+	}
+	static final void emergencyExit(ScmObject obj){
+		int status;
+		if(obj==ScmBoolean.TRUE)
+			status=0;
+		else if(obj==ScmBoolean.FALSE)
+			status=1;
+		else
+			try{
+				status=((ScmComplex)obj).intValueExact();
+			}catch(RuntimeException ex){
+				status=1;
+			}
+		System.exit(status);
+	}
+	static final void exit(ScmObject obj){
+		emergencyExit(obj);//TODO add after wind
+	}
+	static final Environment getInteractiveEnvironment(){
+		return new Environment(true);
 	}
 }

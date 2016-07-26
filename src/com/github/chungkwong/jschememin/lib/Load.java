@@ -16,17 +16,34 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
+import static com.github.chungkwong.jschememin.lib.Utility.cadr;
+import static com.github.chungkwong.jschememin.lib.Utility.car;
+import static com.github.chungkwong.jschememin.lib.Utility.getInteractiveEnvironment;
 import com.github.chungkwong.jschememin.type.*;
+import java.io.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Load extends NativeLibrary{
 	public static final Load INSTANCE=new Load();
+	private static final ScmSymbol BEGIN=new ScmSymbol("begin");
 	public Load(){
 		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("load")));
 	}
 	@Override
 	protected void init(Library lib){
+		addNativeProcedure("load",new NativeProcedureDefault((o)->load(((ScmString)car(o)).getValue(),(Environment)cadr(o)),
+			(o)->car(o),(o)->getInteractiveEnvironment()));
+	}
+	private static ScmObject load(String filename,Environment env){
+		ScmPair content;
+		try{
+			Parser parser=new Parser(new Lex(new InputStreamReader(new FileInputStream(filename),"UTF-8"),false));
+			content=new ScmPair(BEGIN,ScmList.toList(parser.getRemainingDatums()));
+		}catch(FileNotFoundException|UnsupportedEncodingException ex){
+			throw new RuntimeException();
+		}
+		return new Evaluator(env).eval(content);
 	}
 }

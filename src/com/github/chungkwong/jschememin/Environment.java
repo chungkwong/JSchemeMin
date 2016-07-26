@@ -22,7 +22,7 @@ import java.util.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Environment{
+public class Environment extends ScmObject{
 	private final Environment parent;
 	private final boolean repl;
 	private final HashMap<ScmSymbol,ScmObject> bindings=new HashMap<>();
@@ -87,5 +87,13 @@ public class Environment{
 		while(getOptional(id).isPresent())
 			id=new ScmSymbol(Integer.toString(++count));
 		return id;
+	}
+	@Override
+	public String toExternalRepresentation(){
+		return "environemnt";
+	}
+	@Override
+	public boolean isSelfevaluating(){
+		return false;
 	}
 }

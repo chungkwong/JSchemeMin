@@ -1,114 +1,47 @@
-*
--
-/
-<=
 =>
->=
 assoc
 assv
-+
 ...
-<
-=
->
 apply
 assq
 begin
-boolean=?
 call-with-current-continuation
 call-with-port
 call-with-values
 call/cc
 case
-char-ready?
-char<=?
-char<?
-char=?
-char>=?
-char>?
-close-input-port
-close-output-port
-close-port
 cond
 cond-expand
-current-error-port
-current-input-port
-current-output-port
 define-values
 do
 dynamic-wind
 else
-eof-object
-eof-object?
 error
-error-object-irritants
-error-object-message
-error-object?
-features
-file-error?
-flush-output-port
 for-each
-gcd
-get-output-bytevector
-get-output-string
 guard
-if
-include
-include-ci
-input-port?
-lcm
 let
 let*-values
 let-values
 letrec*
 make-parameter
-max
-min
 number->string
-open-input-bytevector
-open-output-bytevector
 parameterize
-peek-u8
 quasiquote
 raise-continuable
 rationalize
-read-bytevector!
-read-error?
-read-string
-input-port-open?
 let*
 let-syntax
 letrec
 letrec-syntax
 map
 member
-newline
-open-input-string
-open-output-string
-output-port-open?
-peek-char
-procedure?
 raise
-read-bytevector
-read-char
-read-line
-read-u8real?
-reverse
 string->number
 string-for-each
 string-map
-string<?
-string>=?
 syntax-rules
-u8-ready?
 unquote
 with-exception-handler
-write-char
-write-u8
-string<=?
-string=?
-string>?
-symbol=?
 syntax-error
 unless
 unquote-splicing
@@ -116,51 +49,8 @@ values
 vector-for-each
 vector-map
 when
-write-bytevector
-write-string
-Char Library
-char-ci<?
-char-ci>=?
-string-ci<=?
-string-ci=?
-string-ci>?
-char-ci<=?
-char-ci=?
-char-ci>?
-string-ci<?
-string-ci>=?
-Eval Library
-The (scheme eval) library exports procedures for evaluating Scheme
-data as programs.
-environment
-eval
 File Library
 call-with-input-file
 with-input-from-file
 call-with-output-file
 with-output-to-file
-Load Library
-The (scheme load) library exports procedures for loading Scheme
-expressions from files.
-load
-Process-Context Library
-The (scheme process-context) library exports procedures for ac-
-cessing with the program’s calling context.
-command-line
-emergency-exit
-exit
-Read Library
-The (scheme read) library provides procedures for reading Scheme
-objects.
-read
-Repl Library
-The (scheme repl) library exports the interaction-environment
-procedure.
-interaction-environment
-Write Library
-The (scheme write) library provides procedures for writing Scheme
-objects.
-display
-write-shared
-write
-write-simple

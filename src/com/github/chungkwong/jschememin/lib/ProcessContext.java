@@ -16,9 +16,7 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
-import static com.github.chungkwong.jschememin.lib.Utility.car;
-import static com.github.chungkwong.jschememin.lib.Utility.getEnvironmentVariable;
-import static com.github.chungkwong.jschememin.lib.Utility.getEnvironmentVariables;
+import static com.github.chungkwong.jschememin.lib.Utility.*;
 import com.github.chungkwong.jschememin.type.*;
 /**
  *
@@ -31,6 +29,9 @@ public class ProcessContext extends NativeLibrary{
 	}
 	@Override
 	protected void init(Library lib){
+		addNativeProcedure("command-line",(o)->Main.COMMAND_LINE);
+		addNativeProcedure("exit",new NativeProcedureDefault((o)->{exit(o);return null;},(o)->ScmBoolean.TRUE));
+		addNativeProcedure("emergency-exit",new NativeProcedureDefault((o)->{emergencyExit(o);return null;},(o)->ScmBoolean.TRUE));
 		addNativeProcedure("get-environment-variable",(o)->getEnvironmentVariable((ScmString)car(o)));
 		addNativeProcedure("get-environment-variables",(o)->getEnvironmentVariables());
 	}

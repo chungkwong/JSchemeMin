@@ -23,6 +23,7 @@ import static com.github.chungkwong.jschememin.lib.Utility.cadr;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.primitive.*;
 import com.github.chungkwong.jschememin.type.*;
+import java.io.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -184,11 +185,19 @@ public class Base extends NativeLibrary{
 				(o)->ScmInteger.ZERO,
 				(o)->new ScmInteger(((ScmString)car(o)).length())
 		));
-
+		addNativeProcedure("string=?",Utility.chainComparator((a,b)->((ScmString)a).compareTo((ScmString)b)==0));
+		addNativeProcedure("string<?",Utility.chainComparator((a,b)->((ScmString)a).compareTo((ScmString)b)<0));
+		addNativeProcedure("string<=?",Utility.chainComparator((a,b)->((ScmString)a).compareTo((ScmString)b)<=0));
+		addNativeProcedure("string>?",Utility.chainComparator((a,b)->((ScmString)a).compareTo((ScmString)b)>0));
+		addNativeProcedure("string>=?",Utility.chainComparator((a,b)->((ScmString)a).compareTo((ScmString)b)>=0));
 	}
 	private void initCharacter(){
 		addNativeProcedure("char?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmCharacter));
-		//compare
+		addNativeProcedure("char=?",Utility.chainComparator((a,b)->((ScmCharacter)a).compareTo((ScmCharacter)b)==0));
+		addNativeProcedure("char<?",Utility.chainComparator((a,b)->((ScmCharacter)a).compareTo((ScmCharacter)b)<0));
+		addNativeProcedure("char<=?",Utility.chainComparator((a,b)->((ScmCharacter)a).compareTo((ScmCharacter)b)<=0));
+		addNativeProcedure("char>?",Utility.chainComparator((a,b)->((ScmCharacter)a).compareTo((ScmCharacter)b)>0));
+		addNativeProcedure("char>=?",Utility.chainComparator((a,b)->((ScmCharacter)a).compareTo((ScmCharacter)b)>=0));
 		addNativeProcedure("char->integer",(o)->new ScmInteger(((ScmCharacter)car(o)).getCodePoint()));
 		addNativeProcedure("integer->char",(o)->new ScmCharacter(((ScmComplex)car(o)).toScmInteger().getValue().intValueExact()));
 
@@ -197,7 +206,7 @@ public class Base extends NativeLibrary{
 		addNativeProcedure("symbol?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmSymbol));
 		addNativeProcedure("symbol->string",(o)->new ScmString(((ScmSymbol)car(o)).getValue()));
 		addNativeProcedure("string->symbol",(o)->new ScmSymbol(((ScmString)car(o)).getValue()));
-		//symbol=?
+		addNativeProcedure("symbol=?",Utility.chainComparator((a,b)->((ScmSymbol)a).equals((ScmSymbol)b)));
 	}
 	private void initList(){
 		addNativeProcedure("cons",(o)->new ScmPair(car(o),cadr(o)));
@@ -234,7 +243,7 @@ public class Base extends NativeLibrary{
 	private void initBoolean(){
 		addNativeProcedure("boolean?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmBoolean));
 		addNativeProcedure("not",(o)->ScmBoolean.valueOf(car(o)!=ScmBoolean.FALSE));
-		//boolean=?
+		addNativeProcedure("boolean=?",Utility.chainComparator((a,b)->(ScmBoolean)a==(ScmBoolean)b));
 	}
 	private void initNumber(){
 		addNativeProcedure("number?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmNumber));
@@ -245,13 +254,22 @@ public class Base extends NativeLibrary{
 		addNativeProcedure("exact?",(o)->ScmBoolean.valueOf(((ScmComplex)car(o)).isExact()));
 		addNativeProcedure("inexact?",(o)->ScmBoolean.valueOf(!((ScmNumber)car(o)).isExact()));
 		addNativeProcedure("exact-integer?",(o)->ScmBoolean.valueOf(((ScmNumber)car(o)).isExact()&&((ScmComplex)car(o)).isInteger()));
-		//compare
+		addNativeProcedure("<",Utility.chainComparator((a,b)->ScmReal.less(((ScmComplex)a).toScmReal(),((ScmComplex)b).toScmReal())));
+		addNativeProcedure("<=",Utility.chainComparator((a,b)->ScmReal.lessEquals(((ScmComplex)a).toScmReal(),((ScmComplex)b).toScmReal())));
+		addNativeProcedure(">",Utility.chainComparator((a,b)->ScmReal.greater(((ScmComplex)a).toScmReal(),((ScmComplex)b).toScmReal())));
+		addNativeProcedure(">=",Utility.chainComparator((a,b)->ScmReal.greaterEquals(((ScmComplex)a).toScmReal(),((ScmComplex)b).toScmReal())));
+		addNativeProcedure("=",Utility.chainComparator((a,b)->ScmReal.equals(((ScmComplex)a).toScmReal(),((ScmComplex)b).toScmReal())));
 		addNativeProcedure("zero?",(o)->ScmBoolean.valueOf(((ScmComplex)car(o)).isZero()));
 		addNativeProcedure("positive?",(o)->ScmBoolean.valueOf(((ScmComplex)car(o)).toScmReal().isPositive()));
 		addNativeProcedure("negative?",(o)->ScmBoolean.valueOf(((ScmComplex)car(o)).toScmReal().isNegative()));
 		addNativeProcedure("even?",(o)->ScmBoolean.valueOf(((ScmComplex)car(o)).toScmInteger().isEven()));
 		addNativeProcedure("odd?",(o)->ScmBoolean.valueOf(((ScmComplex)car(o)).toScmInteger().isOdd()));
-		//min min + * - /
+		addNativeProcedure("+",Utility.reducer((a,b)->((ScmComplex)a).add((ScmComplex)b),ScmInteger.ZERO));
+		addNativeProcedure("*",Utility.reducer((a,b)->((ScmComplex)a).multiply((ScmComplex)b),ScmInteger.ONE));
+		addNativeProcedure("-",Utility.reducer((a,b)->((ScmComplex)a).subtract((ScmComplex)b)));
+		addNativeProcedure("/",Utility.reducer((a,b)->((ScmComplex)a).divide((ScmComplex)b)));
+		addNativeProcedure("max",Utility.reducer((a,b)->ScmReal.max(((ScmComplex)a).toScmReal(),((ScmComplex)b).toScmReal())));
+		addNativeProcedure("min",Utility.reducer((a,b)->ScmReal.min(((ScmComplex)a).toScmReal(),((ScmComplex)b).toScmReal())));
 		addNativeProcedure("abs",(o)->((ScmComplex)car(o)).toScmReal().getMagnitude());
 		addNativeProcedure("floor/",(o)->ScmList.toList(((ScmComplex)car(o)).toScmInteger().divideAndRemainder(((ScmComplex)cadr(o)).toScmInteger())));
 		addNativeProcedure("floor-quotient",(o)->((ScmComplex)car(o)).toScmInteger().moduloQuotient(((ScmComplex)cadr(o)).toScmInteger()));
@@ -262,7 +280,8 @@ public class Base extends NativeLibrary{
 		addNativeProcedure("quotient",(o)->((ScmComplex)car(o)).toScmInteger().divide(((ScmComplex)cadr(o)).toScmInteger()));
 		addNativeProcedure("remainder",(o)->((ScmComplex)car(o)).toScmInteger().remainder(((ScmComplex)cadr(o)).toScmInteger()));
 		addNativeProcedure("module",(o)->((ScmComplex)car(o)).toScmInteger().moduloRemainder(((ScmComplex)cadr(o)).toScmInteger()));
-		//gcd lcm
+		addNativeProcedure("gcd",Utility.reducer((a,b)->((ScmComplex)a).toScmInteger().gcd(((ScmComplex)b).toScmInteger())));
+		addNativeProcedure("lcm",Utility.reducer((a,b)->((ScmComplex)a).toScmInteger().lcm(((ScmComplex)b).toScmInteger())));
 		addNativeProcedure("numerator",(o)->((ScmComplex)car(o)).toScmRational().getNumerator());
 		addNativeProcedure("denominator",(o)->((ScmComplex)car(o)).toScmRational().getDenominator());
 		addNativeProcedure("floor",(o)->((ScmComplex)car(o)).toScmReal().floor());
@@ -295,15 +314,22 @@ public class Base extends NativeLibrary{
 		addPrimitiveType(SyntaxRule.INSTANCE);
 	}
 	private void initControl(){
-
+		addNativeProcedure("procedure?",(o)->ScmBoolean.valueOf(car(o) instanceof Evaluable));
 	}
 	private void initException(){
+		addNativeProcedure("error-object?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmError));
+		addNativeProcedure("file-error?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmError&&((ScmError)car(o)).getType()==ScmError.ErrorType.FILE));
+		addNativeProcedure("read-error?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmError&&((ScmError)car(o)).getType()==ScmError.ErrorType.READ));
+		addNativeProcedure("error-object-message",(o)->((ScmError)car(o)).getErrorMessage());
+		addNativeProcedure("error-object-irritants",(o)->((ScmError)car(o)).getIrritants());
 
 	}
 	private void initEval(){
 
 	}
 	private void initIO(){
+		addNativeProcedure("eof-object",(o)->ScmEndOfFileObject.INSTANCE);
+		addNativeProcedure("eof-object?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmEndOfFileObject));
 		addNativeProcedure("port?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmPort));
 		addNativeProcedure("binary-port?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmBinaryInputPort
 				||car(o) instanceof ScmBinaryOutputPort));
@@ -313,6 +339,58 @@ public class Base extends NativeLibrary{
 				||car(o) instanceof ScmTextualInputPort));
 		addNativeProcedure("output-port?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmBinaryOutputPort
 				||car(o) instanceof ScmTextualOutputPort));
+		addNativeProcedure("input-port-open?",(o)->ScmBoolean.valueOf(!((ScmPort)car(o)).isClosed()));
+		addNativeProcedure("output-port-open?",(o)->ScmBoolean.valueOf(!((ScmPort)car(o)).isClosed()));
+		addNativeProcedure("current-input-port",(o)->ScmPort.CURRENT_INPUT);
+		addNativeProcedure("current-output-port",(o)->ScmPort.CURRENT_OUTPUT);
+		addNativeProcedure("current-error-port",(o)->ScmPort.CURRENT_ERROR);
+		addNativeProcedure("open-input-file",(o)->new ScmTextualInputPort(((ScmString)car(o)).getValue()));
+		addNativeProcedure("open-binary-input-file",(o)->new ScmBinaryInputPort(((ScmString)car(o)).getValue()));
+		addNativeProcedure("open-output-file",(o)->new ScmTextualOutputPort(((ScmString)car(o)).getValue()));
+		addNativeProcedure("open-binary-output-file",(o)->new ScmBinaryOutputPort(((ScmString)car(o)).getValue()));
+		addNativeProcedure("close-port",(o)->((ScmPort)car(o)).close());
+		addNativeProcedure("close-input-port",(o)->((ScmPort)car(o)).close());
+		addNativeProcedure("close-output-port",(o)->((ScmPort)car(o)).close());
+		addNativeProcedure("open-input-string",(o)->new ScmTextualInputPort(new StringReader(((ScmString)car(o)).getValue())));
+		addNativeProcedure("open-output-string",(o)->new ScmTextualOutputPort(new StringWriter()));
+		addNativeProcedure("get-output-string",(o)->new ScmString(((ScmTextualOutputPort)car(o)).getString()));
+		addNativeProcedure("open-input-bytevector",(o)->new ScmBinaryInputPort(new ByteArrayInputStream(((ScmByteVector)car(o)).getByteArray())));
+		addNativeProcedure("open-output-bytevector",(o)->new ScmBinaryOutputPort(new ByteArrayOutputStream()));
+		addNativeProcedure("get-output-bytevector",(o)->new ScmByteVector(((ScmBinaryOutputPort)car(o)).getByteArray()));
+		addNativeProcedure("read-char",new NativeProcedureDefault((o)->((ScmTextualInputPort)car(o)).readCharacter(),
+			(o)->ScmPort.CURRENT_INPUT));
+		addNativeProcedure("peek-char",new NativeProcedureDefault((o)->((ScmTextualInputPort)car(o)).peekCharacter(),
+			(o)->ScmPort.CURRENT_INPUT));
+		addNativeProcedure("read-line",new NativeProcedureDefault((o)->((ScmTextualInputPort)car(o)).readLine(),
+			(o)->ScmPort.CURRENT_INPUT));
+		addNativeProcedure("char-ready?",new NativeProcedureDefault((o)->((ScmTextualInputPort)car(o)).ready(),
+			(o)->ScmPort.CURRENT_INPUT));
+		addNativeProcedure("read-string",new NativeProcedureDefault((o)->((ScmTextualInputPort)cadr(o)).readString(((ScmComplex)car(o)).toScmInteger()),
+			(o)->car(o),(o)->ScmPort.CURRENT_INPUT));
+		addNativeProcedure("read-u8",new NativeProcedureDefault((o)->((ScmBinaryInputPort)car(o)).readByte(),
+			(o)->ScmPort.CURRENT_INPUT));
+		addNativeProcedure("peek-u8",new NativeProcedureDefault((o)->((ScmBinaryInputPort)car(o)).peekByte(),
+			(o)->ScmPort.CURRENT_INPUT));
+		addNativeProcedure("u8-ready?",new NativeProcedureDefault((o)->((ScmBinaryInputPort)car(o)).ready(),
+			(o)->ScmPort.CURRENT_INPUT));
+		addNativeProcedure("read-bytevector",new NativeProcedureDefault((o)->((ScmBinaryInputPort)cadr(o)).readBytevector(((ScmComplex)car(o)).toScmInteger()),
+			(o)->car(o),(o)->ScmPort.CURRENT_INPUT));
+		addNativeProcedure("read-bytevector!",new NativeProcedureDefault((o)->((ScmBinaryInputPort)cadr(o)).readBytevector((ScmByteVector)car(o),((ScmComplex)cadr(o)).toScmInteger(),((ScmComplex)caddr(o)).toScmInteger()),
+			(o)->car(o),(o)->ScmPort.CURRENT_INPUT,(o)->ScmInteger.ZERO,(o)->new ScmInteger(((ScmByteVector)car(o)).getLength())));
+		addNativeProcedure("newline",new NativeProcedureDefault((o)->((ScmTextualOutputPort)car(o)).newline(),
+			(o)->ScmPort.CURRENT_OUTPUT));
+		addNativeProcedure("write-char",new NativeProcedureDefault((o)->((ScmTextualOutputPort)cadr(o)).writeCharacter((ScmCharacter)car(o)),
+			(o)->car(o),(o)->ScmPort.CURRENT_OUTPUT));
+		addNativeProcedure("write-string",new NativeProcedureDefault((o)->((ScmTextualOutputPort)cadr(o)).writeString((ScmString)car(o),((ScmComplex)caddr(o)).intValueExact(),((ScmComplex)cadddr(o)).intValueExact()),
+			(o)->car(o),(o)->ScmPort.CURRENT_OUTPUT,(o)->ScmInteger.ZERO,(o)->new ScmInteger(((ScmString)car(o)).length())));
+		addNativeProcedure("write-u8",new NativeProcedureDefault((o)->((ScmBinaryOutputPort)cadr(o)).writeByte(((ScmComplex)car(o)).toScmInteger()),
+			(o)->car(o),(o)->ScmPort.CURRENT_OUTPUT));
+		addNativeProcedure("write-bytevector",new NativeProcedureDefault((o)->((ScmBinaryOutputPort)cadr(o)).writeByteVector((ScmByteVector)car(o),((ScmComplex)caddr(o)).intValueExact(),((ScmComplex)cadddr(o)).intValueExact()),
+			(o)->car(o),(o)->ScmPort.CURRENT_OUTPUT,(o)->ScmInteger.ZERO,(o)->new ScmInteger(((ScmByteVector)car(o)).getLength())));
+		addNativeProcedure("flush-output-port",new NativeProcedureDefault((o)->{
+			if(car(o)instanceof ScmBinaryOutputPort)return ((ScmBinaryOutputPort)car(o)).flush();
+			else return ((ScmTextualOutputPort)car(o)).flush();
+		},(o)->ScmPort.CURRENT_OUTPUT));
 	}
 	private void initSystem(){
 		addNativeProcedure("features",(o)->Feature.getAll());

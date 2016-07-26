@@ -15,25 +15,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.type;
-import java.io.*;
+
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public abstract class ScmPort extends ScmObject{
-	public static ScmPort CURRENT_INPUT=new ScmTextualInputPort(new InputStreamReader(System.in));
-	public static ScmPort CURRENT_OUTPUT=new ScmTextualOutputPort(new OutputStreamWriter(System.out));
-	public static ScmPort CURRENT_ERROR=new ScmTextualOutputPort(new OutputStreamWriter(System.err));
-	private boolean closed=false;
+public class ScmError extends ScmObject{
+	public static enum ErrorType{
+		READ,FILE,OTHER
+	}
+	private final ScmString message;
+	private final ScmPairOrNil irritants;
+	private final ErrorType type;
+	public ScmError(ScmString message,ScmPairOrNil irritants,ErrorType type){
+		this.message=message;
+		this.irritants=irritants;
+		this.type=type;
+	}
+	public ScmString getErrorMessage(){
+		return message;
+	}
+	public ScmPairOrNil getIrritants(){
+		return irritants;
+	}
+	public ErrorType getType(){
+		return type;
+	}
+	@Override
+	public String toExternalRepresentation(){
+		return new ScmPair(new ScmSymbol("error"),new ScmPair(message,irritants)).toExternalRepresentation();
+	}
 	@Override
 	public boolean isSelfevaluating(){
 		return false;
-	}
-	public ScmPort close()throws IOException{
-		closed=true;
-		return this;
-	}
-	public boolean isClosed(){
-		return closed;
 	}
 }

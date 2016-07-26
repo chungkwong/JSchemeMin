@@ -28,5 +28,6 @@ public class REPL extends NativeLibrary{
 	}
 	@Override
 	protected void init(Library lib){
+		addNativeProcedure("interaction-environment",(o)->Utility.getInteractiveEnvironment());
 	}
 }

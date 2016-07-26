@@ -50,4 +50,44 @@ public abstract class ScmReal extends ScmComplex{
 	public abstract ScmReal round();
 	public abstract boolean isPositive();
 	public abstract boolean isNegative();
+	public static ScmReal max(ScmReal a,ScmReal b){
+		if(isNonNaN(a,b))
+			return compare(a,b)>0?a:b;
+		else
+			return ScmSpecialReal.POSITIVE_NAN;
+	}
+	public static ScmReal min(ScmReal a,ScmReal b){
+		if(isNonNaN(a,b))
+			return compare(a,b)<0?a:b;
+		else
+			return ScmSpecialReal.POSITIVE_NAN;
+	}
+	public static boolean less(ScmReal a,ScmReal b){
+		return isNonNaN(a,b)&&compare(a,b)<0;
+	}
+	public static boolean lessEquals(ScmReal a,ScmReal b){
+		return isNonNaN(a,b)&&compare(a,b)<=0;
+	}
+	public static boolean greater(ScmReal a,ScmReal b){
+		return isNonNaN(a,b)&&compare(a,b)>0;
+	}
+	public static boolean greaterEquals(ScmReal a,ScmReal b){
+		return isNonNaN(a,b)&&compare(a,b)>=0;
+	}
+	public static boolean equals(ScmReal a,ScmReal b){
+		return isNonNaN(a,b)&&compare(a,b)==0;
+	}
+	public static boolean isNonNaN(ScmReal a,ScmReal b){
+		return a!=ScmSpecialReal.POSITIVE_NAN&&b!=ScmSpecialReal.POSITIVE_NAN;
+	}
+	private static int compare(ScmReal a,ScmReal b){
+		if(a instanceof ScmNormalReal&&b instanceof ScmNormalReal)
+			return ((ScmNormalReal)a).compareTo((ScmNormalReal)b);
+		else if(a==b)
+			return 0;
+		else if(a==ScmSpecialReal.NEGATIVE_INF||b==ScmSpecialReal.POSITIVE_INF)
+			return -1;
+		else// if(a==ScmSpecialReal.POSITIVE_INF||b==ScmSpecialReal.NEGATIVE_INF)
+			return 1;
+	}
 }

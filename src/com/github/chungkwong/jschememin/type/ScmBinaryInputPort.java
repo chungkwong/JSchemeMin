@@ -61,8 +61,11 @@ public class ScmBinaryInputPort extends ScmPort{
 	public ScmBoolean ready() throws IOException{
 		return ScmBoolean.valueOf(in.available()>=1);
 	}
-	public void close() throws IOException{
+	@Override
+	public ScmBinaryInputPort close()throws IOException{
+		super.close();
 		in.close();
+		return this;
 	}
 	@Override
 	public String toExternalRepresentation(){
