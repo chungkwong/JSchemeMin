@@ -126,7 +126,7 @@ public class ScmList{
 			list=(ScmPairOrNil)((ScmPair)list).getCdr();
 		return list;
 	}
-	public static ScmObject memq(ScmPairOrNil list,ScmObject obj){
+	public static ScmObject memq(ScmObject obj,ScmPairOrNil list){
 		while(list instanceof ScmPair){
 			if(((ScmPair)list).getCar().equalsStrict(obj))
 				return list;
@@ -134,7 +134,7 @@ public class ScmList{
 		}
 		return ScmBoolean.FALSE;
 	}
-	public static ScmObject memv(ScmPairOrNil list,ScmObject obj){
+	public static ScmObject memv(ScmObject obj,ScmPairOrNil list){
 		while(list instanceof ScmPair){
 			if(((ScmPair)list).getCar().equalsValue(obj))
 				return list;
@@ -142,10 +142,34 @@ public class ScmList{
 		}
 		return ScmBoolean.FALSE;
 	}
-	public static ScmObject member(ScmPairOrNil list,ScmObject obj){
+	public static ScmObject member(ScmObject obj,ScmPairOrNil list){
 		while(list instanceof ScmPair){
 			if(((ScmPair)list).getCar().equals(obj))
 				return list;
+			list=(ScmPairOrNil)((ScmPair)list).getCdr();
+		}
+		return ScmBoolean.FALSE;
+	}
+	public static ScmObject assq(ScmObject obj,ScmPairOrNil list){
+		while(list instanceof ScmPair){
+			if(((ScmPair)list).getCaar().equalsStrict(obj))
+				return ((ScmPair)list).getCar();
+			list=(ScmPairOrNil)((ScmPair)list).getCdr();
+		}
+		return ScmBoolean.FALSE;
+	}
+	public static ScmObject assv(ScmObject obj,ScmPairOrNil list){
+		while(list instanceof ScmPair){
+			if(((ScmPair)list).getCaar().equalsValue(obj))
+				return ((ScmPair)list).getCar();
+			list=(ScmPairOrNil)((ScmPair)list).getCdr();
+		}
+		return ScmBoolean.FALSE;
+	}
+	public static ScmObject assoc(ScmObject obj,ScmPairOrNil list){
+		while(list instanceof ScmPair){
+			if(((ScmPair)list).getCaar().equalsStrict(obj))
+				return ((ScmPair)list).getCar();
 			list=(ScmPairOrNil)((ScmPair)list).getCdr();
 		}
 		return ScmBoolean.FALSE;

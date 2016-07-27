@@ -62,8 +62,8 @@ public class ScmComplexPolar extends ScmComplex{
 		return abs.isExact()&&radius.isExact();
 	}
 	@Override
-	public String toExternalRepresentation(){
-		return abs.toExternalRepresentation()+"@"+radius.toExternalRepresentation();
+	public String toExternalRepresentation(int radix){
+		return abs.toExternalRepresentation(radix)+"@"+radius.toExternalRepresentation(radix);
 	}
 	@Override
 	public boolean isZero(){

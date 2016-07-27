@@ -72,8 +72,8 @@ public final class ScmRational extends ScmNormalReal{
 		return true;
 	}
 	@Override
-	public String toExternalRepresentation(){
-		return numerator.toExternalRepresentation()+"/"+denominator.toExternalRepresentation();
+	public String toExternalRepresentation(int radix){
+		return numerator.toExternalRepresentation(radix)+"/"+denominator.toExternalRepresentation(radix);
 	}
 	@Override
 	public boolean needPlusSign(){

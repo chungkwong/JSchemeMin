@@ -59,16 +59,6 @@ public class ScmComplexRectangular extends ScmComplex{
 		return real.isExact()&&imag.isExact();
 	}
 	@Override
-	public String toExternalRepresentation(){
-		StringBuilder buf=new StringBuilder();
-		buf.append(real.toExternalRepresentation());
-		if(imag.needPlusSign())
-			buf.append('+');
-		buf.append(imag.toExternalRepresentation());
-		buf.append("i");
-		return buf.toString();
-	}
-	@Override
 	public boolean isZero(){
 		return real.isZero()&&imag.isZero();
 	}
@@ -87,5 +77,15 @@ public class ScmComplexRectangular extends ScmComplex{
 	@Override
 	public boolean isInfinite(){
 		return real.isInfinite()||imag.isInfinite();
+	}
+	@Override
+	public String toExternalRepresentation(int radix){
+		StringBuilder buf=new StringBuilder();
+		buf.append(real.toExternalRepresentation(radix));
+		if(imag.needPlusSign())
+			buf.append('+');
+		buf.append(imag.toExternalRepresentation(radix));
+		buf.append("i");
+		return buf.toString();
 	}
 }

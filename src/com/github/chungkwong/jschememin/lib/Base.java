@@ -233,10 +233,12 @@ public class Base extends NativeLibrary{
 		addNativeProcedure("list-tail",(o)->ScmList.tail((ScmPairOrNil)car(o),((ScmComplex)cadr(o)).intValueExact()));
 		addNativeProcedure("list-ref",(o)->ScmList.get((ScmPairOrNil)car(o),((ScmComplex)cadr(o)).intValueExact()));
 		addNativeProcedure("list-set!",(o)->{ScmList.set((ScmPair)car(o),((ScmComplex)cadr(o)).intValueExact(),caddr(o));return car(o);});
-		addNativeProcedure("memq",(o)->ScmList.memq((ScmPairOrNil)car(o),cadr(o)));
-		addNativeProcedure("memv",(o)->ScmList.memv((ScmPairOrNil)car(o),cadr(o)));
-		addNativeProcedure("member",(o)->ScmList.member((ScmPairOrNil)car(o),cadr(o)));
-
+		addNativeProcedure("memq",(o)->ScmList.memq(car(o),(ScmPairOrNil)cadr(o)));
+		addNativeProcedure("memv",(o)->ScmList.memv(car(o),(ScmPairOrNil)cadr(o)));
+		addNativeProcedure("member",(o)->ScmList.member(car(o),(ScmPairOrNil)cadr(o)));
+		addNativeProcedure("assq",(o)->ScmList.assq(car(o),(ScmPairOrNil)cadr(o)));
+		addNativeProcedure("assv",(o)->ScmList.assv(car(o),(ScmPairOrNil)cadr(o)));
+		addNativeProcedure("assoc",(o)->ScmList.assoc(car(o),(ScmPairOrNil)cadr(o)));
 
 		addNativeProcedure("list-copy",(o)->ScmList.copy((ScmPairOrNil)car(o)));
 	}

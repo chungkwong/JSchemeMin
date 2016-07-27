@@ -102,4 +102,9 @@ public abstract class ScmComplex extends ScmNumber{
 	}
 	public abstract boolean isFinite();
 	public abstract boolean isInfinite();
+	@Override
+	public String toExternalRepresentation(){
+		return toExternalRepresentation(10);
+	}
+	public abstract String toExternalRepresentation(int radix);
 }

@@ -462,3 +462,6 @@
                   more-clauses ...)
        (cond-expand more-clauses ...))))
 
+(define (values . things)
+  (call-with-current-continuation
+    (lambda (cont) (apply cont things))))

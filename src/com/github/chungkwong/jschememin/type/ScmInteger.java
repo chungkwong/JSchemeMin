@@ -111,8 +111,8 @@ public final class ScmInteger extends ScmNormalReal{
 		return true;
 	}
 	@Override
-	public String toExternalRepresentation(){
-		return value.toString();
+	public String toExternalRepresentation(int radix){
+		return value.toString(radix);
 	}
 	@Override
 	public boolean needPlusSign(){

@@ -109,7 +109,7 @@ public class ScmFloatingPointNumber extends ScmNormalReal{
 		return false;
 	}
 	@Override
-	public String toExternalRepresentation(){
+	public String toExternalRepresentation(int radix){
 		return value.toString();
 	}
 	@Override
