@@ -152,4 +152,42 @@ public final class ScmString extends ScmObject implements Token,Comparable<ScmSt
 		}
 		return new ScmVector(vector);
 	}
+	public static ScmString map(ScmPairOrNil lists,Evaluable proc){
+		StringBuilder buf=new StringBuilder();
+		int numberOfString=ScmList.getLength(lists);
+		PrimitiveIterator.OfInt[] lsts=new PrimitiveIterator.OfInt[numberOfString];
+		int j=0;
+		while(lists instanceof ScmPair){
+			lsts[j++]=((ScmString)((ScmPair)lists).getCar()).getValue().codePoints().iterator();
+			lists=(ScmPairOrNil)((ScmPair)lists).getCdr();
+		}
+		while(true){
+			ScmPairOrNil item=ScmNil.NIL;
+			for(int i=numberOfString-1;i>=0;i--){
+				if(lsts[i].hasNext()){
+					item=new ScmPair(new ScmCharacter(lsts[i].nextInt()),item);
+				}else
+					return new ScmString(buf.toString());
+			}
+			buf.appendCodePoint(((ScmCharacter)proc.apply(item,null)).getCodePoint());
+		}
+	}
+	public static void foreach(ScmPairOrNil lists,Evaluable proc){
+		int numberOfString=ScmList.getLength(lists);
+		PrimitiveIterator.OfInt[] lsts=new PrimitiveIterator.OfInt[numberOfString];
+		int j=0;
+		while(lists instanceof ScmPair){
+			lsts[j++]=((ScmString)((ScmPair)lists).getCar()).getValue().codePoints().iterator();
+			lists=(ScmPairOrNil)((ScmPair)lists).getCdr();
+		}
+		while(true){
+			ScmPairOrNil item=ScmNil.NIL;
+			for(int i=numberOfString-1;i>=0;i--){
+				if(lsts[i].hasNext()){
+					item=new ScmPair(new ScmCharacter(lsts[i].nextInt()),item);
+				}else
+					return;
+			}
+		}
+	}
 }

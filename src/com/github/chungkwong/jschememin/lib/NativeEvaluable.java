@@ -21,7 +21,7 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class NativeEvaluable extends ScmObject implements Evaluable{
+public class NativeEvaluable extends Evaluable{
 	private final NativeProcedure proc;
 	public NativeEvaluable(NativeProcedure proc){
 		this.proc=proc;

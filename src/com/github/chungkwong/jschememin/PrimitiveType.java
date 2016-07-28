@@ -20,17 +20,13 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public abstract class PrimitiveType extends ScmObject implements Evaluable{
+public abstract class PrimitiveType extends Evaluable{
 	private final ScmSymbol keyword;
 	public PrimitiveType(ScmSymbol keyword){
 		this.keyword=keyword;
 	}
 	public ScmSymbol getKeyword(){
 		return keyword;
-	}
-	@Override
-	public boolean isSelfevaluating(){
-		return false;
 	}
 	@Override
 	public String toExternalRepresentation(){

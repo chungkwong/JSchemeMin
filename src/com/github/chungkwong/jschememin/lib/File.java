@@ -35,5 +35,6 @@ public class File extends NativeLibrary{
 		addNativeProcedure("open-binary-input-file",(o)->new ScmBinaryInputPort(((ScmString)car(o)).getValue()));
 		addNativeProcedure("open-output-file",(o)->new ScmTextualOutputPort(((ScmString)car(o)).getValue()));
 		addNativeProcedure("open-binary-output-file",(o)->new ScmBinaryOutputPort(((ScmString)car(o)).getValue()));
+		addDeriveFile("/com/github/chungkwong/jschememin/lib/file_derive.scm");
 	}
 }

@@ -1,6 +1,6 @@
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
-public final class ScmProcedure extends ScmObject implements Evaluable{
+public final class ScmProcedure extends Evaluable{
 	private final Environment parent;
 	private final ScmObject formal;
 	private final ScmPair body;

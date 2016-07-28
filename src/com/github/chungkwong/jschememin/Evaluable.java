@@ -20,6 +20,17 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public interface Evaluable{
-	void call(Environment env,Continuation cont,Object pointer,ScmObject param);
+public abstract class Evaluable extends ScmObject{
+	public ScmObject apply(ScmObject param,Environment env){
+		Continuation cont=new Continuation();
+		cont.callInit(this,param);
+		while(cont.hasNext())
+			cont.evalNext(env);
+		return cont.getValue();
+	}
+	@Override
+	public boolean isSelfevaluating(){
+		return false;
+	}
+	public abstract void call(Environment env,Continuation cont,Object pointer,ScmObject param);
 }

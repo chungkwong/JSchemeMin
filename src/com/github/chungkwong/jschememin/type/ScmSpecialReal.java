@@ -74,7 +74,7 @@ public abstract class ScmSpecialReal extends ScmReal{
 	}
 	public static class PositiveNaN extends ScmSpecialReal{
 		@Override
-		public String toExternalRepresentation(){
+		public String toExternalRepresentation(int radix){
 			return "+nan.0";
 		}
 		@Override
@@ -132,7 +132,7 @@ public abstract class ScmSpecialReal extends ScmReal{
 	}
 	public static class PositiveInf extends ScmSpecialReal{
 		@Override
-		public String toExternalRepresentation(){
+		public String toExternalRepresentation(int radix){
 			return "+inf.0";
 		}
 		@Override
@@ -197,7 +197,7 @@ public abstract class ScmSpecialReal extends ScmReal{
 	}
 	public static class NegativeInf extends ScmSpecialReal{
 		@Override
-		public String toExternalRepresentation(){
+		public String toExternalRepresentation(int radix){
 			return "-inf.0";
 		}
 		@Override

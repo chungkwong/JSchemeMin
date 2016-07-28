@@ -105,4 +105,26 @@ public class Utility{
 	static final Environment getInteractiveEnvironment(){
 		return new Environment(true);
 	}
+	static final String toRadixPrefix(int radix){
+		switch(radix){
+			case 2:return "#b";
+			case 8:return "#o";
+			case 10:return "#d";
+			case 16:return "#x";
+			default:throw new RuntimeException();
+		}
+	}
+	static final ScmObject getRollbackProcedure(Continuation checkpoint){
+		return new Evaluable(){
+			@Override
+			public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
+				cont.reset(checkpoint);
+				cont.ret(param);
+			}
+			@Override
+			public String toExternalRepresentation(){
+				throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+			}
+		};
+	}
 }

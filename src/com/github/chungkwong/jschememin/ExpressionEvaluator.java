@@ -20,7 +20,7 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class ExpressionEvaluator implements Evaluable{
+public class ExpressionEvaluator extends Evaluable{
 	public static final ExpressionEvaluator INSTANCE=new ExpressionEvaluator();
 	private ExpressionEvaluator(){
 	}
@@ -49,7 +49,7 @@ public class ExpressionEvaluator implements Evaluable{
 		}
 	}
 	private void evaluateRemaining(BackTrace b,ScmObject expr,Environment env,Continuation cont){
-		if(expr instanceof Evaluable){
+		if(expr instanceof PrimitiveType){
 			((Evaluable)expr).call(env,cont,null,b.getAfter());
 		}else if(expr instanceof ScmSyntaxRules){
 			cont.callTail(this,((ScmSyntaxRules)expr).tranform((ScmPairOrNil)b.getAfter()));
@@ -69,6 +69,10 @@ public class ExpressionEvaluator implements Evaluable{
 				cont.call(this,new BackTrace(b.getBefore(),newBeforeLast,(ScmPairOrNil)((ScmPair)b.getAfter()).getCdr()),((ScmPair)b.getAfter()).getCar());
 			}
 		}
+	}
+	@Override
+	public String toExternalRepresentation(){
+		return "apply";
 	}
 	class BackTrace{
 		private final ScmPair before, beforeLast;

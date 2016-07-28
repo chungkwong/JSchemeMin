@@ -15,22 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.primitive;
-import com.github.chungkwong.jschememin.*;
-import com.github.chungkwong.jschememin.type.*;
+
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class DefineSyntax extends PrimitiveType{
-	public static final DefineSyntax INSTANCE=new DefineSyntax();
-	public DefineSyntax(){
-		super(new ScmSymbol("define-syntax"));
-	}
-	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
-		ScmSyntaxRules rule=new ScmSyntaxRules((ScmPair)((ScmPair)expr).getCddr());
-		env.add((ScmSymbol)((ScmPair)expr).getCar(),rule);
-		cont.ret(rule);
-	}
+public class Apply{
 
 }
