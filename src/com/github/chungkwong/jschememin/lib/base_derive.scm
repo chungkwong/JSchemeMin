@@ -495,60 +495,67 @@
 (define (assq obj lst) (assoc obj list eq?))
 (define (assv obj lst) (assoc obj list eqv?))
 
-(define (foreach proc . lists)
-        (if (assq? '() lists)
-            #t
-            (begin (apply proc (map car lists))
-                   (foreach proc (map cdr lists)))))
-
-(define (vector-foreach proc . lists)
-        (let vector-foreach-range
-             (lambda (proc lists start end)
-                     (if (< start end)
-                         #t
-                         (begin (apply proc (map (lambda (list) (vector-ref list start)) lists))
-                                (vector-foreach-range lists (+ start 1) end)))))
-        (vector-foreach-range lists 0 (apply min (map vector-length lists))))
-
-(define (string-foreach proc . lists)
-        (let string-foreach-range
-             (lambda (proc lists start end)
-                     (if (< start end)
-                         #t
-                         (begin (apply proc (map (lambda (list) (string-ref list start)) lists))
-                                (string-foreach-range lists (+ start 1) end)))))
-        (string-foreach-range lists 0 (apply min (map string-length lists))))
-
 (define (map proc . lists)
-        (let ((simple-map (lambda (proc lsts start end)
-                                  (if (null? lsts)
+        (letrec ((simple-map-acc (lambda (proc lsts start end)
+                                     (if (null? lsts)
+                                         start
+                                         (begin (set-cdr! end (list (proc (car lsts))))
+                                                (simple-map-acc proc (cdr lsts) start (cdr end))))))
+                 (simple-map (lambda (proc list)
+                                     (if (null? list)
+                                         '()
+                                         (let ((p (cons (proc (car list)) '())))
+                                              (simple-map-acc proc (cdr list) p p)))))
+                 (bad-map (lambda (lsts start end)
+                                  (if (memq '() lsts)
                                       start
-                                      (begin (set-cdr! end (list (proc (car lsts))))
-                                             (simple-map proc (cdr lsts) start (cdr end)))))))
-        (if (null? (cdr lists))
-            (if (null? (car lists))
-                '()
-                (let ((p (cons (caar lists) '())))
-                     (simple-map proc (cdar lists) p p)))
-            (let ((bad-map ))
-)
+                                      (begin (set-cdr! end (list (apply proc (simple-map car lsts))))
+                                                 (bad-map (simple-map cdr lsts) start (cdr end)))))))
+                (if (memq '() lists)
+                    '()
+                    (let ((p (cons (apply proc (simple-map car lists)) '())))
+                         (bad-map (simple-map cdr lists) p p)))))
 
 (define (vector-map proc . lists)
-        (letrec vector-map-range
-             (lambda (proc lists start end acc)
+        (letrec ((vector-map-range
+             (lambda (lists start end acc)
                      (if (< start end)
-                         acc
                          (begin (vector-set! acc start (apply proc (map (lambda (list) (vector-ref list start)) lists)))
-                                (vector-map-range lists (+ start 1) end acc))))
-             len (apply min (map vector-length lists)))
-        (vector-map-range lists 0 len (make-vector len)))
+                                (vector-map-range lists (+ start 1) end acc))
+                        acc)))
+             (len (apply min (map vector-length lists))))
+        (vector-map-range lists 0 len (make-vector len))))
 
 (define (string-map proc . lists)
-        (letrec string-map-range
-             (lambda (proc lists start end acc)
+        (letrec ((string-map-range
+             (lambda (lists start end acc)
                      (if (< start end)
-                         acc
                          (begin (string-set! acc start (apply proc (map (lambda (list) (string-ref list start)) lists)))
-                                (string-map-range lists (+ start 1) end acc))))
-             len (apply min (map string-length lists)))
-        (string-map-range lists 0 len (make-string len)))
+                                (string-map-range lists (+ start 1) end acc))
+                        acc)))
+             (len (apply min (map string-length lists))))
+        (string-map-range lists 0 len (make-string len))))
+
+(define (foreach proc . lists)
+        (if (memq '() lists)
+            #t
+            (begin (apply proc (map car lists))
+                   (apply foreach proc (map cdr lists)))))
+
+(define (vector-foreach proc . lists)
+        (letrec ((vector-foreach-range
+                  (lambda (lists start end)
+                     (if (< start end)
+                        (begin (apply proc (map (lambda (list) (vector-ref list start)) lists))
+                                (vector-foreach-range lists (+ start 1) end))
+                         #t))))
+        (vector-foreach-range lists 0 (apply min (map vector-length lists)))))
+
+(define (string-foreach proc . lists)
+        (letrec ((string-foreach-range
+                  (lambda (lists start end)
+                     (if (< start end)
+                        (begin (apply proc (map (lambda (list) (string-ref list start)) lists))
+                                (string-foreach-range lists (+ start 1) end))
+                         #t))))
+        (string-foreach-range lists 0 (apply min (map string-length lists)))))

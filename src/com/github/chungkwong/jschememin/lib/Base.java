@@ -314,12 +314,6 @@ public class Base extends NativeLibrary{
 	private void initControl(){
 		addNativeProcedure("procedure?",(o)->ScmBoolean.valueOf(car(o) instanceof Evaluable));
 		addNativeProcedure("apply",(o)->((Evaluable)car(o)).apply(cadr(o),null));
-		addNativeProcedure("map",(o)->ScmList.map((ScmPairOrNil)cadr(o),(Evaluable)car(o)));
-		addNativeProcedure("foreach",(o)->{ScmList.foreach((ScmPairOrNil)cadr(o),(Evaluable)car(o));return ScmBoolean.TRUE;});
-		addNativeProcedure("vector-map",(o)->ScmVector.map((ScmPairOrNil)cadr(o),(Evaluable)car(o)));
-		addNativeProcedure("vector-foreach",(o)->{ScmVector.foreach((ScmPairOrNil)cadr(o),(Evaluable)car(o));return ScmBoolean.TRUE;});
-		addNativeProcedure("string-map",(o)->ScmString.map((ScmPairOrNil)cadr(o),(Evaluable)car(o)));
-		addNativeProcedure("string-foreach",(o)->{ScmString.foreach((ScmPairOrNil)cadr(o),(Evaluable)car(o));return ScmBoolean.TRUE;});
 		addNative(new ScmSymbol("call-with-current-continuation"),null);
 		addNative(new ScmSymbol("call/cc"),null);
 

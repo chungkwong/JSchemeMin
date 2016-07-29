@@ -21,13 +21,13 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Apply extends PrimitiveType{
-	public static final Apply INSTANCE=new Apply();
-	private Apply(){
-		super(new ScmSymbol("apply"));
+public class CallWithCurrentContinuation extends PrimitiveType{
+	public static final CallWithCurrentContinuation INSTANCE=new CallWithCurrentContinuation();
+	private CallWithCurrentContinuation(){
+		super(new ScmSymbol("call-with-current-continuation"));
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 }
