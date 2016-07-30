@@ -21,19 +21,37 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Apply extends PrimitiveType{
-	public static final Apply INSTANCE=new Apply();
-	private Apply(){
-		super(new ScmSymbol("apply"));
+public class Quasiquote extends PrimitiveType{
+	public static final Quasiquote INSTANCE=new Quasiquote();
+	private static final ScmSymbol QUASIQUOTE=new ScmSymbol("quasiquote");
+	private static final ScmSymbol UNQUOTE=new ScmSymbol("unquote");
+	private static final ScmSymbol UNQUOTE_SLICING=new ScmSymbol("unquote-slicing");
+	private Quasiquote(){
+		super(QUASIQUOTE);
+
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		ScmListBuilder buf=new ScmListBuilder();
-		ScmPair curr=(ScmPair)((ScmPair)param).getCdr();
-		for(;curr.getCdr() instanceof ScmPair;curr=(ScmPair)curr.getCdr()){
-			buf.add(curr.getCar());
-		}
-		ScmList.forEach(curr.getCar(),(o)->buf.add(o));
-		cont.callTail(ExpressionEvaluator.INSTANCE,new ScmPair(((ScmPair)param).getCar(),buf.toList()));
+		cont.ret(quasiquote(((ScmPair)param).getCar(),1));
+	}
+	public static ScmObject quasiquote(ScmObject obj,int depth){
+		/*if(obj.isSelfevaluating())
+			return obj;
+		else if(obj instanceof ScmVector){
+			ArrayList<ScmObject> vector=new ArrayList<>();
+
+		}else if(obj instanceof ScmPair){
+			if(((ScmPair)obj).getCar().equals(UNQUOTE)){
+
+			}else if(((ScmPair)obj).getCar().equals(UNQUOTE_SLICING)){
+
+			}else if(((ScmPair)obj).getCar().equals(QUASIQUOTE)){
+
+			}else{
+
+			}
+		}else
+			throw new RuntimeException();*/
+		return obj;//TODO
 	}
 }

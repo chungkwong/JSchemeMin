@@ -22,7 +22,7 @@ package com.github.chungkwong.jschememin.type;
  */
 public class ScmError extends ScmObject{
 	public static enum ErrorType{
-		READ,FILE,OTHER
+		READ,FILE,SYNTAX,OTHER
 	}
 	private final ScmString message;
 	private final ScmPairOrNil irritants;
@@ -47,6 +47,28 @@ public class ScmError extends ScmObject{
 	}
 	@Override
 	public boolean isSelfevaluating(){
-		return false;
+		return true;
+	}
+	public static RuntimeException toException(ScmObject obj){
+		return new ScmException(obj);
+	}
+	public static ScmObject toScmObject(RuntimeException obj){
+		if(obj instanceof ScmException)
+			return ((ScmException)obj).getObject();
+		return new ScmError(new ScmString(obj.getMessage()),ScmNil.NIL,ErrorType.OTHER);
+	}
+	private static class ScmException extends RuntimeException{
+		private final ScmObject obj;
+		public ScmException(ScmObject obj){
+			super();
+			this.obj=obj;
+		}
+		public ScmObject getObject(){
+			return obj;
+		}
+		@Override
+		public String getMessage(){
+			return obj.toExternalRepresentation();
+		}
 	}
 }

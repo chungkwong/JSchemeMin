@@ -21,19 +21,27 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Apply extends PrimitiveType{
-	public static final Apply INSTANCE=new Apply();
-	private Apply(){
-		super(new ScmSymbol("apply"));
+public class WithExceptionHandler extends PrimitiveType{
+	public static final WithExceptionHandler INSTANCE=new WithExceptionHandler();
+	private WithExceptionHandler(){
+		super(new ScmSymbol("with-exception-handler"));
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		ScmListBuilder buf=new ScmListBuilder();
-		ScmPair curr=(ScmPair)((ScmPair)param).getCdr();
-		for(;curr.getCdr() instanceof ScmPair;curr=(ScmPair)curr.getCdr()){
-			buf.add(curr.getCar());
+		if(pointer==null)
+			cont.call(ExpressionEvaluator.INSTANCE,((ScmPair)param).getCar(),((ScmPair)param).getCdr());
+		else if(pointer instanceof ErrorInfo)
+			cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(((ErrorInfo)pointer).getHandler(),((ScmPair)param).getCar()));
+		else
+			cont.ret(((ScmPair)param).getCar());
+	}
+	public static class ErrorInfo{
+		private final ScmObject handler;
+		public ErrorInfo(ScmObject handler){
+			this.handler=handler;
 		}
-		ScmList.forEach(curr.getCar(),(o)->buf.add(o));
-		cont.callTail(ExpressionEvaluator.INSTANCE,new ScmPair(((ScmPair)param).getCar(),buf.toList()));
+		public ScmObject getHandler(){
+			return handler;
+		}
 	}
 }

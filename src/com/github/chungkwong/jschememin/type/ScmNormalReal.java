@@ -22,6 +22,8 @@ package com.github.chungkwong.jschememin.type;
  */
 public abstract class ScmNormalReal extends ScmReal implements Comparable<ScmNormalReal>{
 	@Override
+	public abstract ScmNormalReal negate();
+	@Override
 	public abstract ScmInteger floor();
 	@Override
 	public abstract ScmInteger ceiling();

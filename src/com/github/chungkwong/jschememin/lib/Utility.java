@@ -114,17 +114,4 @@ public class Utility{
 			default:throw new RuntimeException();
 		}
 	}
-	static final ScmObject getRollbackProcedure(Continuation checkpoint){
-		return new Evaluable(){
-			@Override
-			public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-				cont.reset(checkpoint);
-				cont.ret(param);
-			}
-			@Override
-			public String toExternalRepresentation(){
-				throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-			}
-		};
-	}
 }

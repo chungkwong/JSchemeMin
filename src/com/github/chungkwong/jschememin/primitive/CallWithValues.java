@@ -21,19 +21,14 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Apply extends PrimitiveType{
-	public static final Apply INSTANCE=new Apply();
-	private Apply(){
-		super(new ScmSymbol("apply"));
+public class CallWithValues extends PrimitiveType{
+	public static final CallWithValues INSTANCE=new CallWithValues();
+	private CallWithValues(){
+		super(new ScmSymbol("call-with-values"));
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		ScmListBuilder buf=new ScmListBuilder();
-		ScmPair curr=(ScmPair)((ScmPair)param).getCdr();
-		for(;curr.getCdr() instanceof ScmPair;curr=(ScmPair)curr.getCdr()){
-			buf.add(curr.getCar());
-		}
-		ScmList.forEach(curr.getCar(),(o)->buf.add(o));
-		cont.callTail(ExpressionEvaluator.INSTANCE,new ScmPair(((ScmPair)param).getCar(),buf.toList()));
+		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(((ScmPair)param).getCadr()));
+		cont.call(ExpressionEvaluator.INSTANCE,null,ScmList.toList(((ScmPair)param).getCar()));
 	}
 }

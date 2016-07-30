@@ -203,7 +203,15 @@ public final class ScmRational extends ScmNormalReal{
 	public int signum(){
 		return numerator.signum();
 	}
-	public static ScmRational rationalize(ScmReal x,ScmReal error){
-
+	public static ScmReal rationalize(ScmNormalReal x,ScmReal error){
+		if(x.signum()<0)
+			return rationalize(x.negate(),error).negate();
+		ScmInteger d=ScmInteger.ONE;
+		ScmInteger n=x.floor();
+		while(x.multiply(d).subtract(n).subtract(error.multiply(d)).isPositive()){
+			d=d.add(ScmInteger.ONE);
+			n=(ScmInteger)x.multiply(d).floor();
+		}
+		return new ScmRational(n,d);
 	}
 }

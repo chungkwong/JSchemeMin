@@ -21,13 +21,6 @@ import com.github.chungkwong.jschememin.type.*;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public abstract class Evaluable extends ScmObject{
-	public ScmObject apply(ScmObject param,Environment env){
-		Continuation cont=new Continuation();
-		cont.callInit(this,param);
-		while(cont.hasNext())
-			cont.evalNext(env);
-		return cont.getValue();
-	}
 	@Override
 	public boolean isSelfevaluating(){
 		return false;

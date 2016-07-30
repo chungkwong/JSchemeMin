@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin;
+import com.github.chungkwong.jschememin.primitive.*;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
 /**
@@ -66,10 +67,21 @@ public class Continuation extends ScmObject{
 		pointers.clear();
 		actives.addAll(cont.actives);
 		pointers.addAll(cont.pointers);
-		arguments=cont.arguments;
+		arguments=cont.arguments;//TODO dynamic-wind
 	}
 	public void evalNext(Environment env){
-		actives.peek().call(env,this,pointers.peek(),arguments);
+		try{
+			actives.peek().call(env,this,pointers.peek(),arguments);
+		}catch(RuntimeException ex){
+			while(!actives.isEmpty()&&!(actives.peek() instanceof WithExceptionHandler)){
+				actives.pop();
+				pointers.pop();
+			}
+			arguments=ScmList.toList(ScmError.toScmObject(ex));
+			if(!actives.isEmpty()){
+				pointers.push(new WithExceptionHandler.ErrorInfo((ScmObject)pointers.pop()));
+			}
+		}
 	}
 	public boolean hasNext(){
 		return !pointers.isEmpty();
@@ -87,5 +99,9 @@ public class Continuation extends ScmObject{
 	@Override
 	public boolean isSelfevaluating(){
 		return false;
+	}
+	public ScmObject getErrorHandler(){
+		int index=actives.search(WithExceptionHandler.INSTANCE);
+		return index>=0?((WithExceptionHandler.ErrorInfo)pointers.get(index)).getHandler():null;
 	}
 }

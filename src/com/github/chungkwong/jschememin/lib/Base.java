@@ -21,6 +21,7 @@ import static com.github.chungkwong.jschememin.lib.Utility.cadddr;
 import static com.github.chungkwong.jschememin.lib.Utility.caddr;
 import static com.github.chungkwong.jschememin.lib.Utility.cadr;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
+import static com.github.chungkwong.jschememin.lib.Utility.cdr;
 import com.github.chungkwong.jschememin.primitive.*;
 import com.github.chungkwong.jschememin.type.*;
 import java.io.*;
@@ -310,16 +311,24 @@ public class Base extends NativeLibrary{
 		addPrimitiveType(DefineLibrary.INSTANCE);
 		addPrimitiveType(Import.INSTANCE);
 		addPrimitiveType(SyntaxRule.INSTANCE);
+		addPrimitiveType(Apply.INSTANCE);
+		addPrimitiveType(CallWithCurrentContinuation.INSTANCE);
+		addPrimitiveType(WithExceptionHandler.INSTANCE);
+		addPrimitiveType(Quasiquote.INSTANCE);
+		addPrimitiveType(RaiseContinuable.INSTANCE);
+		addPrimitiveType(CallWithValues.INSTANCE);
 	}
 	private void initControl(){
 		addNativeProcedure("procedure?",(o)->ScmBoolean.valueOf(car(o) instanceof Evaluable));
-		addNativeProcedure("apply",(o)->((Evaluable)car(o)).apply(cadr(o),null));
-		addNative(new ScmSymbol("call-with-current-continuation"),null);
-		addNative(new ScmSymbol("call/cc"),null);
+		addPrimitiveType(Apply.INSTANCE);
+
 
 
 	}
 	private void initException(){
+		addNativeProcedure("raise",(o)->{throw ScmError.toException(car(o));});
+		addNativeProcedure("error",(o)->{throw ScmError.toException(new ScmError((ScmString)car(o),(ScmPairOrNil)cdr(o),ScmError.ErrorType.OTHER));});
+		addNativeProcedure("syntax-error",(o)->{throw ScmError.toException(new ScmError((ScmString)car(o),(ScmPairOrNil)cdr(o),ScmError.ErrorType.SYNTAX));});
 		addNativeProcedure("error-object?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmError));
 		addNativeProcedure("file-error?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmError&&((ScmError)car(o)).getType()==ScmError.ErrorType.FILE));
 		addNativeProcedure("read-error?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmError&&((ScmError)car(o)).getType()==ScmError.ErrorType.READ));

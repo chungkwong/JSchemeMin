@@ -1,13 +1,5 @@
-apply
-call-with-current-continuation
-call-with-values
 dynamic-wind
-error
 quasiquote
-raise-continuable
-raise
 syntax-rules
 unquote
-with-exception-handler
-syntax-error
 unquote-splicing

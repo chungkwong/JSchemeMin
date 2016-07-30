@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.type;
-import com.github.chungkwong.jschememin.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -127,54 +126,6 @@ public class ScmList{
 			list=(ScmPairOrNil)((ScmPair)list).getCdr();
 		return list;
 	}
-	public static ScmObject memq(ScmObject obj,ScmPairOrNil list){
-		while(list instanceof ScmPair){
-			if(((ScmPair)list).getCar().equalsStrict(obj))
-				return list;
-			list=(ScmPairOrNil)((ScmPair)list).getCdr();
-		}
-		return ScmBoolean.FALSE;
-	}
-	public static ScmObject memv(ScmObject obj,ScmPairOrNil list){
-		while(list instanceof ScmPair){
-			if(((ScmPair)list).getCar().equalsValue(obj))
-				return list;
-			list=(ScmPairOrNil)((ScmPair)list).getCdr();
-		}
-		return ScmBoolean.FALSE;
-	}
-	public static ScmObject member(ScmObject obj,ScmPairOrNil list){
-		while(list instanceof ScmPair){
-			if(((ScmPair)list).getCar().equals(obj))
-				return list;
-			list=(ScmPairOrNil)((ScmPair)list).getCdr();
-		}
-		return ScmBoolean.FALSE;
-	}
-	public static ScmObject assq(ScmObject obj,ScmPairOrNil list){
-		while(list instanceof ScmPair){
-			if(((ScmPair)list).getCaar().equalsStrict(obj))
-				return ((ScmPair)list).getCar();
-			list=(ScmPairOrNil)((ScmPair)list).getCdr();
-		}
-		return ScmBoolean.FALSE;
-	}
-	public static ScmObject assv(ScmObject obj,ScmPairOrNil list){
-		while(list instanceof ScmPair){
-			if(((ScmPair)list).getCaar().equalsValue(obj))
-				return ((ScmPair)list).getCar();
-			list=(ScmPairOrNil)((ScmPair)list).getCdr();
-		}
-		return ScmBoolean.FALSE;
-	}
-	public static ScmObject assoc(ScmObject obj,ScmPairOrNil list){
-		while(list instanceof ScmPair){
-			if(((ScmPair)list).getCaar().equalsStrict(obj))
-				return ((ScmPair)list).getCar();
-			list=(ScmPairOrNil)((ScmPair)list).getCdr();
-		}
-		return ScmBoolean.FALSE;
-	}
 	public static ScmPair getLastListNode(ScmPair scmPair){
 		ScmPair node=scmPair;
 		while(node.getCdr() instanceof ScmPair){
@@ -246,46 +197,5 @@ public class ScmList{
 			}
 		};
 		return StreamSupport.stream(iter.spliterator(),false);
-	}
-	public static ScmPairOrNil map(ScmPairOrNil lists,Evaluable proc){
-		ScmListBuilder buf=new ScmListBuilder();
-		int numberOfList=ScmList.getLength(lists);
-		ScmPairOrNil[] lsts=new ScmPairOrNil[numberOfList];
-		int j=0;
-		while(lists instanceof ScmPair){
-			lsts[j++]=(ScmPairOrNil)((ScmPair)lists).getCar();
-			lists=(ScmPairOrNil)((ScmPair)lists).getCdr();
-		}
-		while(true){
-			ScmPairOrNil item=ScmNil.NIL;
-			for(int i=numberOfList-1;i>=0;i--){
-				if(lsts[i]instanceof ScmPair){
-					item=new ScmPair(((ScmPair)lsts[i]).getCar(),item);
-					lsts[i]=(ScmPairOrNil)((ScmPair)lsts[i]).getCdr();
-				}else
-					return buf.toList();
-			}
-			buf.add(proc.apply(item,null));
-		}
-	}
-	public static void foreach(ScmPairOrNil lists,Evaluable proc){
-		int numberOfList=ScmList.getLength(lists);
-		ScmPairOrNil[] lsts=new ScmPairOrNil[numberOfList];
-		int j=0;
-		while(lists instanceof ScmPair){
-			lsts[j++]=(ScmPairOrNil)((ScmPair)lists).getCar();
-			lists=(ScmPairOrNil)((ScmPair)lists).getCdr();
-		}
-		while(true){
-			ScmPairOrNil item=ScmNil.NIL;
-			for(int i=numberOfList-1;i>=0;i--){
-				if(lsts[i]instanceof ScmPair){
-					item=new ScmPair(((ScmPair)lsts[i]).getCar(),item);
-					lsts[i]=(ScmPairOrNil)((ScmPair)lsts[i]).getCdr();
-				}else
-					return;
-			}
-			proc.apply(item,null);
-		}
 	}
 }

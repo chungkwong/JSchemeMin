@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.type;
-import com.github.chungkwong.jschememin.*;
 import java.util.*;
 import java.util.stream.*;
 public final class ScmVector extends ScmObject{
@@ -124,45 +123,5 @@ public final class ScmVector extends ScmObject{
 	public ScmString toScmString(int start,int end){
 		return new ScmString(vector.subList(start,end).stream().mapToInt((c)->((ScmCharacter)c).getCodePoint()).
 				collect(StringBuilder::new,StringBuilder::appendCodePoint,StringBuilder::append).toString());
-	}
-	public static ScmVector map(ScmPairOrNil lists,Evaluable proc){
-		ArrayList<ScmObject> buf=new ArrayList<>();
-		int numberOfList=ScmList.getLength(lists);
-		ScmVector[] lsts=new ScmVector[numberOfList];
-		int j=0;
-		while(lists instanceof ScmPair){
-			lsts[j++]=(ScmVector)((ScmPair)lists).getCar();
-			lists=(ScmPairOrNil)((ScmPair)lists).getCdr();
-		}
-		j=0;
-		while(true){
-			ScmPairOrNil item=ScmNil.NIL;
-			for(int i=numberOfList-1;i>=0;i--){
-				if(j++<lsts[i].getLength()){
-					item=new ScmPair(lsts[i].get(j),item);
-				}else
-					return new ScmVector(buf);
-			}
-			buf.add(proc.apply(item,null));
-		}
-	}
-	public static void foreach(ScmPairOrNil lists,Evaluable proc){
-		int numberOfList=ScmList.getLength(lists);
-		ScmVector[] lsts=new ScmVector[numberOfList];
-		int j=0;
-		while(lists instanceof ScmPair){
-			lsts[j++]=(ScmVector)((ScmPair)lists).getCar();
-			lists=(ScmPairOrNil)((ScmPair)lists).getCdr();
-		}
-		j=0;
-		while(true){
-			ScmPairOrNil item=ScmNil.NIL;
-			for(int i=numberOfList-1;i>=0;i--){
-				if(j++<lsts[i].getLength()){
-					item=new ScmPair(lsts[i].get(j),item);
-				}else
-					return;
-			}
-		}
 	}
 }

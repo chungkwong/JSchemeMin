@@ -480,8 +480,8 @@
                                lst
                                (member obj (cdr lst) compare))))))
 
-(define (memq obj lst) (member obj list eq?))
-(define (memv obj lst) (member obj list eqv?))
+(define (memq obj lst) (member obj lst eq?))
+(define (memv obj lst) (member obj lst eqv?))
 
 (define assoc
   (case-lambda
@@ -492,8 +492,8 @@
                                (car lst)
                                (assoc obj (cdr lst) compare))))))
 
-(define (assq obj lst) (assoc obj list eq?))
-(define (assv obj lst) (assoc obj list eqv?))
+(define (assq obj lst) (assoc obj lst eq?))
+(define (assv obj lst) (assoc obj lst eqv?))
 
 (define (map proc . lists)
         (letrec ((simple-map-acc (lambda (proc lsts start end)
@@ -559,3 +559,4 @@
                                 (string-foreach-range lists (+ start 1) end))
                          #t))))
         (string-foreach-range lists 0 (apply min (map string-length lists)))))
+(define call/cc call-with-current-continuation)
