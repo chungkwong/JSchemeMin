@@ -146,20 +146,20 @@ public class ScmFloatingPointNumber extends ScmNormalReal{
 		return this;
 	}
 	@Override
-	public ScmInteger floor(){
-		return new ScmInteger(value.setScale(0,RoundingMode.FLOOR).toBigInteger());
+	public ScmFloatingPointNumber floor(){
+		return new ScmFloatingPointNumber(value.setScale(0,RoundingMode.FLOOR));
 	}
 	@Override
-	public ScmInteger ceiling(){
-		return new ScmInteger(value.setScale(0,RoundingMode.CEILING).toBigInteger());
+	public ScmFloatingPointNumber ceiling(){
+		return new ScmFloatingPointNumber(value.setScale(0,RoundingMode.CEILING));
 	}
 	@Override
-	public ScmInteger truncate(){
-		return new ScmInteger(value.setScale(0,RoundingMode.DOWN).toBigInteger());
+	public ScmFloatingPointNumber truncate(){
+		return new ScmFloatingPointNumber(value.setScale(0,RoundingMode.DOWN));
 	}
 	@Override
-	public ScmInteger round(){
-		return new ScmInteger(value.setScale(0,RoundingMode.HALF_EVEN).toBigInteger());
+	public ScmFloatingPointNumber round(){
+		return new ScmFloatingPointNumber(value.setScale(0,RoundingMode.HALF_EVEN));
 	}
 	@Override
 	public int signum(){

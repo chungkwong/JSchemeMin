@@ -61,6 +61,7 @@ public class Continuation extends ScmObject{
 		actives.pop();
 		pointers.pop();
 		this.arguments=retValue;
+
 	}
 	public void reset(Continuation cont){
 		actives.clear();

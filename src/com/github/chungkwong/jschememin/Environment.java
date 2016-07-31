@@ -76,6 +76,9 @@ public class Environment extends ScmObject{
 	public void remove(ScmSymbol id){
 		bindings.remove(id);
 	}
+	public boolean containsKey(ScmSymbol id){
+		return bindings.containsKey(id);
+	}
 	public void addPrimitiveType(PrimitiveType keyword){
 		add(keyword.getKeyword(),keyword);
 	}

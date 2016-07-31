@@ -27,7 +27,8 @@ public class ScmSyntaxRules extends ScmObject{
 	private final List<SyntaxRule> rules=new ArrayList<>();
 	private final ScmSymbol ellipsis;
 	private final HashSet<ScmSymbol> literals=new HashSet<>();
-	public ScmSyntaxRules(ScmPair spec){
+	private final Environment defEnv;
+	public ScmSyntaxRules(ScmPair spec,Environment defEnv){
 		if(spec.getCar() instanceof ScmSymbol){
 			ellipsis=(ScmSymbol)spec.getCar();
 			spec=(ScmPair)spec.getCdr();
@@ -35,6 +36,7 @@ public class ScmSyntaxRules extends ScmObject{
 			ellipsis=ELLIPSIS;
 		ScmList.forEach((ScmPairOrNil)spec.getCar(),(id)->literals.add((ScmSymbol)id));
 		ScmList.forEach((ScmPairOrNil)spec.getCdr(),(rule)->addSyntaxRule((ScmPair)rule));
+		this.defEnv=defEnv;
 	}
 	private void addSyntaxRule(ScmPair rule){
 		rules.add(new SyntaxRule(rule.getCar(),rule.getCadr()));
@@ -47,11 +49,13 @@ public class ScmSyntaxRules extends ScmObject{
 	public boolean isSelfevaluating(){
 		return false;
 	}
-	public ScmObject tranform(ScmPairOrNil argument){
-		return rules.stream().filter((rule)->rule.getPattern().match(argument)).findFirst().get().getTemplate().apply(argument);
-	}
-	public ScmObject applyTemplate(ScmObject template,HashMap<ScmSymbol,ScmObject> binding){
-
+	public ScmObject transform(ScmPairOrNil argument,Environment env){
+		for(SyntaxRule rule:rules){
+			ScmObject transformed=rule.apply(argument,env);
+			if(transformed!=null)
+				return transformed;
+		}
+		throw new RuntimeException();
 	}
 	class SyntaxRule{
 		final ScmObject pattern;
@@ -66,21 +70,14 @@ public class ScmSyntaxRules extends ScmObject{
 		public ScmObject getTemplate(){
 			return template;
 		}
-		public Optional<HashMap<ScmSymbol,ScmObject>> match(ScmObject arg,Environment env){
-			HashMap<ScmSymbol,ScmObject> bind=new HashMap<>();
-			return match(arg,pattern,bind,env)?Optional.of(bind):Optional.empty();
-		}
 		private boolean matchIdentifier(ScmObject expr,ScmSymbol patt,HashMap<ScmSymbol,ScmObject> bind,Environment env){
-			if(literals.contains((ScmSymbol)patt)){
-				return expr.equals((ScmSymbol)patt);
+			if(literals.contains(patt)){
+				return expr instanceof ScmSymbol&&((expr.equals(patt)&&!defEnv.containsKey(patt)&&!env.containsKey((ScmSymbol)expr))
+						||(env.containsKey(patt)&&env.containsKey((ScmSymbol)expr)&&env.get((ScmSymbol)expr).equals(env.get(patt))));
 			}else if(patt.equals(WILDCARD))
 				return true;
 			else{
-				if(bind.containsKey((ScmSymbol)patt))
-					bind.put((ScmSymbol)patt,new ScmPair(expr,bind.get((ScmSymbol)patt)));
-				else{
-					bind.put((ScmSymbol)patt,expr);
-				}
+				bind.put(patt,expr);
 				return true;
 			}
 		}
@@ -96,10 +93,10 @@ public class ScmSyntaxRules extends ScmObject{
 			for(int i=0;i<split;i++)
 				if(!match(exp.get(i),patt.get(i),bind,env))
 					return false;
-			for(int i=split;i<split+exp.getLength()-patt.getLength();i++)
+			for(int i=split;i<split+exp.getLength()-patt.getLength()+2;i++)
 				if(!match(exp.get(i),patt.get(split),bind,env))
 					return false;
-			for(int i=split+1;i<patt.getLength();i++)
+			for(int i=split+2;i<patt.getLength();i++)
 				if(!match(exp.get(i+exp.getLength()-patt.getLength()),patt.get(i),bind,env))
 					return false;
 			return true;
@@ -120,16 +117,15 @@ public class ScmSyntaxRules extends ScmObject{
 				throw new SyntaxException();
 			}
 		}
-		private ScmObject apply(HashMap<ScmSymbol,ScmObject> bind){
-
-		}
 		private ScmObject apply(ScmObject temp,HashMap<ScmSymbol,ScmObject> bind,boolean ellipsed,Environment env){
 			if(temp instanceof ScmSymbol)
 				return transformSymbol((ScmSymbol)temp,bind,env);
+			else if(temp.isSelfevaluating())
+				return temp;
 			else if(temp instanceof ScmPair){
 				if(((ScmPair)temp).getCar().equals(ellipsis))
-					return apply(((ScmPair)temp).getCdr(),bind,true);
-
+					return apply(((ScmPair)temp).getCdr(),bind,true,env);
+				
 			}else if(temp instanceof ScmVector){
 				ScmVector vector=(ScmVector)temp;
 				for(int i=0;i<vector.getLength();i++){
@@ -147,6 +143,13 @@ public class ScmSyntaxRules extends ScmObject{
 				return rename;
 			}
 			return temp;
+		}
+		private ScmObject apply(ScmPairOrNil argument,Environment env){
+			HashMap<ScmSymbol,ScmObject> bind=new HashMap<>();
+			if(match(argument,pattern,bind,env))
+				return apply(template,bind,false,env);
+			else
+				return null;
 		}
 	}
 }

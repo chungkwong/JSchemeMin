@@ -24,13 +24,13 @@ public abstract class ScmNormalReal extends ScmReal implements Comparable<ScmNor
 	@Override
 	public abstract ScmNormalReal negate();
 	@Override
-	public abstract ScmInteger floor();
+	public abstract ScmNormalReal floor();
 	@Override
-	public abstract ScmInteger ceiling();
+	public abstract ScmNormalReal ceiling();
 	@Override
-	public abstract ScmInteger truncate();
+	public abstract ScmNormalReal truncate();
 	@Override
-	public abstract ScmInteger round();
+	public abstract ScmNormalReal round();
 	public abstract int signum();
 	@Override
 	public abstract ScmFloatingPointNumber toInExact();

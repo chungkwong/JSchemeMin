@@ -207,10 +207,10 @@ public final class ScmRational extends ScmNormalReal{
 		if(x.signum()<0)
 			return rationalize(x.negate(),error).negate();
 		ScmInteger d=ScmInteger.ONE;
-		ScmInteger n=x.floor();
+		ScmInteger n=x.floor().toScmInteger();
 		while(x.multiply(d).subtract(n).subtract(error.multiply(d)).isPositive()){
 			d=d.add(ScmInteger.ONE);
-			n=(ScmInteger)x.multiply(d).floor();
+			n=x.multiply(d).floor().toScmInteger();
 		}
 		return new ScmRational(n,d);
 	}
