@@ -52,7 +52,7 @@ public class ExpressionEvaluator extends Evaluable{
 		if(expr instanceof PrimitiveType){
 			((Evaluable)expr).call(env,cont,null,b.getAfter());
 		}else if(expr instanceof ScmSyntaxRules){
-			cont.callTail(this,((ScmSyntaxRules)expr).tranform((ScmPairOrNil)b.getAfter()));
+			cont.callTail(this,((ScmSyntaxRules)expr).transform((ScmPairOrNil)b.getAfter(),env));
 		}else if(b.getBefore()==null){
 			if(b.getAfter()==ScmNil.NIL){
 				cont.callTail((Evaluable)expr,ScmNil.NIL);
