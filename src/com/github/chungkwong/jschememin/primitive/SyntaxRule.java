@@ -28,6 +28,6 @@ public class SyntaxRule extends PrimitiveType{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		cont.ret(new ScmSyntaxRules((ScmPair)param));
+		cont.ret(new ScmSyntaxRules((ScmPair)param,env));
 	}
 }

@@ -39,7 +39,7 @@ public class ScmList{
 			proc.accept(((ScmPair)pair).getCar());
 			pair=((ScmPair)pair).getCdr();
 		}
-		if(list!=ScmNil.NIL)
+		if(pair!=ScmNil.NIL)
 			throw new RuntimeException();
 	}
 	public static boolean isList(ScmObject list){

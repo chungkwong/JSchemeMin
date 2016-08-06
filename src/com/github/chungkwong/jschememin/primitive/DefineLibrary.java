@@ -53,7 +53,7 @@ public class DefineLibrary extends PrimitiveType{
 					expr=content;
 				}
 			}else if(dir.equals(COND_EXPAND)){
-				ScmPair content=(ScmPair)((ScmSyntaxRules)env.get(COND_EXPAND)).tranform((ScmPairOrNil)declaration.getCdr());
+				ScmPair content=(ScmPair)((ScmSyntaxRules)env.get(COND_EXPAND)).transform((ScmPairOrNil)declaration.getCdr(),env);
 				if(content.getCdr()instanceof ScmPair){
 					ScmList.getLastListNode(content).setCdr(((ScmPair)expr).getCdr());
 					expr=content;

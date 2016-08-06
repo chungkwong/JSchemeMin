@@ -16,7 +16,9 @@
  */
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
+import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -43,7 +45,15 @@ public class ScmSyntaxRules extends ScmObject{
 	}
 	@Override
 	public String toExternalRepresentation(){
-		return "'macro";
+		StringBuilder buf=new StringBuilder();
+		buf.append("(syntax-rules ");
+		buf.append(ellipsis.getValue());
+		buf.append(literals.stream().map((id)->id.getValue()).collect(Collectors.joining(" "," (",") ")));
+		for(SyntaxRule rule:rules){
+			buf.append('(').append(rule.pattern).append(' ').append(rule.template).append(')');
+		}
+		buf.append(')');
+		return buf.toString();
 	}
 	@Override
 	public boolean isSelfevaluating(){
@@ -57,6 +67,16 @@ public class ScmSyntaxRules extends ScmObject{
 		}
 		throw new RuntimeException();
 	}
+	public static void main(String[] args) throws IOException{
+		BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
+		String s;
+		Environment env=new Environment(false);
+		while((s=in.readLine())!=null){
+			ScmSyntaxRules rules=new ScmSyntaxRules((ScmPair)new Parser(s).nextDatum(),env);
+			System.out.println(rules);
+			System.out.println(rules.transform((ScmPair)new Parser(in.readLine()).nextDatum(),env));
+		}
+	}
 	class SyntaxRule{
 		final ScmObject pattern;
 		final ScmObject template;
@@ -69,6 +89,16 @@ public class ScmSyntaxRules extends ScmObject{
 		}
 		public ScmObject getTemplate(){
 			return template;
+		}
+		private void collectPatternVariables(ScmObject patt,HashMap<ScmSymbol,CapturedObjects> bind){
+			if(patt instanceof ScmSymbol){
+				bind.put((ScmSymbol)patt,new CapturedObjects());
+			}else if(patt instanceof ScmPair){
+				collectPatternVariables(((ScmPair)patt).getCar(),bind);
+				collectPatternVariables(((ScmPair)patt).getCdr(),bind);
+			}else if(patt instanceof ScmVector){
+				((ScmVector)patt).stream().forEach((p)->collectPatternVariables(p,bind));
+			}
 		}
 		private boolean matchIdentifier(ScmObject expr,ScmSymbol patt,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
 			if(literals.contains(patt)){
@@ -96,6 +126,7 @@ public class ScmSyntaxRules extends ScmObject{
 				if(!match(exp.get(i),patt.get(i),bind,env,index))
 					return false;
 			index.push();
+			collectPatternVariables(patt.get(split),bind);
 			for(int i=split;i<split+exp.getLength()-patt.getLength()+2;i++){
 				if(!match(exp.get(i),patt.get(split),bind,env,index))
 					return false;
@@ -107,8 +138,33 @@ public class ScmSyntaxRules extends ScmObject{
 					return false;
 			return true;
 		}
-		private boolean matchList(ScmObject expr,ScmPairOrNil patt,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
-
+		private boolean matchList(ScmObject expr,ScmObject patt,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
+			while(patt instanceof ScmPair){
+				ScmObject sub=((ScmPair)patt).getCar();
+				if(((ScmPair)patt).getCdr()instanceof ScmPair&&((ScmPair)patt).getCadr().equals(ellipsis)){
+					index.push();
+					int count=ScmList.getLength(expr)-ScmList.getLength(patt)+2;
+					if(count==0)
+						collectPatternVariables(sub,bind);
+					while(--count>=0&&expr instanceof ScmPair){
+						if(!match(((ScmPair)expr).getCar(),sub,bind,env,index))
+							return false;
+						expr=((ScmPair)expr).getCdr();
+						index.advance();
+					}
+					index.pop();
+					patt=((ScmPair)patt).getCdr();
+				}else{
+					if(!(expr instanceof ScmPair)||!match(((ScmPair)expr).getCar(),sub,bind,env,index))
+						return false;
+					expr=((ScmPair)expr).getCdr();
+				}
+				patt=((ScmPair)patt).getCdr();
+			}
+			if(!(patt instanceof ScmNil)){
+				return match(expr,patt,bind,env,index);
+			}else
+				return true;
 		}
 		private boolean match(ScmObject expr,ScmObject patt,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
 			if(patt.isSelfevaluating()){
@@ -131,28 +187,10 @@ public class ScmSyntaxRules extends ScmObject{
 			else if(temp instanceof ScmPair){
 				if(((ScmPair)temp).getCar().equals(ellipsis))
 					return apply(((ScmPair)temp).getCdr(),bind,true,env,index);
-
+				else
+					return transformList(temp,bind,ellipsed,env,index);
 			}else if(temp instanceof ScmVector){
-				ScmVector vector=(ScmVector)temp;
-				ArrayList<ScmObject> list=new ArrayList<>();
-				for(int i=0;i<vector.getLength();i++){
-					if(i+1<vector.getLength()&&vector.get(i+1).equals(ellipsis)){
-						index.push();
-						try{
-							while(true){
-								list.add(apply(vector.get(i),bind,ellipsed,env,index));
-								index.advance();
-							}
-						}catch(RuntimeException ex){
-
-						}
-						index.pop();
-						++i;
-					}else{
-						list.add(apply(vector.get(i),bind,ellipsed,env,index));
-					}
-				}
-				return new ScmVector(list);
+				return transformVector((ScmVector)temp,bind,ellipsed,env,index);
 			}else
 				return temp;
 		}
@@ -166,6 +204,51 @@ public class ScmSyntaxRules extends ScmObject{
 				return rename;
 			}
 			return temp;
+		}
+		private ScmObject transformVector(ScmVector temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,Environment env,MultiIndex index){
+			ArrayList<ScmObject> list=new ArrayList<>();
+			for(int i=0;i<temp.getLength();i++){
+				if(i+1<temp.getLength()&&temp.get(i+1).equals(ellipsis)){
+					index.push();
+					try{
+						while(true){
+							list.add(apply(temp.get(i),bind,ellipsed,env,index));
+							index.advance();
+						}
+					}catch(RuntimeException ex){
+					}
+					index.pop();
+					++i;
+				}else{
+					list.add(apply(temp.get(i),bind,ellipsed,env,index));
+				}
+			}
+			return new ScmVector(list);
+		}
+		private ScmObject transformList(ScmObject temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,Environment env,MultiIndex index){
+			ScmListBuilder buf=new ScmListBuilder();
+			while(temp instanceof ScmPair){
+				ScmObject sub=((ScmPair)temp).getCar();
+				if(((ScmPair)temp).getCdr()instanceof ScmPair&&((ScmPair)temp).getCadr().equals(ellipsis)){
+					index.push();
+					try{
+						while(true){
+							buf.add(apply(sub,bind,ellipsed,env,index));
+							index.advance();
+						}
+					}catch(RuntimeException ex){
+					}
+					index.pop();
+					temp=((ScmPair)temp).getCdr();
+				}else{
+					buf.add(apply(sub,bind,ellipsed,env,index));
+				}
+				temp=((ScmPair)temp).getCdr();
+			}
+			if(!(temp instanceof ScmNil)){
+				buf.setLast(apply(temp,bind,ellipsed,env,index));
+			}
+			return buf.toList();
 		}
 		private ScmObject apply(ScmPairOrNil argument,Environment env){
 			HashMap<ScmSymbol,CapturedObjects> bind=new HashMap<>();
