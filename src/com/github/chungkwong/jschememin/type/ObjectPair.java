@@ -37,7 +37,6 @@ public class ObjectPair{
 		hash=23*hash+System.identityHashCode(cdr);
 		return hash;
 	}
-
 	public static boolean equals(Object a,Object b,HashSet<ObjectPair> found){
 		if(a instanceof ScmPair&&b instanceof ScmPair){
 			ScmPair c=(ScmPair)a,d=(ScmPair)b;
@@ -62,7 +61,9 @@ public class ObjectPair{
 				return true;
 			}
 		}else{
-			return Objects.equals(a,b);
+			return !(a instanceof ScmPair)&&!(b instanceof ScmPair)&&
+					!(a instanceof ScmVector)&&!(b instanceof ScmVector)
+					&&Objects.equals(a,b);
 		}
 	}
 }

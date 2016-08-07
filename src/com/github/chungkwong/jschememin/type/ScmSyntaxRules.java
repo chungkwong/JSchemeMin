@@ -41,7 +41,7 @@ public class ScmSyntaxRules extends ScmObject{
 		this.defEnv=defEnv;
 	}
 	private void addSyntaxRule(ScmPair rule){
-		rules.add(new SyntaxRule(rule.getCar(),rule.getCadr()));
+		rules.add(new SyntaxRule(rule.getCdar(),rule.getCadr()));
 	}
 	@Override
 	public String toExternalRepresentation(){
@@ -65,7 +65,7 @@ public class ScmSyntaxRules extends ScmObject{
 			if(transformed!=null)
 				return transformed;
 		}
-		throw new RuntimeException();
+		throw new SyntaxException();
 	}
 	public static void main(String[] args) throws IOException{
 		BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
@@ -125,14 +125,16 @@ public class ScmSyntaxRules extends ScmObject{
 			for(int i=0;i<split;i++)
 				if(!match(exp.get(i),patt.get(i),bind,env,index))
 					return false;
-			index.push();
-			collectPatternVariables(patt.get(split),bind);
-			for(int i=split;i<split+exp.getLength()-patt.getLength()+2;i++){
-				if(!match(exp.get(i),patt.get(split),bind,env,index))
-					return false;
-				index.advance();
+			if(split<patt.getLength()){
+				index.push();
+				collectPatternVariables(patt.get(split),bind);
+				for(int i=split;i<split+exp.getLength()-patt.getLength()+2;i++){
+					if(!match(exp.get(i),patt.get(split),bind,env,index))
+						return false;
+					index.advance();
+				}
+				index.pop();
 			}
-			index.pop();
 			for(int i=split+2;i<patt.getLength();i++)
 				if(!match(exp.get(i+exp.getLength()-patt.getLength()),patt.get(i),bind,env,index))
 					return false;
@@ -167,14 +169,14 @@ public class ScmSyntaxRules extends ScmObject{
 				return true;
 		}
 		private boolean match(ScmObject expr,ScmObject patt,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
-			if(patt.isSelfevaluating()){
-				return patt.equals(expr);
-			}else if(patt instanceof ScmSymbol){
+			if(patt instanceof ScmSymbol){
 				return matchIdentifier(expr,(ScmSymbol)patt,bind,env,index);
 			}else if(patt instanceof ScmPairOrNil){
 				return matchList(expr,(ScmPairOrNil)patt,bind,env,index);
 			}else if(patt instanceof ScmVector){
 				return matchVector(expr,(ScmVector)patt,bind,env,index);
+			}else if(patt.isSelfevaluating()){
+				return patt.equals(expr);
 			}else{
 				throw new SyntaxException();
 			}
@@ -197,10 +199,9 @@ public class ScmSyntaxRules extends ScmObject{
 		private ScmObject transformSymbol(ScmSymbol temp,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
 			if(bind.containsKey(temp))
 				return bind.get(temp).get(index);
-			if(env.getOptional(temp).isPresent()){
-				ScmSymbol rename=env.getUnusedVariable();
-				bind.put(temp,new CapturedObjects());
-				bind.get(temp).add(index,rename);
+			if(!defEnv.getOptional(temp).isPresent()){
+				ScmSymbol rename=defEnv.getUnusedVariable();
+				bind.put(temp,new Rename(rename));
 				return rename;
 			}
 			return temp;
@@ -278,6 +279,16 @@ public class ScmSyntaxRules extends ScmObject{
 			for(Integer i:index.getIndices())
 				toSearch=((List)toSearch).get(i);
 			return (ScmObject)toSearch;
+		}
+	}
+	class Rename extends CapturedObjects{
+		private final ScmSymbol renameTo;
+		public Rename(ScmSymbol renameTo){
+			this.renameTo=renameTo;
+		}
+		@Override
+		public ScmObject get(MultiIndex index){
+			return renameTo;
 		}
 	}
 	class MultiIndex{
