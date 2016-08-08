@@ -32,7 +32,7 @@ public class Include extends PrimitiveType{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
-		cont.callTail(ExpressionEvaluator.INSTANCE,getFileContent((ScmPair)expr));
+		cont.callTail(ExpressionEvaluator.INSTANCE,getFileContent((ScmPair)expr),env);
 	}
 	ScmPair getFileContent(ScmPair files){
 		ScmPair content=new ScmPair(new ScmSymbol("begin"),ScmNil.NIL);

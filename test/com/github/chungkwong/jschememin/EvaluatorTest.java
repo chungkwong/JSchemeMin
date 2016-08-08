@@ -50,14 +50,18 @@ public class EvaluatorTest{
 	@Test
 	public void testLambda(){
 		checkLast("(set! f (lambda () (set! x '()))) x",Environment.UNBOUNDED);
-		checkLast("(set! f (lambda () (set! x '()))) (f) x",ScmNil.NIL);
+		checkLast("(set! x 3) (set! f (lambda () (set! x '()))) (f) x",ScmNil.NIL);
 	}
 	@Test
 	public void testInclude(){
-
+		check("(include \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/to_include.scm\")",new ScmInteger(12));
 	}
 	@Test
 	public void testSet(){
-
+		check("(begin (* 2 3) (+ 4 5))",new ScmInteger(9));
+	}
+	@Test
+	public void testImport(){
+		checkLast("(import (scheme cxr)) (cadddr '(1 2 3 4 5))",new ScmInteger(4));
 	}
 }

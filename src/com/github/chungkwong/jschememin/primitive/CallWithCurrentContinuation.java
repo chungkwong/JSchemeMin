@@ -28,7 +28,7 @@ public class CallWithCurrentContinuation extends PrimitiveType{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(((ScmPair)param).getCar(),getRollbackProcedure(cont.getCopy())));
+		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(((ScmPair)param).getCar(),getRollbackProcedure(cont.getCopy())),env);
 	}
 	static final ScmObject getRollbackProcedure(Continuation checkpoint){
 		return new Evaluable(){

@@ -32,7 +32,7 @@ public class Define extends PrimitiveType{
 			ScmPair remain=(ScmPair)expr;
 			if(remain.getCar() instanceof ScmSymbol){
 				cont.replaceCurrent(this);
-				cont.call(ExpressionEvaluator.INSTANCE,(ScmSymbol)remain.getCar(),((ScmPair)remain.getCdr()).getCar());
+				cont.call(ExpressionEvaluator.INSTANCE,(ScmSymbol)remain.getCar(),((ScmPair)remain.getCdr()).getCar(),env);
 			}else if(remain.getCar() instanceof ScmPair){
 				ScmSymbol name=(ScmSymbol)((ScmPair)remain.getCar()).getCar();
 				ScmProcedure proc=new ScmProcedure(((ScmPair)remain.getCar()).getCdr(),(ScmPair)remain.getCdr(),env);

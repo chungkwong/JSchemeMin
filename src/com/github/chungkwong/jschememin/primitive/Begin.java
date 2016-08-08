@@ -34,9 +34,9 @@ public class Begin extends PrimitiveType{
 		}else if(pointer instanceof ScmPair){
 			ScmObject next=((ScmPair)pointer).getCdr();
 			if(next==ScmNil.NIL){
-				cont.callTail(ExpressionEvaluator.INSTANCE,((ScmPair)pointer).getCar());
+				cont.callTail(ExpressionEvaluator.INSTANCE,((ScmPair)pointer).getCar(),env);
 			}else if(next instanceof ScmPair){
-				cont.call(ExpressionEvaluator.INSTANCE,((ScmPair)next).getCdr(),((ScmPair)pointer).getCar());
+				cont.call(ExpressionEvaluator.INSTANCE,((ScmPair)next).getCdr(),((ScmPair)pointer).getCar(),env);
 			}else
 				throw new SyntaxException();
 		}else

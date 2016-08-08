@@ -34,6 +34,6 @@ public class Apply extends PrimitiveType{
 			buf.add(curr.getCar());
 		}
 		ScmList.forEach(curr.getCar(),(o)->buf.add(o));
-		cont.callTail(ExpressionEvaluator.INSTANCE,new ScmPair(((ScmPair)param).getCar(),buf.toList()));
+		cont.callTail(ExpressionEvaluator.INSTANCE,new ScmPair(((ScmPair)param).getCar(),buf.toList()),env);
 	}
 }

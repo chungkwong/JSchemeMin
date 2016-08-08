@@ -28,7 +28,7 @@ public class CallWithValues extends PrimitiveType{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(((ScmPair)param).getCadr()));
-		cont.call(ExpressionEvaluator.INSTANCE,null,ScmList.toList(((ScmPair)param).getCar()));
+		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(((ScmPair)param).getCadr()),env);
+		cont.call(ExpressionEvaluator.INSTANCE,null,ScmList.toList(((ScmPair)param).getCar()),env);
 	}
 }

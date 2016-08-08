@@ -213,7 +213,7 @@ public class Base extends NativeLibrary{
 		addNativeProcedure("cons",(o)->new ScmPair(car(o),cadr(o)));
 		addNativeProcedure("car",(o)->((ScmPair)car(o)).getCar());
 		addNativeProcedure("cdr",(o)->((ScmPair)car(o)).getCdr());
-		addNativeProcedure("car",(o)->((ScmPair)car(o)).getCaar());
+		addNativeProcedure("caar",(o)->((ScmPair)car(o)).getCaar());
 		addNativeProcedure("cadr",(o)->((ScmPair)car(o)).getCadr());
 		addNativeProcedure("cdar",(o)->((ScmPair)car(o)).getCdar());
 		addNativeProcedure("cddr",(o)->((ScmPair)car(o)).getCddr());

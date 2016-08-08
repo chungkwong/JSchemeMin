@@ -36,7 +36,7 @@ public class DynamicWind extends PrimitiveType{
 			ScmObject ret=null;
 			if(then.getCddr() instanceof ScmNil)
 				ret=((ScmPair)param).getCar();
-			cont.call(ExpressionEvaluator.INSTANCE,new Backtrack(all,(ScmPairOrNil)then.getCdr(),ret),ScmList.toList(then.getCar()));
+			cont.call(ExpressionEvaluator.INSTANCE,new Backtrack(all,(ScmPairOrNil)then.getCdr(),ret),ScmList.toList(then.getCar()),env);
 		}else{
 			cont.ret(((Backtrack)pointer).getRet());
 		}

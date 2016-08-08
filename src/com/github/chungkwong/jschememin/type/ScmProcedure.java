@@ -34,9 +34,9 @@ public final class ScmProcedure extends Evaluable{
 			Backtrack b=(Backtrack)pointer;
 			ScmObject next=b.getRemaining().getCdr();
 			if(next==ScmNil.NIL){
-				cont.callTail(ExpressionEvaluator.INSTANCE,b.getRemaining().getCar());
+				cont.callTail(ExpressionEvaluator.INSTANCE,b.getRemaining().getCar(),b.getEnvironment());
 			}else if(next instanceof ScmPair){
-				cont.call(ExpressionEvaluator.INSTANCE,new Backtrack(b.getEnvironment(),(ScmPair)next),b.getRemaining().getCar());
+				cont.call(ExpressionEvaluator.INSTANCE,new Backtrack(b.getEnvironment(),(ScmPair)next),b.getRemaining().getCar(),b.getEnvironment());
 			}else
 				throw new SyntaxException();
 		}

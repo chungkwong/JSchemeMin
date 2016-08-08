@@ -31,13 +31,13 @@ public class If extends PrimitiveType{
 		if(pointer==null){
 			ScmPair list=(ScmPair)expr;
 			cont.replaceCurrent(this);
-			cont.call(ExpressionEvaluator.INSTANCE,(ScmPair)list.getCdr(),list.getCar());
+			cont.call(ExpressionEvaluator.INSTANCE,(ScmPair)list.getCdr(),list.getCar(),env);
 		}else{
 			ScmPair list=(ScmPair)pointer;
 			if(expr==ScmBoolean.FALSE){
-				cont.callTail(ExpressionEvaluator.INSTANCE,((ScmPair)list.getCdr()).getCar());
+				cont.callTail(ExpressionEvaluator.INSTANCE,((ScmPair)list.getCdr()).getCar(),env);
 			}else{
-				cont.callTail(ExpressionEvaluator.INSTANCE,list.getCar());
+				cont.callTail(ExpressionEvaluator.INSTANCE,list.getCar(),env);
 			}
 		}
 	}

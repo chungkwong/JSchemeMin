@@ -28,6 +28,6 @@ public class RaiseContinuable extends PrimitiveType{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(cont.getErrorHandler(),((ScmPair)param).getCar()));
+		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(cont.getErrorHandler(),((ScmPair)param).getCar()),env);
 	}
 }

@@ -31,7 +31,7 @@ public class Assignment extends PrimitiveType{
 		if(pointer==null){
 			ScmPair remain=(ScmPair)expr;
 			cont.replaceCurrent(this);
-			cont.call(ExpressionEvaluator.INSTANCE,(ScmSymbol)remain.getCar(),((ScmPair)remain.getCdr()).getCar());
+			cont.call(ExpressionEvaluator.INSTANCE,(ScmSymbol)remain.getCar(),((ScmPair)remain.getCdr()).getCar(),env);
 		}else{
 			env.set((ScmSymbol)pointer,expr);
 			cont.ret(expr);

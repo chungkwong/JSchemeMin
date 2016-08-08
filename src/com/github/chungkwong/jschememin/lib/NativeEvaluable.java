@@ -38,7 +38,7 @@ public class NativeEvaluable extends Evaluable{
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
 		try{
-			cont.ret(new ScmPair(proc.call(param),ScmNil.NIL));
+			cont.ret(proc.call(param));
 		}catch(Exception ex){
 			throw new RuntimeException(ex);
 		}

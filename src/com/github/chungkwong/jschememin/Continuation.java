@@ -25,32 +25,39 @@ import java.util.*;
 public class Continuation extends ScmObject{
 	private final Stack<Evaluable> actives;
 	private final Stack<Object> pointers;
+	private final Stack<Environment> environments;
 	private ScmObject arguments;
 	public Continuation(){
 		this.pointers=new Stack<>();
 		this.actives=new Stack<>();
+		this.environments=new Stack<>();
 	}
-	public Continuation(Stack<Evaluable> actives,Stack<Object> pointers){
+	public Continuation(Stack<Evaluable> actives,Stack<Object> pointers,Stack<Environment> environments){
 		this.pointers=pointers;
 		this.actives=actives;
+		this.environments=environments;
 	}
-	public void callInit(Evaluable proc,ScmObject arguments){
+	public void callInit(Evaluable proc,ScmObject arguments,Environment env){
 		actives.push(proc);
 		pointers.push(null);
+		environments.push(env);
 		this.arguments=arguments;
 	}
-	public void call(Evaluable proc,Object pointer,ScmObject arguments){
+	public void call(Evaluable proc,Object pointer,ScmObject arguments,Environment env){
 		actives.push(proc);
 		pointers.pop();
 		pointers.push(pointer);
 		pointers.push(null);
+		environments.push(env);
 		this.arguments=arguments;
 	}
-	public void callTail(Evaluable proc,ScmObject arguments){
+	public void callTail(Evaluable proc,ScmObject arguments,Environment env){
 		actives.pop();
 		pointers.pop();
+		environments.pop();
 		actives.push(proc);
 		pointers.push(null);
+		environments.push(env);
 		this.arguments=arguments;
 	}
 	public void replaceCurrent(Evaluable proc){
@@ -60,19 +67,21 @@ public class Continuation extends ScmObject{
 	public void ret(ScmObject retValue){
 		actives.pop();
 		pointers.pop();
+		environments.pop();
 		this.arguments=retValue;
-
 	}
 	public void reset(Continuation cont){
 		actives.clear();
 		pointers.clear();
+		environments.clear();
 		actives.addAll(cont.actives);
 		pointers.addAll(cont.pointers);
+		environments.addAll(cont.environments);
 		arguments=cont.arguments;//TODO dynamic-wind
 	}
-	public void evalNext(Environment env){
+	public void evalNext(){
 		try{
-			actives.peek().call(env,this,pointers.peek(),arguments);
+			actives.peek().call(environments.peek(),this,pointers.peek(),arguments);
 		}catch(RuntimeException ex){
 			while(!actives.isEmpty()&&!(actives.peek() instanceof WithExceptionHandler)){
 				actives.pop();
@@ -91,7 +100,7 @@ public class Continuation extends ScmObject{
 		return arguments;
 	}
 	public Continuation getCopy(){
-		return new Continuation((Stack)actives.clone(),(Stack)pointers.clone());
+		return new Continuation((Stack)actives.clone(),(Stack)pointers.clone(),(Stack)environments.clone());
 	}
 	@Override
 	public String toExternalRepresentation(){

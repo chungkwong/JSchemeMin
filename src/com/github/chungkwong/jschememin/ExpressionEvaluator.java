@@ -37,7 +37,7 @@ public class ExpressionEvaluator extends Evaluable{
 			cont.ret(expr);
 		}else if(expr instanceof ScmPair){
 			ScmPair list=(ScmPair)expr;
-			cont.call(this,new BackTrace(null,null,list.getCdr()),list.getCar());
+			cont.call(this,new BackTrace(null,null,list.getCdr()),list.getCar(),env);
 		}else if(expr instanceof ScmSymbol){
 			ScmObject val=env.get((ScmSymbol)expr);
 			if(val!=null)
@@ -52,21 +52,21 @@ public class ExpressionEvaluator extends Evaluable{
 		if(expr instanceof PrimitiveType){
 			((Evaluable)expr).call(env,cont,null,b.getAfter());
 		}else if(expr instanceof ScmSyntaxRules){
-			cont.callTail(this,((ScmSyntaxRules)expr).transform((ScmPairOrNil)b.getAfter(),env));
+			cont.callTail(this,((ScmSyntaxRules)expr).transform((ScmPairOrNil)b.getAfter(),env),env);
 		}else if(b.getBefore()==null){
 			if(b.getAfter()==ScmNil.NIL){
-				cont.callTail((Evaluable)expr,ScmNil.NIL);
+				cont.callTail((Evaluable)expr,ScmNil.NIL,env);
 			}else{
 				ScmPair before=new ScmPair(expr,ScmNil.NIL);
-				cont.call(this,new BackTrace(before,before,(ScmPairOrNil)((ScmPair)b.getAfter()).getCdr()),((ScmPair)b.getAfter()).getCar());
+				cont.call(this,new BackTrace(before,before,(ScmPairOrNil)((ScmPair)b.getAfter()).getCdr()),((ScmPair)b.getAfter()).getCar(),env);
 			}
 		}else{
 			ScmPair newBeforeLast=new ScmPair(expr,ScmNil.NIL);
 			b.getBeforeLast().setCdr(newBeforeLast);
 			if(b.getAfter()==ScmNil.NIL){
-				cont.callTail((Evaluable)b.getBefore().getCar(),b.getBefore().getCdr());
+				cont.callTail((Evaluable)b.getBefore().getCar(),b.getBefore().getCdr(),env);
 			}else{
-				cont.call(this,new BackTrace(b.getBefore(),newBeforeLast,(ScmPairOrNil)((ScmPair)b.getAfter()).getCdr()),((ScmPair)b.getAfter()).getCar());
+				cont.call(this,new BackTrace(b.getBefore(),newBeforeLast,(ScmPairOrNil)((ScmPair)b.getAfter()).getCdr()),((ScmPair)b.getAfter()).getCar(),env);
 			}
 		}
 	}

@@ -33,9 +33,9 @@ public class Evaluator{
 		this.env=env;
 	}
 	public ScmObject eval(ScmObject expr){
-		cont.callInit(ExpressionEvaluator.INSTANCE,expr);
+		cont.callInit(ExpressionEvaluator.INSTANCE,expr,env);
 		while(cont.hasNext())
-			cont.evalNext(env);
+			cont.evalNext();
 		return cont.getValue();
 	}
 	public Environment getEnvironment(){
