@@ -13,7 +13,6 @@
  *
  */
 package com.github.chungkwong.jschememin.type;
-import java.util.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -41,18 +40,6 @@ public class ScmComplexRectangular extends ScmComplex{
 	public ScmReal getAngle(){
 		return ScmFloatingPointNumber.valueOf(Math.atan2(ScmFloatingPointNumber.toDouble(imag)
 				,ScmFloatingPointNumber.toDouble(real)));
-	}
-	@Override
-	public boolean equals(Object obj){
-		return obj instanceof ScmComplexRectangular
-				&&((ScmComplexRectangular)obj).real.equals(real)&&((ScmComplexRectangular)obj).imag.equals(imag);
-	}
-	@Override
-	public int hashCode(){
-		int hash=7;
-		hash=31*hash+Objects.hashCode(this.real);
-		hash=31*hash+Objects.hashCode(this.imag);
-		return hash;
 	}
 	@Override
 	public boolean isExact(){

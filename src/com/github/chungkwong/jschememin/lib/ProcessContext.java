@@ -16,7 +16,11 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
-import static com.github.chungkwong.jschememin.lib.Utility.*;
+import static com.github.chungkwong.jschememin.lib.Utility.car;
+import static com.github.chungkwong.jschememin.lib.Utility.emergencyExit;
+import static com.github.chungkwong.jschememin.lib.Utility.exit;
+import static com.github.chungkwong.jschememin.lib.Utility.getEnvironmentVariable;
+import static com.github.chungkwong.jschememin.lib.Utility.getEnvironmentVariables;
 import com.github.chungkwong.jschememin.type.*;
 /**
  *
@@ -25,7 +29,7 @@ import com.github.chungkwong.jschememin.type.*;
 public class ProcessContext extends NativeLibrary{
 	public static final ProcessContext INSTANCE=new ProcessContext();
 	public ProcessContext(){
-		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("process-context")));
+		super("scheme","process-context");
 	}
 	@Override
 	protected void init(Library lib){

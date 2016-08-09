@@ -35,7 +35,7 @@ public class EvaluatorTest{
 	}
 	void expectException(String expr){
 		try{
-			new Parser(expr).getRemainingDatums();
+			new Evaluator(true).eval(new Parser(expr).nextDatum());
 			Assert.assertTrue(false);
 		}catch(Exception ex){
 

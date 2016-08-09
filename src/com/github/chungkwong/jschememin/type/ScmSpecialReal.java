@@ -129,6 +129,10 @@ public abstract class ScmSpecialReal extends ScmReal{
 		public boolean isNegative(){
 			return false;
 		}
+		@Override
+		public double toDouble(){
+			return Double.NaN;
+		}
 	}
 	public static class PositiveInf extends ScmSpecialReal{
 		@Override
@@ -194,6 +198,10 @@ public abstract class ScmSpecialReal extends ScmReal{
 		public boolean isNegative(){
 			return false;
 		}
+		@Override
+		public double toDouble(){
+			return Double.POSITIVE_INFINITY;
+		}
 	}
 	public static class NegativeInf extends ScmSpecialReal{
 		@Override
@@ -258,6 +266,10 @@ public abstract class ScmSpecialReal extends ScmReal{
 		@Override
 		public boolean isNegative(){
 			return true;
+		}
+		@Override
+		public double toDouble(){
+			return Double.NEGATIVE_INFINITY;
 		}
 	}
 }

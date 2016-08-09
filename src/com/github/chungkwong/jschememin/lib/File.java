@@ -25,7 +25,7 @@ import com.github.chungkwong.jschememin.type.*;
 public class File extends NativeLibrary{
 	public static final File INSTANCE=new File();
 	public File(){
-		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("file")));
+		super("scheme","file");
 	}
 	@Override
 	protected void init(Library lib){

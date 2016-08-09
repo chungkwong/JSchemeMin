@@ -16,7 +16,6 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
-import com.github.chungkwong.jschememin.type.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -24,7 +23,7 @@ import com.github.chungkwong.jschememin.type.*;
 public class CaseLambda extends NativeLibrary{
 	public static final CaseLambda INSTANCE=new CaseLambda();
 	public CaseLambda(){
-		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("case-lambda")));
+		super("scheme","case-lambda");
 	}
 	@Override
 	protected void init(Library lib){

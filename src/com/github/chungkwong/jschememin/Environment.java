@@ -16,6 +16,7 @@
  */
 package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.lib.*;
+import com.github.chungkwong.jschememin.primitive.*;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
 /**
@@ -31,6 +32,7 @@ public class Environment extends ScmObject{
 	public Environment(boolean repl){
 		this.parent=null;
 		this.repl=repl;
+		bindings.put(Import.INSTANCE.getKeyword(),Import.INSTANCE);
 		if(repl)
 			Base.INSTANCE.getLibrary().exportTo(this);
 	}

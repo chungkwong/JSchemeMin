@@ -1,3 +1,5 @@
+(import (scheme base))
+
 (define (call-with-input-file file proc)
   (let ((port (open-input-file file)))
     (proc port)

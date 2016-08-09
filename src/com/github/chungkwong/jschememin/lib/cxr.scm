@@ -1,3 +1,5 @@
+(import (scheme base))
+
 (define caaaar (lambda (x) (car (car (car (car x))))))
 (define caaar (lambda (x) (car (car (car x)))))
 (define caaddr (lambda (x) (car (car (cdr (cdr x))))))

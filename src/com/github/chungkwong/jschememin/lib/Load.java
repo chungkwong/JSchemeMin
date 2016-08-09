@@ -29,7 +29,7 @@ public class Load extends NativeLibrary{
 	public static final Load INSTANCE=new Load();
 	private static final ScmSymbol BEGIN=new ScmSymbol("begin");
 	public Load(){
-		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("load")));
+		super("scheme","load");
 	}
 	@Override
 	protected void init(Library lib){

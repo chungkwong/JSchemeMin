@@ -13,7 +13,6 @@
  *
  */
 package com.github.chungkwong.jschememin.type;
-import java.util.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -44,18 +43,6 @@ public class ScmComplexPolar extends ScmComplex{
 	@Override
 	public ScmReal getReal(){
 		return abs.multiply(radius.cos());
-	}
-	@Override
-	public boolean equals(Object obj){
-		return obj instanceof ScmComplexPolar&&
-				((ScmComplexPolar)obj).abs.equals(abs)&&((ScmComplexPolar)obj).radius.equals(radius);
-	}
-	@Override
-	public int hashCode(){
-		int hash=7;
-		hash=31*hash+Objects.hashCode(this.abs);
-		hash=31*hash+Objects.hashCode(this.radius);
-		return hash;
 	}
 	@Override
 	public boolean isExact(){

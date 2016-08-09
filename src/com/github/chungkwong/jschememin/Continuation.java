@@ -83,10 +83,13 @@ public class Continuation extends ScmObject{
 		try{
 			actives.peek().call(environments.peek(),this,pointers.peek(),arguments);
 		}catch(RuntimeException ex){
+			ex.printStackTrace();
 			while(!actives.isEmpty()&&!(actives.peek() instanceof WithExceptionHandler)){
 				actives.pop();
 				pointers.pop();
 			}
+			if(actives.isEmpty())
+				throw ex;
 			arguments=ScmList.toList(ScmError.toScmObject(ex));
 			if(!actives.isEmpty()){
 				pointers.push(new WithExceptionHandler.ErrorInfo((ScmObject)pointers.pop()));

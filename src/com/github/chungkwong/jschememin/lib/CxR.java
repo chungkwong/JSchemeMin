@@ -16,7 +16,6 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
-import com.github.chungkwong.jschememin.type.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -24,7 +23,7 @@ import com.github.chungkwong.jschememin.type.*;
 public class CxR extends NativeLibrary{
 	public static final CxR INSTANCE=new CxR();
 	public CxR(){
-		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("cxr")));
+		super("scheme","cxr");
 	}
 	@Override
 	protected void init(Library lib){

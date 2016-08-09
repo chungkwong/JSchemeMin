@@ -1,3 +1,4 @@
+(import (scheme base))
 (define-syntax case-lambda
   (syntax-rules ()
     ((case-lambda (params body0 ...) ...)

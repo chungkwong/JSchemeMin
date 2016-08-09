@@ -80,4 +80,8 @@ public abstract class ScmNormalReal extends ScmReal implements Comparable<ScmNor
 	public boolean isInfinite(){
 		return false;
 	}
+	@Override
+	public double toDouble(){
+		return toInExact().getValue().doubleValue();
+	}
 }

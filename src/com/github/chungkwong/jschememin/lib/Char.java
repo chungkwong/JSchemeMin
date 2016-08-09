@@ -25,7 +25,7 @@ import com.github.chungkwong.jschememin.type.*;
 public class Char extends NativeLibrary{
 	public static final Char INSTANCE=new Char();
 	public Char(){
-		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("char")));
+		super("scheme","char");
 	}
 	@Override
 	protected void init(Library lib){

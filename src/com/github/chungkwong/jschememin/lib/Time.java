@@ -24,7 +24,7 @@ import com.github.chungkwong.jschememin.type.*;
 public class Time extends NativeLibrary{
 	public static final Time INSTANCE=new Time();
 	public Time(){
-		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("time")));
+		super("scheme","time");
 	}
 	@Override
 	protected void init(Library lib){

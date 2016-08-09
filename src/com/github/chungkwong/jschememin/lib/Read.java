@@ -25,7 +25,7 @@ import com.github.chungkwong.jschememin.type.*;
 public class Read extends NativeLibrary{
 	public static final Read INSTANCE=new Read();
 	public Read(){
-		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("read")));
+		super("scheme","read");
 	}
 	@Override
 	protected void init(Library lib){

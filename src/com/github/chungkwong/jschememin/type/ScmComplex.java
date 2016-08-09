@@ -107,4 +107,16 @@ public abstract class ScmComplex extends ScmNumber{
 		return toExternalRepresentation(10);
 	}
 	public abstract String toExternalRepresentation(int radix);
+	@Override
+	public boolean equals(Object obj){
+		return obj instanceof ScmComplex&&isExact()==((ScmComplex)obj).isExact()&&
+				getReal().equals(((ScmComplex)obj).getReal())&&getImag().equals(((ScmComplex)obj).getImag());
+	}
+	@Override
+	public int hashCode(){
+		int hash=5;
+		hash=37*hash+getReal().hashCode();
+		hash=37*hash+getImag().hashCode();
+		return hash;
+	}
 }

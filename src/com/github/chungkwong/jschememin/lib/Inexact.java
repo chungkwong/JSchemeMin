@@ -27,7 +27,7 @@ import com.github.chungkwong.jschememin.type.*;
 public class Inexact extends NativeLibrary{
 	public static final Inexact INSTANCE=new Inexact();
 	public Inexact(){
-		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("inexact")));
+		super("scheme","inexact");
 	}
 	@Override
 	protected void init(Library lib){

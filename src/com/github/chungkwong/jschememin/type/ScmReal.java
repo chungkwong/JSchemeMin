@@ -50,6 +50,7 @@ public abstract class ScmReal extends ScmComplex{
 	public abstract ScmReal round();
 	public abstract boolean isPositive();
 	public abstract boolean isNegative();
+	public abstract double toDouble();
 	public static ScmReal max(ScmReal a,ScmReal b){
 		if(isNonNaN(a,b))
 			return compare(a,b)>0?a:b;
@@ -89,5 +90,15 @@ public abstract class ScmReal extends ScmComplex{
 			return -1;
 		else// if(a==ScmSpecialReal.POSITIVE_INF||b==ScmSpecialReal.NEGATIVE_INF)
 			return 1;
+	}
+	@Override
+	public boolean equals(Object obj){
+		return obj instanceof ScmComplex&&((ScmComplex)obj).isReal()&&equals(this,((ScmComplex)obj).toScmReal());
+	}
+	@Override
+	public int hashCode(){
+		int hash=5;
+		hash=hash+Double.hashCode(toDouble());
+		return hash;
 	}
 }

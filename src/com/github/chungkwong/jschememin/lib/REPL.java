@@ -16,7 +16,6 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
-import com.github.chungkwong.jschememin.type.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -24,7 +23,7 @@ import com.github.chungkwong.jschememin.type.*;
 public class REPL extends NativeLibrary{
 	public static final REPL INSTANCE=new REPL();
 	public REPL(){
-		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("repl")));
+		super("scheme","repl");
 	}
 	@Override
 	protected void init(Library lib){

@@ -32,7 +32,7 @@ import java.io.*;
 public class Base extends NativeLibrary{
 	public static final Base INSTANCE=new Base();
 	public Base(){
-		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("base")));
+		super("scheme","base");
 	}
 	@Override
 	protected void init(Library lib){
@@ -238,7 +238,7 @@ public class Base extends NativeLibrary{
 	}
 	private void initBoolean(){
 		addNativeProcedure("boolean?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmBoolean));
-		addNativeProcedure("not",(o)->ScmBoolean.valueOf(car(o)!=ScmBoolean.FALSE));
+		addNativeProcedure("not",(o)->ScmBoolean.valueOf(car(o)==ScmBoolean.FALSE));
 		addNativeProcedure("boolean=?",Utility.chainComparator((a,b)->(ScmBoolean)a==(ScmBoolean)b));
 	}
 	private void initNumber(){
@@ -309,7 +309,7 @@ public class Base extends NativeLibrary{
 		addPrimitiveType(Define.INSTANCE);
 		addPrimitiveType(DefineRecordType.INSTANCE);
 		addPrimitiveType(DefineLibrary.INSTANCE);
-		addPrimitiveType(Import.INSTANCE);
+		//addPrimitiveType(Import.INSTANCE);
 		addPrimitiveType(SyntaxRule.INSTANCE);
 		addPrimitiveType(Apply.INSTANCE);
 		addPrimitiveType(CallWithCurrentContinuation.INSTANCE);

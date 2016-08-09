@@ -27,8 +27,10 @@ import java.util.logging.*;
 public abstract class NativeLibrary{
 	private Library lib=null;
 	private final ScmPair name;
-	public NativeLibrary(ScmPair name){
-		this.name=name;
+	public NativeLibrary(String... part){
+		ScmListBuilder buf=new ScmListBuilder();
+		Arrays.stream(part).map((n)->new ScmSymbol(n)).forEach((o)->buf.add(o));
+		this.name=(ScmPair)buf.toList();
 	}
 	public ScmPair getName(){
 		return name;

@@ -29,8 +29,36 @@ public class StandardProcedureTest{
 		ScmObject expectval=new Evaluator(true).eval(new Parser(result).nextDatum());
 		Assert.assertEquals(gotval,expectval);
 	}
+	void expectException(String expr){
+		try{
+			new Evaluator(true).eval(new Parser(expr).nextDatum());
+			Assert.assertTrue(false);
+		}catch(Exception ex){
+
+		}
+	}
 	@Test
 	public void testEquivalent(){
+		assertExpressionValue("(eqv? 'a 'a)","#t");
+		assertExpressionValue("(eqv? 'a 'b)","#f");
+		assertExpressionValue("(eqv? 2 2)","#t");
+		assertExpressionValue("(eqv? 2 2.0)","#f");
+		assertExpressionValue("(eqv? '() '())","#t");
+		assertExpressionValue("(eqv? 100000000 100000000)","#t");
+		assertExpressionValue("(eqv? 0.0 +nan.0)","#f");
+		assertExpressionValue("(eqv? (cons 1 2) (cons 1 2))","#f");
+		assertExpressionValue("(eqv? (lambda () 1) (lambda () 2))","#f");
+		assertExpressionValue("(eq? 'a 'a)","#t");
+		assertExpressionValue("(eq? (list 'a) (list 'a))","#f");
+		assertExpressionValue("(eq? '() '())","#t");
+		assertExpressionValue("(eq? car car)","#t");
+		assertExpressionValue("(equal? 'a 'a)","#t");
+		assertExpressionValue("(equal? '(a) '(a))","#t");
+		assertExpressionValue("(equal? '(a (b) c) '(a (b) c))","#t");
+		assertExpressionValue("(equal? \"abc\" \"abc\")","#t");
+		assertExpressionValue("(equal? 2 2)","#t");
+		assertExpressionValue("(equal? (make-vector 5 'a) (make-vector 5 'a))","#t");
+		assertExpressionValue("(equal? '#1=(a b . #1#) '#2=(a b a b . #2#))","#t");
 	}
 	@Test
 	public void testNumber(){
@@ -120,9 +148,53 @@ public class StandardProcedureTest{
 	}
 	@Test
 	public void testBoolean(){
+		assertExpressionValue("#t","#t");
+		assertExpressionValue("#f","#f");
+		assertExpressionValue("'#f","#f");
+		assertExpressionValue("(not #t)","#f");
+		assertExpressionValue("(not 3)","#f");
+		assertExpressionValue("(not (list 3))","#f");
+		assertExpressionValue("(not #f)","#t");
+		assertExpressionValue("(not '())","#f");
+		assertExpressionValue("(not (list))","#f");
+		assertExpressionValue("(not 'nil)","#f");
+		assertExpressionValue("(boolean? #f)","#t");
+		assertExpressionValue("(boolean? 0)","#f");
+		assertExpressionValue("(boolean? '())","#f");
 	}
 	@Test
 	public void testList(){
+		assertExpressionValue("(pair? '(a . b))","#t");
+		assertExpressionValue("(pair? '(a b c))","#t");
+		assertExpressionValue("(pair? '())","#f");
+		assertExpressionValue("(pair? '#(a b))","#f");
+		assertExpressionValue("(cons 'a '())","'(a)");
+		assertExpressionValue("(cons '(a) '(b c d))","'((a) b c d)");
+		assertExpressionValue("(cons \"a\" '(b c))","'(\"a\" b c)");
+		assertExpressionValue("(cons 'a 3)","'(a . 3)");
+		assertExpressionValue("(cons '(a b) 'c)","'((a b) . c)%");
+		assertExpressionValue("(car '(a b c))","'a");
+		assertExpressionValue("(car '((a) b c d))","'(a)");
+		assertExpressionValue("(car '(1 . 2))","1");
+		expectException("(car '())");
+		assertExpressionValue("(cdr '((a) b c d))","'(b c d)");
+		assertExpressionValue("(cdr '(1 . 2))","2");
+		expectException("(cdr '())");
+		assertExpressionValue("(make-list 2 3)","'(3 3)");
+		assertExpressionValue("(list 'a (+ 3 4) 'c)","'(a 7 c)");
+		assertExpressionValue("(list)","'()");
+		assertExpressionValue("(length '(a b c))","3");
+		assertExpressionValue("(length '(a (b) (c d e)))","3");
+		assertExpressionValue("(length '())","0");
+		assertExpressionValue("(append '(x) '(y))","'(x y)");
+		assertExpressionValue("(append '(a) '(b c d))","'(a b c d)");
+		assertExpressionValue("(append '(a (b)) '((c)))","'(a (b) (c))");
+		assertExpressionValue("(append '(a b) '(c . d))","(a b c . d)");
+		assertExpressionValue("(append '() 'a)","'a");
+		assertExpressionValue("(reverse '(a b c))","'(c b a)");
+		assertExpressionValue("(reverse '(a (b c) d (e (f))))","'((e (f)) d (b c) a)");
+		assertExpressionValue("(list-ref '(a b c d) 2)","'c");
+		assertExpressionValue("(list-ref '(a b c d) (exact (round 1.8)))","'c");
 	}
 	@Test
 	public void testSymbol(){

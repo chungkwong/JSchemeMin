@@ -1,3 +1,5 @@
+(import (scheme base))
+
 (define-syntax delay-force
   (syntax-rules ()
     ((delay-force expression)

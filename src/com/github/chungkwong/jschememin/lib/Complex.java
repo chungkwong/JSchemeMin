@@ -26,7 +26,7 @@ import com.github.chungkwong.jschememin.type.*;
 public class Complex extends NativeLibrary{
 	public static final Complex INSTANCE=new Complex();
 	public Complex(){
-		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("complex")));
+		super("scheme","complex");
 	}
 	@Override
 	protected void init(Library lib){

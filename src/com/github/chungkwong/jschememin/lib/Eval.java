@@ -19,7 +19,6 @@ import com.github.chungkwong.jschememin.*;
 import static com.github.chungkwong.jschememin.lib.Utility.cadr;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.primitive.*;
-import com.github.chungkwong.jschememin.type.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -27,7 +26,7 @@ import com.github.chungkwong.jschememin.type.*;
 public class Eval extends NativeLibrary{
 	public static final Eval INSTANCE=new Eval();
 	public Eval(){
-		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("eval")));
+		super("scheme","eval");
 	}
 	@Override
 	protected void init(Library lib){

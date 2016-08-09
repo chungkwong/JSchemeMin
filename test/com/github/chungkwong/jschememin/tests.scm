@@ -1,420 +1,344 @@
-"(eqv? 'a 'a)","#t"
-"(eqv? 'a 'b)","#f"
-"(eqv? 2 2)","#t"
-"(eqv? 2 2.0)","#f"
-"(eqv? '() '())","#t"
-"(eqv? 100000000 100000000)","#t"
-"(eqv? 0.0 +nan.0)","#f"
-"(eqv? (cons 1 2) (cons 1 2))","#f"
-"(eqv? (lambda () 1)"
-"      (lambda () 2))","#f"
-"(let ((p (lambda (x) x)))"
-"  (eqv? p p))","#t"
-"(eqv? \#f 'nil)","#f%"
-"(define gen-counter"
-"  (lambda ()"
-"    (let ((n 0))"
-"      (lambda () (set! n (+ n 1)) n))))"
-"(let ((g (gen-counter)))"
-"  (eqv? g g))","#t"
-"(eqv? (gen-counter) (gen-counter))","#f"
-"(define gen-loser"
-"  (lambda ()"
-"    (let ((n 0))"
-"      (lambda () (set! n (+ n 1)) 27))))"
-"(let ((g (gen-loser)))"
-"  (eqv? g g))","#t"
-"(eqv? (gen-loser) (gen-loser))","\unspecified"
-""
-"(letrec ((f (lambda () (if (eqv? f g) 'both 'f)))"
-"         (g (lambda () (if (eqv? f g) 'both 'g))))"
-"  (eqv? f g))","\unspecified"
-""
-"(letrec ((f (lambda () (if (eqv? f g) 'f 'both)))"
-"         (g (lambda () (if (eqv? f g) 'g 'both))))"
-"  (eqv? f g))","#f%"
-"(eqv? '(a) '(a))","\unspecified"
-"(eqv? "a" "a")","\unspecified"
-"(eqv? '(b) (cdr '(a b)))","\unspecified"
-"(let ((x '(a)))"
-"  (eqv? x x))","#t%"
-"(eq? 'a 'a)","#t"
-"(eq? '(a) '(a))","\unspecified"
-"(eq? (list 'a) (list 'a))","#f"
-"(eq? "a" "a")","\unspecified"
-"(eq? "" "")","\unspecified"
-"(eq? '() '())","#t"
-"(eq? 2 2)","\unspecified"
-"(eq? \#\backwhack{}A \#\backwhack{}A)","\unspecified"
-"(eq? car car)","#t"
-"(let ((n (+ 2 3)))"
-"  (eq? n n))","\unspecified"
-"(let ((x '(a)))"
-"  (eq? x x))","#t"
-"(let ((x '\#()))"
-"  (eq? x x))","#t"
-"(let ((p (lambda (x) x)))"
-"  (eq? p p))","#t%"
-""
-"(equal? 'a 'a)","#t"
-"(equal? '(a) '(a))","#t"
-"(equal? '(a (b) c)"
-"        '(a (b) c))","#t"
-"(equal? "abc" "abc")","#t"
-"(equal? 2 2)","#t"
-"(equal? (make-vector 5 'a)"
-"        (make-vector 5 'a))","#t"
-"(equal? '\#1=(a b . \#1\#)"
-"        '\#2=(a b a b . \#2\#))","#t"
-"(equal? (lambda (x) x)"
-"        (lambda (y) y))","\unspecified%"
-"#t","#t"
-"#f","#f"
-"'#f","#f%"
-"(not #t)","#f"
-"(not 3)","#f"
-"(not (list 3))","#f"
-"(not #f)","#t"
-"(not '())","#f"
-"(not (list))","#f"
-"(not 'nil)","#f%"
-"(boolean? #f)","#t"
-"(boolean? 0)","#f"
-"(boolean? '())","#f%"
-"(define x (list 'a 'b 'c))"
-"(define y x)"
-"y","(a b c)"
-"(list? y)","#t"
-"(set-cdr! x 4)","\unspecified"
-"x","(a . 4)"
-"(eqv? x y)","#t"
-"y","(a . 4)"
-"(list? y)","#f"
-"(set-cdr! x x)","\unspecified"
-"(list? x)","#f%"
-"(pair? '(a . b))","#t"
-"(pair? '(a b c))","#t"
-"(pair? '())","#f"
-"(pair? '\#(a b))","#f%"
-"(cons 'a '())","(a)"
-"(cons '(a) '(b c d))","((a) b c d)"
-"(cons "a" '(b c))","("a" b c)"
-"(cons 'a 3)","(a . 3)"
-"(cons '(a b) 'c)","((a b) . c)%"
-"(car '(a b c))","a"
-"(car '((a) b c d))","(a)"
-"(car '(1 . 2))","1"
-"(car '())","\scherror%"
-"(cdr '((a) b c d))","(b c d)"
-"(cdr '(1 . 2))","2"
-"(cdr '())","\scherror%"
-"(define (f) (list 'not-a-constant-list))"
-"(define (g) '(constant-list))"
-"(set-car! (f) 3)","\unspecified"
-"(set-car! (g) 3)","\scherror%"
-"        (list? '(a b c))","#t"
-"        (list? '())","#t"
-"        (list? '(a . b))","#f"
-"        (let ((x (list 'a)))"
-"          (set-cdr! x x)"
-"          (list? x))","#f%"
-"(make-list 2 3)","(3 3)%"
-"(list 'a (+ 3 4) 'c)","(a 7 c)"
-"(list)","()%"
-"(length '(a b c))","3"
-"(length '(a (b) (c d e)))","3"
-"(length '())","0%"
-"(append '(x) '(y))","(x y)"
-"(append '(a) '(b c d))","(a b c d)"
-"(append '(a (b)) '((c)))","(a (b) (c))%"
-"(append '(a b) '(c . d))","(a b c . d)"
-"(append '() 'a)","a%"
-"(reverse '(a b c))","(c b a)"
-"(reverse '(a (b c) d (e (f))))  \lev  ((e (f)) d (b c) a)%"
-"(list-ref '(a b c d) 2)","c"
-"(list-ref '(a b c d)"
-"          (exact (round 1.8))) \lev  c%"
-"(let ((ls (list 'one 'two 'five!)))"
-"  (list-set! ls 2 'three)"
-"  ls)      \lev  (one two three)"
-""
-"(list-set! '(0 1 2) 1 "oops")  \lev  \scherror  ; constant list%"
-"(memq 'a '(a b c))","(a b c)"
-"(memq 'b '(a b c))","(b c)"
-"(memq 'a '(b c d))","#f"
-"(memq (list 'a) '(b (a) c))","#f"
-"(member (list 'a)"
-"        '(b (a) c))","((a) c)"
-"(member "B""
-"        '("a" "b" "c")"
-"        string-ci=?)","("b" "c")"
-"(memq 101 '(100 101 102))","\unspecified"
-"(memv 101 '(100 101 102))","(101 102)%"
-"(define e '((a 1) (b 2) (c 3)))"
-"(assq 'a e)","(a 1)"
-"(assq 'b e)","(b 2)"
-"(assq 'd e)","#f"
-"(assq (list 'a) '(((a)) ((b)) ((c))))","#f"
-"(assoc (list 'a) '(((a)) ((b)) ((c))))","((a))"
-"(assoc 2.0 '((1 1) (2 4) (3 9)) =)","(2 4)"
-"(assq 5 '((2 3) (5 7) (11 13)))","\unspecified"
-"(assv 5 '((2 3) (5 7) (11 13)))","(5 7)%"
-"(define a '(1 8 2 8)) ; a may be immutable"
-"(define b (list-copy a))"
-"(set-car! b 3)        ; b is mutable"
-"b","(3 8 2 8)"
-"a","(1 8 2 8)%"
-"(symbol? 'foo)","#t"
-"(symbol? (car '(a b)))","#t"
-"(symbol? "bar")","#f"
-"(symbol? 'nil)","#t"
-"(symbol? '())","#f"
-"(symbol? #f)","#f%"
-"(symbol->string 'flying-fish)",""flying-fish""
-"(symbol->string 'Martin)",""Martin""
-"(symbol->string"
-"   (string->symbol "Malvina"))",""Malvina"%"
-"(string->symbol "mISSISSIppi")  \lev%"
-"  mISSISSIppi"
-"(eqv? 'bitBlt (string->symbol "bitBlt"))     \lev  #t"
-"(eqv? 'LollyPop"
-"     (string->symbol"
-"       (symbol->string 'LollyPop)))  \lev  #t"
-"(string=? "K. Harper, M.D.""
-"          (symbol->string"
-"            (string->symbol "K. Harper, M.D.")))  \lev  #t%"
-"(digit-value \#\backwhack{}3)","3"
-"(digit-value \#\backwhack{}x0664)","4"
-"(digit-value \#\backwhack{}x0AE6)","0"
-"(digit-value \#\backwhack{}x0EA6)","#f%"
-"(define (f) (make-string 3 \sharpsign\backwhack{}*))"
-"(define (g) "***")"
-"(string-set! (f) 0 \sharpsign\backwhack{}?)","\unspecified"
-"(string-set! (g) 0 \sharpsign\backwhack{}?)","\scherror"
-"(string-set! (symbol->string 'immutable)"
-"             0"
-"             \sharpsign\backwhack{}?)","\scherror%"
-"(define a "12345")"
-"(define b (string-copy "abcde"))"
-"(string-copy! b 1 a 0 2)"
-"b",""a12de"%"
-"(vector 'a 'b 'c)","\#(a b c)%"
-"(vector-ref '\#(1 1 2 3 5 8 13 21)"
-"            5)  \lev  8"
-"(vector-ref '\#(1 1 2 3 5 8 13 21)"
-"            (exact"
-"             (round (* 2 (acos -1))))) \lev 13%"
-"(let ((vec (vector 0 '(2 2 2 2) "Anna")))"
-"  (vector-set! vec 1 '("Sue" "Sue"))"
-"  vec)      \lev  \#(0 ("Sue" "Sue") "Anna")"
-""
-"(vector-set! '\#(0 1 2) 1 "doe")  \lev  \scherror  ; constant vector%"
-"(vector->list '\#(dah dah didah))  \lev  (dah dah didah)"
-"(vector->list '\#(dah dah didah) 1 2) \lev (dah)"
-"(list->vector '(dididit dah))   \lev  \#(dididit dah)%"
-"(string->vector "ABC")","\#(\#\backwhack{}A \#\backwhack{}B \#\backwhack{}C)"
-"(vector->string"
-"  \#(\#\backwhack{}1 \#\backwhack{}2 \#\backwhack{}3)",""123""
-"(define a \#(1 8 2 8)) ; a may be immutable"
-"(define b (vector-copy a))"
-"(vector-set! b 0 3)   ; b is mutable"
-"b","\#(3 8 2 8)"
-"(define c (vector-copy b 1 3))"
-"c","\#(8 2)%"
-"(define a (vector 1 2 3 4 5))"
-"(define b (vector 10 20 30 40 50))"
-"(vector-copy! b 1 a 0 2)"
-"b","\#(10 1 2 40 50)%"
-"(vector-append \#(a b c) \#(d e f)) \lev \#(a b c d e f)%"
-"(define a (vector 1 2 3 4 5))"
-"(vector-fill! a 'smash 2 4)"
-"a \lev \#(1 2 smash smash 5)%"
-"\#u8(0 10 5)%"
-"(make-bytevector 2 12)","\#u8(12 12)%"
-"(bytevector 1 3 5 1 3 5)","\#u8(1 3 5 1 3 5)"
-"(bytevector)","\#u8()%"
-"(bytevector-u8-ref '\#u8(1 1 2 3 5 8 13 21)"
-"            5)  \lev  8%"
-"(let ((bv (bytevector 1 2 3 4)))"
-"  (bytevector-u8-set! bv 1 3)"
-"  bv) \lev \#u8(1 3 3 4)%"
-"(define a \#u8(1 2 3 4 5))"
-"(bytevector-copy a 2 4))","\#u8(3 4)%"
-"(define a (bytevector 1 2 3 4 5))"
-"(define b (bytevector 10 20 30 40 50))"
-"(bytevector-copy! b 1 a 0 2)"
-"b","\#u8(10 1 2 40 50)%"
-"(bytevector-append \#u8(0 1 2) \#u8(3 4 5)) \lev \#u8(0 1 2 3 4 5)%"
-"(utf8->string \#u8(\#x41))",""A""
-"(string->utf8 "$\lambda$")","\#u8(\#xCE \#xBB)%"
-"(procedure? car)","#t"
-"(procedure? 'car)","#f"
-"(procedure? (lambda (x) (* x x)))","#t"
-"(procedure? '(lambda (x) (* x x)))","#f"
-"(call-with-current-continuation procedure?)","#t%"
-"(apply + (list 3 4))","7"
-""
-"(define compose"
-"  (lambda (f g)"
-"    (lambda args"
-"      (f (apply g args)))))"
-""
-"((compose sqrt *) 12 75)","30%"
-"(map cadr '((a b) (d e) (g h)))   \lev  (b e h)"
-""
-"(map (lambda (n) (expt n n))"
-"     '(1 2 3 4 5))                \lev  (1 4 27 256 3125)"
-""
-"(map + '(1 2 3) '(4 5 6 7))","(5 7 9)"
-""
-"(let ((count 0))"
-"  (map (lambda (ignored)"
-"         (set! count (+ count 1))"
-"         count)"
-"       '(a b)))","(1 2) \var{or} (2 1)%"
-"(string-map char-foldcase "AbdEgH") \lev  "abdegh""
-""
-"(string-map"
-" (lambda (c)"
-"   (integer->char (+ 1 (char->integer c))))"
-" "HAL")                \lev  "IBM""
-""
-"(string-map"
-" (lambda (c k)"
-"   ((if (eqv? k \sharpsign\backwhack{}u) char-upcase char-downcase)"
-"    c))"
-" "studlycaps xxx""
-" "ululululul")   \lev   "StUdLyCaPs"%"
-"(vector-map cadr '\#((a b) (d e) (g h)))   \lev  \#(b e h)"
-""
-"(vector-map (lambda (n) (expt n n))"
-"            '\#(1 2 3 4 5))                \lev  \#(1 4 27 256 3125)"
-""
-"(vector-map + '\#(1 2 3) '\#(4 5 6 7))       \lev  \#(5 7 9)"
-""
-"(let ((count 0))"
-"  (vector-map"
-"   (lambda (ignored)"
-"     (set! count (+ count 1))"
-"     count)"
-"   '\#(a b)))","\#(1 2) \var{or} \#(2 1)%"
-"(let ((v (make-vector 5)))"
-"  (for-each (lambda (i)"
-"              (vector-set! v i (* i i)))"
-"            '(0 1 2 3 4))"
-"  v)","\#(0 1 4 9 16)%"
-"(let ((v '()))"
-"  (string-for-each"
-"   (lambda (c) (set! v (cons (char->integer c) v)))"
-"   "abcde")"
-"  v)","(101 100 99 98 97)%"
-"(let ((v (make-list 5)))"
-"  (vector-for-each"
-"   (lambda (i) (list-set! v i (* i i)))"
-"   '\#(0 1 2 3 4))"
-"  v)","(0 1 4 9 16)%"
-"(call-with-current-continuation"
-"  (lambda (exit)"
-"    (for-each (lambda (x)"
-"                (if (negative? x)"
-"                    (exit x)))"
-"              '(54 0 37 -3 245 19))"
-"    #t))","-3"
-""
-"(define list-length"
-"  (lambda (obj)"
-"    (call-with-current-continuation"
-"      (lambda (return)"
-"        (letrec ((r"
-"                  (lambda (obj)"
-"                    (cond ((null? obj) 0)"
-"                          ((pair? obj)"
-"                           (+ (r (cdr obj)) 1))"
-"                          (else (return #f))))))"
-"          (r obj))))))"
-""
-"(list-length '(1 2 3 4))","4"
-""
-"(list-length '(a b . c))","#f%"
-"(call-with-values (lambda () (values 4 5))"
-"                  (lambda (a b) b))","5"
-""
-"(call-with-values * -)","-1%"
-"(let ((path '())"
-"      (c \#f))"
-"  (let ((add (lambda (s)"
-"               (set! path (cons s path)))))"
-"    (dynamic-wind"
-"      (lambda () (add 'connect))"
-"      (lambda ()"
-"        (add (call-with-current-continuation"
-"               (lambda (c0)"
-"                 (set! c c0)"
-"                 'talk1))))"
-"      (lambda () (add 'disconnect)))"
-"    (if (< (length path) 4)"
-"        (c 'talk2)"
-"        (reverse path))))"
-"    \lev (connect talk1 disconnect"
-"               connect talk2 disconnect)%"
-"(call-with-current-continuation"
-" (lambda (k)"
-"  (with-exception-handler"
-"   (lambda (x)"
-"    (display "condition: ")"
-"    (write x)"
-"    (newline)"
-"    (k 'exception))"
-"   (lambda ()"
-"    (+ 1 (raise 'an-error))))))","exception"
-" \>{\em and prints}  condition: an-error"
-""
-"(with-exception-handler"
-" (lambda (x)"
-"  (display "something went wrong\backwhack{}n"))"
-" (lambda ()"
-"  (+ 1 (raise 'an-error))))"
-" \>{\em prints}  something went wrong%"
-"(with-exception-handler"
-"  (lambda (con)"
-"    (cond"
-"      ((string? con)"
-"       (display con))"
-"      (else"
-"       (display "a warning has been issued")))"
-"    42)"
-"  (lambda ()"
-"    (+ (raise-continuable "should be a number")"
-"       23)))"
-"   {\it prints:} should be a number","65%"
-"(define (null-list? l)"
-"  (cond ((pair? l) \#f)"
-"        ((null? l) \#t)"
-"        (else"
-"          (error"
-"            "null-list?: argument out of domain""
-"            l))))%"
-"(eval '(* 7 3) (environment '(scheme base)))","21"
-""
-"(let ((f (eval '(lambda (f x) (f x x))"
-"               (null-environment 5))))"
-"  (f + 10))","20"
-"(eval '(define foo 32)"
-"      (environment '(scheme base)))","{\it{} error is signaled}%"
-"(parameterize"
-"    ((current-output-port"
-"      (open-output-string)))"
-"    (display "piece")"
-"    (display " by piece ")"
-"    (display "by piece.")"
-"    (newline)"
-"    (get-output-string (current-output-port)))"
-"\lev "piece by piece by piece.\backwhack{}n"%"
-"(get-environment-variable "PATH") \lev "/usr/local/bin:/usr/bin:/bin"%"
-"(get-environment-variables) \lev (("USER" . "root") ("HOME" . "/"))%"
-""
-"(features)","(r7rs ratios exact-complex full-unicode"
-"   gnu-linux little-endian "
-"   fantastic-scheme"
-"   fantastic-scheme-1.0"
-"   space-ship-control-system)"%
+
+		assertExpressionValue("(let ((p (lambda (x) x)))");
+		assertExpressionValue("  (eqv? p p))","#t");
+		assertExpressionValue("(eqv? \#f 'nil)","#f%");
+		assertExpressionValue("(define gen-counter");
+		assertExpressionValue("  (lambda ()");
+		assertExpressionValue("    (let ((n 0))");
+		assertExpressionValue("      (lambda () (set! n (+ n 1)) n))))");
+		assertExpressionValue("(let ((g (gen-counter)))");
+		assertExpressionValue("  (eqv? g g))","#t");
+		assertExpressionValue("(eqv? (gen-counter) (gen-counter))","#f");
+		assertExpressionValue("(define gen-loser");
+		assertExpressionValue("  (lambda ()");
+		assertExpressionValue("    (let ((n 0))");
+		assertExpressionValue("      (lambda () (set! n (+ n 1)) 27))))");
+		assertExpressionValue("(let ((g (gen-loser)))");
+		assertExpressionValue("  (eqv? g g))","#t");
+		assertExpressionValue("(eqv? (gen-loser) (gen-loser))","\unspecified");
+		assertExpressionValue("");
+		assertExpressionValue("(letrec ((f (lambda () (if (eqv? f g) 'both 'f)))");
+		assertExpressionValue("         (g (lambda () (if (eqv? f g) 'both 'g))))");
+		assertExpressionValue("  (eqv? f g))","\unspecified");
+		assertExpressionValue("");
+		assertExpressionValue("(letrec ((f (lambda () (if (eqv? f g) 'f 'both)))");
+		assertExpressionValue("         (g (lambda () (if (eqv? f g) 'g 'both))))");
+		assertExpressionValue("  (eqv? f g))","#f%");
+		assertExpressionValue("(let ((x '(a)))");
+		assertExpressionValue("  (eqv? x x))","#t%");
+		assertExpressionValue("(let ((n (+ 2 3)))");
+		assertExpressionValue("  (eq? n n))","\unspecified");
+		assertExpressionValue("(let ((x '(a)))");
+		assertExpressionValue("  (eq? x x))","#t");
+		assertExpressionValue("(let ((x '\#()))");
+		assertExpressionValue("  (eq? x x))","#t");
+		assertExpressionValue("(let ((p (lambda (x) x)))");
+		assertExpressionValue("  (eq? p p))","#t%");
+		assertExpressionValue("");
+
+		assertExpressionValue("(define x (list 'a 'b 'c))");
+		assertExpressionValue("(define y x)");
+		assertExpressionValue("y","(a b c)");
+		assertExpressionValue("(list? y)","#t");
+		assertExpressionValue("(set-cdr! x 4)","\unspecified");
+		assertExpressionValue("x","(a . 4)");
+		assertExpressionValue("(eqv? x y)","#t");
+		assertExpressionValue("y","(a . 4)");
+		assertExpressionValue("(list? y)","#f");
+		assertExpressionValue("(set-cdr! x x)","\unspecified");
+		assertExpressionValue("(list? x)","#f%");
+
+		assertExpressionValue("(define (f) (list 'not-a-constant-list))");
+		assertExpressionValue("(define (g) '(constant-list))");
+		assertExpressionValue("(set-car! (f) 3)","\unspecified");
+		assertExpressionValue("(set-car! (g) 3)","\scherror%");
+		assertExpressionValue("        (list? '(a b c))","#t");
+		assertExpressionValue("        (list? '())","#t");
+		assertExpressionValue("        (list? '(a . b))","#f");
+		assertExpressionValue("        (let ((x (list 'a)))");
+		assertExpressionValue("          (set-cdr! x x)");
+		assertExpressionValue("          (list? x))","#f%");
+		assertExpressionValue("(let ((ls (list 'one 'two 'five!)))");
+		assertExpressionValue("  (list-set! ls 2 'three)");
+		assertExpressionValue("  ls)      \lev  (one two three)");
+		assertExpressionValue("");
+		assertExpressionValue("(list-set! '(0 1 2) 1 "oops")  \lev  \scherror  ; constant list%");
+		assertExpressionValue("(memq 'a '(a b c))","(a b c)");
+		assertExpressionValue("(memq 'b '(a b c))","(b c)");
+		assertExpressionValue("(memq 'a '(b c d))","#f");
+		assertExpressionValue("(memq (list 'a) '(b (a) c))","#f");
+		assertExpressionValue("(member (list 'a)");
+		assertExpressionValue("        '(b (a) c))","((a) c)");
+		assertExpressionValue("(member "B"");
+		assertExpressionValue("        '("a" "b" "c")");
+		assertExpressionValue("        string-ci=?)","("b" "c")");
+		assertExpressionValue("(memq 101 '(100 101 102))","\unspecified");
+		assertExpressionValue("(memv 101 '(100 101 102))","(101 102)%");
+		assertExpressionValue("(define e '((a 1) (b 2) (c 3)))");
+		assertExpressionValue("(assq 'a e)","(a 1)");
+		assertExpressionValue("(assq 'b e)","(b 2)");
+		assertExpressionValue("(assq 'd e)","#f");
+		assertExpressionValue("(assq (list 'a) '(((a)) ((b)) ((c))))","#f");
+		assertExpressionValue("(assoc (list 'a) '(((a)) ((b)) ((c))))","((a))");
+		assertExpressionValue("(assoc 2.0 '((1 1) (2 4) (3 9)) =)","(2 4)");
+		assertExpressionValue("(assq 5 '((2 3) (5 7) (11 13)))","\unspecified");
+		assertExpressionValue("(assv 5 '((2 3) (5 7) (11 13)))","(5 7)%");
+		assertExpressionValue("(define a '(1 8 2 8)) ; a may be immutable");
+		assertExpressionValue("(define b (list-copy a))");
+		assertExpressionValue("(set-car! b 3)        ; b is mutable");
+		assertExpressionValue("b","(3 8 2 8)");
+		assertExpressionValue("a","(1 8 2 8)%");
+		assertExpressionValue("(symbol? 'foo)","#t");
+		assertExpressionValue("(symbol? (car '(a b)))","#t");
+		assertExpressionValue("(symbol? "bar")","#f");
+		assertExpressionValue("(symbol? 'nil)","#t");
+		assertExpressionValue("(symbol? '())","#f");
+		assertExpressionValue("(symbol? #f)","#f%");
+		assertExpressionValue("(symbol->string 'flying-fish)",""flying-fish"");
+		assertExpressionValue("(symbol->string 'Martin)",""Martin"");
+		assertExpressionValue("(symbol->string");
+		assertExpressionValue("   (string->symbol "Malvina"))",""Malvina"%");
+		assertExpressionValue("(string->symbol "mISSISSIppi")  \lev%");
+		assertExpressionValue("  mISSISSIppi");
+		assertExpressionValue("(eqv? 'bitBlt (string->symbol "bitBlt"))     \lev  #t");
+		assertExpressionValue("(eqv? 'LollyPop");
+		assertExpressionValue("     (string->symbol");
+		assertExpressionValue("       (symbol->string 'LollyPop)))  \lev  #t");
+		assertExpressionValue("(string=? "K. Harper, M.D."");
+		assertExpressionValue("          (symbol->string");
+		assertExpressionValue("            (string->symbol "K. Harper, M.D.")))  \lev  #t%");
+		assertExpressionValue("(digit-value \#\backwhack{}3)","3");
+		assertExpressionValue("(digit-value \#\backwhack{}x0664)","4");
+		assertExpressionValue("(digit-value \#\backwhack{}x0AE6)","0");
+		assertExpressionValue("(digit-value \#\backwhack{}x0EA6)","#f%");
+		assertExpressionValue("(define (f) (make-string 3 \sharpsign\backwhack{}*))");
+		assertExpressionValue("(define (g) "***")");
+		assertExpressionValue("(string-set! (f) 0 \sharpsign\backwhack{}?)","\unspecified");
+		assertExpressionValue("(string-set! (g) 0 \sharpsign\backwhack{}?)","\scherror");
+		assertExpressionValue("(string-set! (symbol->string 'immutable)");
+		assertExpressionValue("             0");
+		assertExpressionValue("             \sharpsign\backwhack{}?)","\scherror%");
+		assertExpressionValue("(define a "12345")");
+		assertExpressionValue("(define b (string-copy "abcde"))");
+		assertExpressionValue("(string-copy! b 1 a 0 2)");
+		assertExpressionValue("b",""a12de"%");
+		assertExpressionValue("(vector 'a 'b 'c)","\#(a b c)%");
+		assertExpressionValue("(vector-ref '\#(1 1 2 3 5 8 13 21)");
+		assertExpressionValue("            5)  \lev  8");
+		assertExpressionValue("(vector-ref '\#(1 1 2 3 5 8 13 21)");
+		assertExpressionValue("            (exact");
+		assertExpressionValue("             (round (* 2 (acos -1))))) \lev 13%");
+		assertExpressionValue("(let ((vec (vector 0 '(2 2 2 2) "Anna")))");
+		assertExpressionValue("  (vector-set! vec 1 '("Sue" "Sue"))");
+		assertExpressionValue("  vec)      \lev  \#(0 ("Sue" "Sue") "Anna")");
+		assertExpressionValue("");
+		assertExpressionValue("(vector-set! '\#(0 1 2) 1 "doe")  \lev  \scherror  ; constant vector%");
+		assertExpressionValue("(vector->list '\#(dah dah didah))  \lev  (dah dah didah)");
+		assertExpressionValue("(vector->list '\#(dah dah didah) 1 2) \lev (dah)");
+		assertExpressionValue("(list->vector '(dididit dah))   \lev  \#(dididit dah)%");
+		assertExpressionValue("(string->vector "ABC")","\#(\#\backwhack{}A \#\backwhack{}B \#\backwhack{}C)");
+		assertExpressionValue("(vector->string");
+		assertExpressionValue("  \#(\#\backwhack{}1 \#\backwhack{}2 \#\backwhack{}3)",""123"");
+		assertExpressionValue("(define a \#(1 8 2 8)) ; a may be immutable");
+		assertExpressionValue("(define b (vector-copy a))");
+		assertExpressionValue("(vector-set! b 0 3)   ; b is mutable");
+		assertExpressionValue("b","\#(3 8 2 8)");
+		assertExpressionValue("(define c (vector-copy b 1 3))");
+		assertExpressionValue("c","\#(8 2)%");
+		assertExpressionValue("(define a (vector 1 2 3 4 5))");
+		assertExpressionValue("(define b (vector 10 20 30 40 50))");
+		assertExpressionValue("(vector-copy! b 1 a 0 2)");
+		assertExpressionValue("b","\#(10 1 2 40 50)%");
+		assertExpressionValue("(vector-append \#(a b c) \#(d e f)) \lev \#(a b c d e f)%");
+		assertExpressionValue("(define a (vector 1 2 3 4 5))");
+		assertExpressionValue("(vector-fill! a 'smash 2 4)");
+		assertExpressionValue("a \lev \#(1 2 smash smash 5)%");
+		assertExpressionValue("\#u8(0 10 5)%");
+		assertExpressionValue("(make-bytevector 2 12)","\#u8(12 12)%");
+		assertExpressionValue("(bytevector 1 3 5 1 3 5)","\#u8(1 3 5 1 3 5)");
+		assertExpressionValue("(bytevector)","\#u8()%");
+		assertExpressionValue("(bytevector-u8-ref '\#u8(1 1 2 3 5 8 13 21)");
+		assertExpressionValue("            5)  \lev  8%");
+		assertExpressionValue("(let ((bv (bytevector 1 2 3 4)))");
+		assertExpressionValue("  (bytevector-u8-set! bv 1 3)");
+		assertExpressionValue("  bv) \lev \#u8(1 3 3 4)%");
+		assertExpressionValue("(define a \#u8(1 2 3 4 5))");
+		assertExpressionValue("(bytevector-copy a 2 4))","\#u8(3 4)%");
+		assertExpressionValue("(define a (bytevector 1 2 3 4 5))");
+		assertExpressionValue("(define b (bytevector 10 20 30 40 50))");
+		assertExpressionValue("(bytevector-copy! b 1 a 0 2)");
+		assertExpressionValue("b","\#u8(10 1 2 40 50)%");
+		assertExpressionValue("(bytevector-append \#u8(0 1 2) \#u8(3 4 5)) \lev \#u8(0 1 2 3 4 5)%");
+		assertExpressionValue("(utf8->string \#u8(\#x41))",""A"");
+		assertExpressionValue("(string->utf8 "$\lambda$")","\#u8(\#xCE \#xBB)%");
+		assertExpressionValue("(procedure? car)","#t");
+		assertExpressionValue("(procedure? 'car)","#f");
+		assertExpressionValue("(procedure? (lambda (x) (* x x)))","#t");
+		assertExpressionValue("(procedure? '(lambda (x) (* x x)))","#f");
+		assertExpressionValue("(call-with-current-continuation procedure?)","#t%");
+		assertExpressionValue("(apply + (list 3 4))","7");
+		assertExpressionValue("");
+		assertExpressionValue("(define compose");
+		assertExpressionValue("  (lambda (f g)");
+		assertExpressionValue("    (lambda args");
+		assertExpressionValue("      (f (apply g args)))))");
+		assertExpressionValue("");
+		assertExpressionValue("((compose sqrt *) 12 75)","30%");
+		assertExpressionValue("(map cadr '((a b) (d e) (g h)))   \lev  (b e h)");
+		assertExpressionValue("");
+		assertExpressionValue("(map (lambda (n) (expt n n))");
+		assertExpressionValue("     '(1 2 3 4 5))                \lev  (1 4 27 256 3125)");
+		assertExpressionValue("");
+		assertExpressionValue("(map + '(1 2 3) '(4 5 6 7))","(5 7 9)");
+		assertExpressionValue("");
+		assertExpressionValue("(let ((count 0))");
+		assertExpressionValue("  (map (lambda (ignored)");
+		assertExpressionValue("         (set! count (+ count 1))");
+		assertExpressionValue("         count)");
+		assertExpressionValue("       '(a b)))","(1 2) \var{or} (2 1)%");
+		assertExpressionValue("(string-map char-foldcase "AbdEgH") \lev  "abdegh"");
+		assertExpressionValue("");
+		assertExpressionValue("(string-map");
+		assertExpressionValue(" (lambda (c)");
+		assertExpressionValue("   (integer->char (+ 1 (char->integer c))))");
+		assertExpressionValue(" "HAL")                \lev  "IBM"");
+		assertExpressionValue("");
+		assertExpressionValue("(string-map");
+		assertExpressionValue(" (lambda (c k)");
+		assertExpressionValue("   ((if (eqv? k \sharpsign\backwhack{}u) char-upcase char-downcase)");
+		assertExpressionValue("    c))");
+		assertExpressionValue(" "studlycaps xxx"");
+		assertExpressionValue(" "ululululul")   \lev   "StUdLyCaPs"%");
+		assertExpressionValue("(vector-map cadr '\#((a b) (d e) (g h)))   \lev  \#(b e h)");
+		assertExpressionValue("");
+		assertExpressionValue("(vector-map (lambda (n) (expt n n))");
+		assertExpressionValue("            '\#(1 2 3 4 5))                \lev  \#(1 4 27 256 3125)");
+		assertExpressionValue("");
+		assertExpressionValue("(vector-map + '\#(1 2 3) '\#(4 5 6 7))       \lev  \#(5 7 9)");
+		assertExpressionValue("");
+		assertExpressionValue("(let ((count 0))");
+		assertExpressionValue("  (vector-map");
+		assertExpressionValue("   (lambda (ignored)");
+		assertExpressionValue("     (set! count (+ count 1))");
+		assertExpressionValue("     count)");
+		assertExpressionValue("   '\#(a b)))","\#(1 2) \var{or} \#(2 1)%");
+		assertExpressionValue("(let ((v (make-vector 5)))");
+		assertExpressionValue("  (for-each (lambda (i)");
+		assertExpressionValue("              (vector-set! v i (* i i)))");
+		assertExpressionValue("            '(0 1 2 3 4))");
+		assertExpressionValue("  v)","\#(0 1 4 9 16)%");
+		assertExpressionValue("(let ((v '()))");
+		assertExpressionValue("  (string-for-each");
+		assertExpressionValue("   (lambda (c) (set! v (cons (char->integer c) v)))");
+		assertExpressionValue("   "abcde")");
+		assertExpressionValue("  v)","(101 100 99 98 97)%");
+		assertExpressionValue("(let ((v (make-list 5)))");
+		assertExpressionValue("  (vector-for-each");
+		assertExpressionValue("   (lambda (i) (list-set! v i (* i i)))");
+		assertExpressionValue("   '\#(0 1 2 3 4))");
+		assertExpressionValue("  v)","(0 1 4 9 16)%");
+		assertExpressionValue("(call-with-current-continuation");
+		assertExpressionValue("  (lambda (exit)");
+		assertExpressionValue("    (for-each (lambda (x)");
+		assertExpressionValue("                (if (negative? x)");
+		assertExpressionValue("                    (exit x)))");
+		assertExpressionValue("              '(54 0 37 -3 245 19))");
+		assertExpressionValue("    #t))","-3");
+		assertExpressionValue("");
+		assertExpressionValue("(define list-length");
+		assertExpressionValue("  (lambda (obj)");
+		assertExpressionValue("    (call-with-current-continuation");
+		assertExpressionValue("      (lambda (return)");
+		assertExpressionValue("        (letrec ((r");
+		assertExpressionValue("                  (lambda (obj)");
+		assertExpressionValue("                    (cond ((null? obj) 0)");
+		assertExpressionValue("                          ((pair? obj)");
+		assertExpressionValue("                           (+ (r (cdr obj)) 1))");
+		assertExpressionValue("                          (else (return #f))))))");
+		assertExpressionValue("          (r obj))))))");
+		assertExpressionValue("");
+		assertExpressionValue("(list-length '(1 2 3 4))","4");
+		assertExpressionValue("");
+		assertExpressionValue("(list-length '(a b . c))","#f%");
+		assertExpressionValue("(call-with-values (lambda () (values 4 5))");
+		assertExpressionValue("                  (lambda (a b) b))","5");
+		assertExpressionValue("");
+		assertExpressionValue("(call-with-values * -)","-1%");
+		assertExpressionValue("(let ((path '())");
+		assertExpressionValue("      (c \#f))");
+		assertExpressionValue("  (let ((add (lambda (s)");
+		assertExpressionValue("               (set! path (cons s path)))))");
+		assertExpressionValue("    (dynamic-wind");
+		assertExpressionValue("      (lambda () (add 'connect))");
+		assertExpressionValue("      (lambda ()");
+		assertExpressionValue("        (add (call-with-current-continuation");
+		assertExpressionValue("               (lambda (c0)");
+		assertExpressionValue("                 (set! c c0)");
+		assertExpressionValue("                 'talk1))))");
+		assertExpressionValue("      (lambda () (add 'disconnect)))");
+		assertExpressionValue("    (if (< (length path) 4)");
+		assertExpressionValue("        (c 'talk2)");
+		assertExpressionValue("        (reverse path))))");
+		assertExpressionValue("    \lev (connect talk1 disconnect");
+		assertExpressionValue("               connect talk2 disconnect)%");
+		assertExpressionValue("(call-with-current-continuation");
+		assertExpressionValue(" (lambda (k)");
+		assertExpressionValue("  (with-exception-handler");
+		assertExpressionValue("   (lambda (x)");
+		assertExpressionValue("    (display "condition: ")");
+		assertExpressionValue("    (write x)");
+		assertExpressionValue("    (newline)");
+		assertExpressionValue("    (k 'exception))");
+		assertExpressionValue("   (lambda ()");
+		assertExpressionValue("    (+ 1 (raise 'an-error))))))","exception");
+		assertExpressionValue(" \>{\em and prints}  condition: an-error");
+		assertExpressionValue("");
+		assertExpressionValue("(with-exception-handler");
+		assertExpressionValue(" (lambda (x)");
+		assertExpressionValue("  (display "something went wrong\backwhack{}n"))");
+		assertExpressionValue(" (lambda ()");
+		assertExpressionValue("  (+ 1 (raise 'an-error))))");
+		assertExpressionValue(" \>{\em prints}  something went wrong%");
+		assertExpressionValue("(with-exception-handler");
+		assertExpressionValue("  (lambda (con)");
+		assertExpressionValue("    (cond");
+		assertExpressionValue("      ((string? con)");
+		assertExpressionValue("       (display con))");
+		assertExpressionValue("      (else");
+		assertExpressionValue("       (display "a warning has been issued")))");
+		assertExpressionValue("    42)");
+		assertExpressionValue("  (lambda ()");
+		assertExpressionValue("    (+ (raise-continuable "should be a number")");
+		assertExpressionValue("       23)))");
+		assertExpressionValue("   {\it prints:} should be a number","65%");
+		assertExpressionValue("(define (null-list? l)");
+		assertExpressionValue("  (cond ((pair? l) \#f)");
+		assertExpressionValue("        ((null? l) \#t)");
+		assertExpressionValue("        (else");
+		assertExpressionValue("          (error");
+		assertExpressionValue("            "null-list?: argument out of domain"");
+		assertExpressionValue("            l))))%");
+		assertExpressionValue("(eval '(* 7 3) (environment '(scheme base)))","21");
+		assertExpressionValue("");
+		assertExpressionValue("(let ((f (eval '(lambda (f x) (f x x))");
+		assertExpressionValue("               (null-environment 5))))");
+		assertExpressionValue("  (f + 10))","20");
+		assertExpressionValue("(eval '(define foo 32)");
+		assertExpressionValue("      (environment '(scheme base)))","{\it{} error is signaled}%");
+		assertExpressionValue("(parameterize");
+		assertExpressionValue("    ((current-output-port");
+		assertExpressionValue("      (open-output-string)))");
+		assertExpressionValue("    (display "piece")");
+		assertExpressionValue("    (display " by piece ")");
+		assertExpressionValue("    (display "by piece.")");
+		assertExpressionValue("    (newline)");
+		assertExpressionValue("    (get-output-string (current-output-port)))");
+		assertExpressionValue("\lev "piece by piece by piece.\backwhack{}n"%");
+		assertExpressionValue("(get-environment-variable "PATH") \lev "/usr/local/bin:/usr/bin:/bin"%");
+		assertExpressionValue("(get-environment-variables) \lev (("USER" . "root") ("HOME" . "/"))%");
+		assertExpressionValue("");
+		assertExpressionValue("(features)","(r7rs ratios exact-complex full-unicode");
+		assertExpressionValue("   gnu-linux little-endian ");
+		assertExpressionValue("   fantastic-scheme");
+		assertExpressionValue("   fantastic-scheme-1.0");
+		assertExpressionValue("   space-ship-control-system)"%);

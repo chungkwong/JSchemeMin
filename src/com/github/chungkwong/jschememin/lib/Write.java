@@ -26,7 +26,7 @@ import com.github.chungkwong.jschememin.type.*;
 public class Write extends NativeLibrary{
 	public static final Write INSTANCE=new Write();
 	public Write(){
-		super((ScmPair)ScmList.toList(new ScmString("scheme"),new ScmString("write")));
+		super("scheme","write");
 	}
 	@Override
 	protected void init(Library lib){
