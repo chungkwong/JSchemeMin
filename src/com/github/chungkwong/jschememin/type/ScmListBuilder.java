@@ -21,7 +21,7 @@ package com.github.chungkwong.jschememin.type;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmListBuilder{
-	private ScmPairOrNil start=ScmNil.NIL;
+	private ScmObject start=ScmNil.NIL;
 	private ScmPair end=null;
 	public ScmListBuilder(){
 
@@ -39,9 +39,12 @@ public class ScmListBuilder{
 		ScmList.forEach(list,(item)->add(item));
 	}
 	public void setLast(ScmObject obj){
-		end.setCdr(obj);
+		if(end==null)
+			start=obj;
+		else
+			end.setCdr(obj);
 	}
-	public ScmPairOrNil toList(){
+	public ScmObject toList(){
 		return start;
 	}
 }

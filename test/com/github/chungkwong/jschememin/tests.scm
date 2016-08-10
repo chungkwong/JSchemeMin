@@ -88,29 +88,9 @@
 		assertExpressionValue("(set-car! b 3)        ; b is mutable");
 		assertExpressionValue("b","(3 8 2 8)");
 		assertExpressionValue("a","(1 8 2 8)%");
-		assertExpressionValue("(symbol? 'foo)","#t");
-		assertExpressionValue("(symbol? (car '(a b)))","#t");
-		assertExpressionValue("(symbol? "bar")","#f");
-		assertExpressionValue("(symbol? 'nil)","#t");
-		assertExpressionValue("(symbol? '())","#f");
-		assertExpressionValue("(symbol? #f)","#f%");
-		assertExpressionValue("(symbol->string 'flying-fish)",""flying-fish"");
-		assertExpressionValue("(symbol->string 'Martin)",""Martin"");
-		assertExpressionValue("(symbol->string");
-		assertExpressionValue("   (string->symbol "Malvina"))",""Malvina"%");
-		assertExpressionValue("(string->symbol "mISSISSIppi")  \lev%");
-		assertExpressionValue("  mISSISSIppi");
-		assertExpressionValue("(eqv? 'bitBlt (string->symbol "bitBlt"))     \lev  #t");
-		assertExpressionValue("(eqv? 'LollyPop");
-		assertExpressionValue("     (string->symbol");
-		assertExpressionValue("       (symbol->string 'LollyPop)))  \lev  #t");
-		assertExpressionValue("(string=? "K. Harper, M.D."");
-		assertExpressionValue("          (symbol->string");
-		assertExpressionValue("            (string->symbol "K. Harper, M.D.")))  \lev  #t%");
-		assertExpressionValue("(digit-value \#\backwhack{}3)","3");
-		assertExpressionValue("(digit-value \#\backwhack{}x0664)","4");
-		assertExpressionValue("(digit-value \#\backwhack{}x0AE6)","0");
-		assertExpressionValue("(digit-value \#\backwhack{}x0EA6)","#f%");
+
+
+
 		assertExpressionValue("(define (f) (make-string 3 \sharpsign\backwhack{}*))");
 		assertExpressionValue("(define (g) "***")");
 		assertExpressionValue("(string-set! (f) 0 \sharpsign\backwhack{}?)","\unspecified");
@@ -154,23 +134,7 @@
 		assertExpressionValue("(vector-fill! a 'smash 2 4)");
 		assertExpressionValue("a \lev \#(1 2 smash smash 5)%");
 		assertExpressionValue("\#u8(0 10 5)%");
-		assertExpressionValue("(make-bytevector 2 12)","\#u8(12 12)%");
-		assertExpressionValue("(bytevector 1 3 5 1 3 5)","\#u8(1 3 5 1 3 5)");
-		assertExpressionValue("(bytevector)","\#u8()%");
-		assertExpressionValue("(bytevector-u8-ref '\#u8(1 1 2 3 5 8 13 21)");
-		assertExpressionValue("            5)  \lev  8%");
-		assertExpressionValue("(let ((bv (bytevector 1 2 3 4)))");
-		assertExpressionValue("  (bytevector-u8-set! bv 1 3)");
-		assertExpressionValue("  bv) \lev \#u8(1 3 3 4)%");
-		assertExpressionValue("(define a \#u8(1 2 3 4 5))");
-		assertExpressionValue("(bytevector-copy a 2 4))","\#u8(3 4)%");
-		assertExpressionValue("(define a (bytevector 1 2 3 4 5))");
-		assertExpressionValue("(define b (bytevector 10 20 30 40 50))");
-		assertExpressionValue("(bytevector-copy! b 1 a 0 2)");
-		assertExpressionValue("b","\#u8(10 1 2 40 50)%");
-		assertExpressionValue("(bytevector-append \#u8(0 1 2) \#u8(3 4 5)) \lev \#u8(0 1 2 3 4 5)%");
-		assertExpressionValue("(utf8->string \#u8(\#x41))",""A"");
-		assertExpressionValue("(string->utf8 "$\lambda$")","\#u8(\#xCE \#xBB)%");
+
 		assertExpressionValue("(procedure? car)","#t");
 		assertExpressionValue("(procedure? 'car)","#f");
 		assertExpressionValue("(procedure? (lambda (x) (* x x)))","#t");

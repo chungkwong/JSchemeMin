@@ -189,7 +189,7 @@ public class StandardProcedureTest{
 		assertExpressionValue("(append '(x) '(y))","'(x y)");
 		assertExpressionValue("(append '(a) '(b c d))","'(a b c d)");
 		assertExpressionValue("(append '(a (b)) '((c)))","'(a (b) (c))");
-		assertExpressionValue("(append '(a b) '(c . d))","(a b c . d)");
+		assertExpressionValue("(append '(a b) '(c . d))","'(a b c . d)");
 		assertExpressionValue("(append '() 'a)","'a");
 		assertExpressionValue("(reverse '(a b c))","'(c b a)");
 		assertExpressionValue("(reverse '(a (b c) d (e (f))))","'((e (f)) d (b c) a)");
@@ -198,9 +198,96 @@ public class StandardProcedureTest{
 	}
 	@Test
 	public void testSymbol(){
+		assertExpressionValue("(symbol? 'foo)","#t");
+		assertExpressionValue("(symbol? (car '(a b)))","#t");
+		assertExpressionValue("(symbol? \"bar\")","#f");
+		assertExpressionValue("(symbol? 'nil)","#t");
+		assertExpressionValue("(symbol? '())","#f");
+		assertExpressionValue("(symbol? #f)","#f");
+		assertExpressionValue("(symbol->string 'flying-fish)","\"flying-fish\"");
+		assertExpressionValue("(symbol->string 'Martin)","\"Martin\"");
+		assertExpressionValue("(symbol->string (string->symbol \"Malvina\"))","\"Malvina\"");
+		assertExpressionValue("(string->symbol \"mISSISSIppi\")","'mISSISSIppi");
+		assertExpressionValue("(eqv? 'bitBlt (string->symbol \"bitBlt\"))","#t");
+		assertExpressionValue("(eqv? 'LollyPop (string->symbol (symbol->string 'LollyPop)))","#t");
+		assertExpressionValue("(string=? \"K. Harper, M.D.\" (symbol->string (string->symbol \"K. Harper, M.D.\")))","#t");
 	}
 	@Test
 	public void testCharacter(){
+		assertExpressionValue("(char? #\\space)","#t");
+		assertExpressionValue("(char? \"a\")","#f");
+		assertExpressionValue("(char? '())","#f");
+		assertExpressionValue("(char? 'a)","#f");
+		assertExpressionValue("(char? '(#\\a))","#f");
+		assertExpressionValue("(char=? #\\a  #\\A)","#f");
+		assertExpressionValue("(char=? #\\  #\\space)","#t");
+		assertExpressionValue("(char=? #\\a #\\a #\\a)","#t");
+		assertExpressionValue("(char=? #\\a #\\b)","#f");
+		assertExpressionValue("(char=? #\\a #\\b #\\b)","#f");
+		assertExpressionValue("(char<? #\\a  #\\Z)","#f");
+		assertExpressionValue("(char<? #\\  #\\space)","#f");
+		assertExpressionValue("(char<? #\\a  #\\b)","#t");
+		assertExpressionValue("(char<? #\\a #\\b #\\c)","#t");
+		assertExpressionValue("(char<? #\\a #\\b #\\a)","#f");
+		assertExpressionValue("(char<? #\\b #\\a)","#f");
+		assertExpressionValue("(char>? #\\a  #\\Z)","#t");
+		assertExpressionValue("(char>? #\\  #\\space)","#f");
+		assertExpressionValue("(char>? #\\a  #\\b)","#f");
+		assertExpressionValue("(char>? #\\a #\\b #\\c)","#f");
+		assertExpressionValue("(char>? #\\c #\\b #\\a)","#t");
+		assertExpressionValue("(char>? #\\b #\\a)","#t");
+		assertExpressionValue("(char<=? #\\  #\\space)","#t");
+		assertExpressionValue("(char<=? #\\a  #\\b)","#t");
+		assertExpressionValue("(char<=? #\\a #\\b #\\c)","#t");
+		assertExpressionValue("(char<=? #\\a #\\b #\\a)","#f");
+		assertExpressionValue("(char<=? #\\b #\\a)","#f");
+		assertExpressionValue("(char>=? #\\  #\\space)","#t");
+		assertExpressionValue("(char>=? #\\a  #\\b)","#f");
+		assertExpressionValue("(char>=? #\\a #\\b #\\c)","#f");
+		assertExpressionValue("(char>=? #\\c #\\b #\\a)","#t");
+		assertExpressionValue("(char>=? #\\b #\\a)","#t");
+		assertExpressionValue("(integer->char (char->integer #\\a))","#\\a");
+		assertExpressionValue("(char->integer (integer->char 50))","50");
+
+		assertExpressionValue("(let () (import (scheme char)) (char-alphabetic? #\\a))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (char-alphabetic? #\\Z))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (char-alphabetic? #\\5))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-alphabetic? #\\ ))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-upper-case? #\\a))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-upper-case? #\\Z))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (char-upper-case? #\\5))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-upper-case? #\\ ))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-lower-case? #\\a))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (char-lower-case? #\\Z))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-lower-case? #\\5))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-lower-case? #\\ ))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-whitespace? #\\a))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-whitespace? #\\Z))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-whitespace? #\\5))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-whitespace? #\\ ))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (char-numeric? #\\a))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-numeric? #\\5))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (char-numeric? #\\ ))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (digit-value #\\3))","3");
+		assertExpressionValue("(let () (import (scheme char)) (digit-value #\\x0664))","4");
+		assertExpressionValue("(let () (import (scheme char)) (digit-value #\\x0AE6))","0");
+		assertExpressionValue("(let () (import (scheme char)) (digit-value #\\x0EA6))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-upcase #\\a))","#\\A");
+		assertExpressionValue("(let () (import (scheme char)) (char-upcase #\\Z))","#\\Z");
+		assertExpressionValue("(let () (import (scheme char)) (char-downcase #\\a))","#\\a");
+		assertExpressionValue("(let () (import (scheme char)) (char-downcase #\\Z))","#\\z");
+		assertExpressionValue("(let () (import (scheme char)) (char-foldcase #\\a))","#\\a");
+		assertExpressionValue("(let () (import (scheme char)) (char-foldcase #\\Z))","#\\z");
+		assertExpressionValue("(let () (import (scheme char)) (char-ci=? #\\a #\\A))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (char-ci<? #\\a #\\A))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-ci>? #\\a #\\A))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-ci<=? #\\a #\\A))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (char-ci>=? #\\a #\\A))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (char-ci=? #\\a #\\Z))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-ci<? #\\a #\\Z))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (char-ci>? #\\a #\\Z))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (char-ci<=? #\\a #\\Z))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (char-ci>=? #\\a #\\Z))","#f");
 	}
 	@Test
 	public void testString(){
@@ -210,6 +297,17 @@ public class StandardProcedureTest{
 	}
 	@Test
 	public void testByteVector(){
+		assertExpressionValue("(make-bytevector 2 12)","#u8(12 12)");
+		assertExpressionValue("(bytevector 1 3 5 1 3 5)","#u8(1 3 5 1 3 5)");
+		assertExpressionValue("(bytevector)","#u8()");
+		assertExpressionValue("(bytevector-u8-ref '#u8(1 1 2 3 5 8 13 21) 5)","8");
+		assertExpressionValue("(let ((bv (bytevector 1 2 3 4))) (bytevector-u8-set! bv 1 3) bv)","#u8(1 3 3 4)");
+		assertExpressionValue("(bytevector-copy #u8(1 2 3 4 5) 2 4))","#u8(3 4)");
+		assertExpressionValue("(let ((a (bytevector 1 2 3 4 5)) (b (bytevector 10 20 30 40 50))) (bytevector-copy! b 1 a 0 2) b)"
+				,"#u8(10 1 2 40 50)%");
+		assertExpressionValue("(bytevector-append #u8(0 1 2) #u8(3 4 5))","#u8(0 1 2 3 4 5)");
+		assertExpressionValue("(utf8->string #u8(#x41))","\"A\"");
+		assertExpressionValue("(string->utf8 \"λ\")","#u8(#xCE #xBB #x0)");
 	}
 	@Test
 	public void testControl(){

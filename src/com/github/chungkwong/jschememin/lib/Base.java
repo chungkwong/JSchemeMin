@@ -229,7 +229,7 @@ public class Base extends NativeLibrary{
 		));
 		addNativeProcedure("list",(o)->ScmList.copy((ScmPairOrNil)o));
 		addNativeProcedure("length",(o)->new ScmInteger(ScmList.getLength((ScmPairOrNil)car(o))));
-		addNativeProcedure("append",(o)->ScmList.append((ScmPairOrNil)car(o)));
+		addNativeProcedure("append",(o)->ScmList.append((ScmPairOrNil)o));
 		addNativeProcedure("reverse",(o)->ScmList.reverse((ScmPairOrNil)car(o)));
 		addNativeProcedure("list-tail",(o)->ScmList.tail((ScmPairOrNil)car(o),((ScmComplex)cadr(o)).intValueExact()));
 		addNativeProcedure("list-ref",(o)->ScmList.get((ScmPairOrNil)car(o),((ScmComplex)cadr(o)).intValueExact()));

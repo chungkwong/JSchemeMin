@@ -110,13 +110,13 @@ public abstract class ScmComplex extends ScmNumber{
 	@Override
 	public boolean equals(Object obj){
 		return obj instanceof ScmComplex&&isExact()==((ScmComplex)obj).isExact()&&
-				getReal().equals(((ScmComplex)obj).getReal())&&getImag().equals(((ScmComplex)obj).getImag());
+				ScmReal.equals(getReal(),((ScmComplex)obj).getReal())&&ScmReal.equals(getImag(),((ScmComplex)obj).getImag());
 	}
 	@Override
 	public int hashCode(){
 		int hash=5;
-		hash=37*hash+getReal().hashCode();
-		hash=37*hash+getImag().hashCode();
+		hash=37*hash+Double.hashCode(getReal().toDouble());
+		hash=37*hash+Double.hashCode(getImag().toDouble());
 		return hash;
 	}
 }

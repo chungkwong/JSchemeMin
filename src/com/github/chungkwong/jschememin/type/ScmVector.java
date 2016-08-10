@@ -98,7 +98,7 @@ public final class ScmVector extends ScmObject{
 		ScmListBuilder buf=new ScmListBuilder();
 		for(int i=start;i<end;i++)
 			buf.add(vector.get(i));
-		return buf.toList();
+		return (ScmPairOrNil)buf.toList();
 	}
 	public static ScmVector fill(ScmObject o,int count){
 		return new ScmVector(new ArrayList(Collections.nCopies(count,o)));

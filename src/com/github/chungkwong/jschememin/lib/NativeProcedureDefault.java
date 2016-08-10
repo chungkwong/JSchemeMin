@@ -40,7 +40,7 @@ public class NativeProcedureDefault implements NativeProcedure{
 				++i;
 			}
 			for(;i<def.length;i++)
-				filled.add(def[i].apply(filled.toList()));
+				filled.add(def[i].apply((ScmPairOrNil)filled.toList()));
 			param=filled.toList();
 		}
 		return proc.call(param);

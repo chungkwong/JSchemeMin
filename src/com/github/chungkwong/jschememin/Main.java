@@ -27,7 +27,7 @@ public class Main {
 	public static void main(String[] args) {
 		ScmListBuilder buf=new ScmListBuilder();
 		Arrays.stream(args).map((arg)->new ScmString(arg)).forEach((arg)->buf.add(arg));
-		COMMAND_LINE=buf.toList();
+		COMMAND_LINE=(ScmPairOrNil)buf.toList();
 	}
 
 }

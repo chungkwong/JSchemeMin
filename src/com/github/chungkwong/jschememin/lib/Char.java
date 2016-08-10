@@ -32,9 +32,9 @@ public class Char extends NativeLibrary{
 		addNativeProcedure("char-alphabetic?",(o)->ScmBoolean.valueOf(((ScmCharacter)car(o)).isAlphabetic()));
 		addNativeProcedure("char-numeric?",(o)->ScmBoolean.valueOf(((ScmCharacter)car(o)).isNumeric()));
 		addNativeProcedure("char-whitespace?",(o)->ScmBoolean.valueOf(((ScmCharacter)car(o)).isWhiteSpace()));
-		addNativeProcedure("char-upper-case?",(o)->ScmBoolean.valueOf(((ScmCharacter)car(o)).isLowerCase()));
-		addNativeProcedure("char-lower-case?",(o)->ScmBoolean.valueOf(((ScmCharacter)car(o)).isUpperCase()));
-		addNativeProcedure("digit-value",(o)->new ScmInteger(((ScmCharacter)car(o)).getDigitValue()));
+		addNativeProcedure("char-upper-case?",(o)->ScmBoolean.valueOf(((ScmCharacter)car(o)).isUpperCase()));
+		addNativeProcedure("char-lower-case?",(o)->ScmBoolean.valueOf(((ScmCharacter)car(o)).isLowerCase()));
+		addNativeProcedure("digit-value",(o)->{int d=((ScmCharacter)car(o)).getDigitValue();return d>=0?new ScmInteger(d):ScmBoolean.FALSE;});
 		addNativeProcedure("char-upcase",(o)->((ScmCharacter)car(o)).upCase());
 		addNativeProcedure("char-downcase",(o)->((ScmCharacter)car(o)).downCase());
 		addNativeProcedure("char-foldcase",(o)->((ScmCharacter)car(o)).foldCase());

@@ -91,14 +91,4 @@ public abstract class ScmReal extends ScmComplex{
 		else// if(a==ScmSpecialReal.POSITIVE_INF||b==ScmSpecialReal.NEGATIVE_INF)
 			return 1;
 	}
-	@Override
-	public boolean equals(Object obj){
-		return obj instanceof ScmComplex&&((ScmComplex)obj).isReal()&&equals(this,((ScmComplex)obj).toScmReal());
-	}
-	@Override
-	public int hashCode(){
-		int hash=5;
-		hash=hash+Double.hashCode(toDouble());
-		return hash;
-	}
 }

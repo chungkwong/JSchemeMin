@@ -97,9 +97,15 @@ public class ScmList{
 		}
 		return rev;
 	}
-	public static ScmPairOrNil append(ScmPairOrNil lists){
+	public static ScmObject append(ScmPairOrNil lists){
+		if(lists instanceof ScmNil)
+			return ScmNil.NIL;
 		ScmListBuilder buf=new ScmListBuilder();
-		ScmList.asStream(lists).forEach((list)->buf.addAll((ScmPairOrNil)list));
+		while(((ScmPair)lists).getCdr() instanceof ScmPair){
+			buf.addAll((ScmPairOrNil)((ScmPair)lists).getCar());
+			lists=(ScmPairOrNil)((ScmPair)lists).getCdr();
+		}
+		buf.setLast(((ScmPair)lists).getCar());
 		return buf.toList();
 	}
 	public static ScmPairOrNil copy(ScmPairOrNil list){
@@ -187,7 +193,7 @@ public class ScmList{
 			ScmPairOrNil rest=list;
 			@Override
 			public boolean hasNext(){
-				return list instanceof ScmPair;
+				return rest instanceof ScmPair;
 			}
 			@Override
 			public ScmObject next(){

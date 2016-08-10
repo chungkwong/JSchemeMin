@@ -48,7 +48,7 @@ public class Utility{
 	static final ScmPairOrNil getEnvironmentVariables(){
 		ScmListBuilder buf=new ScmListBuilder();
 		System.getenv().forEach((key,value)->buf.add(new ScmPair(new ScmString(key),new ScmString(value))));
-		return buf.toList();
+		return (ScmPairOrNil)buf.toList();
 	}
 	static final NativeProcedure chainComparator(BiPredicate<ScmObject,ScmObject> comparator){
 		return (list)->{

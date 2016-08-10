@@ -26,7 +26,7 @@ public final class ScmByteVector extends ScmObject{
 		return vector.length;
 	}
 	public ScmInteger get(int index){
-		return new ScmInteger(BigInteger.valueOf(index));
+		return new ScmInteger(BigInteger.valueOf(vector[index]));
 	}
 	public ScmByteVector set(int index,ScmComplex element){
 		vector[index]=byteValueExact(element);
