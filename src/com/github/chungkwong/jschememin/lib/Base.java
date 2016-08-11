@@ -164,7 +164,7 @@ public class Base extends NativeLibrary{
 				(o)->ScmInteger.ZERO,
 				(o)->new ScmInteger(((ScmString)car(o)).length())
 		));
-		addNativeProcedure("list->string",(o)->ScmString.toScmString((ScmPairOrNil)o));
+		addNativeProcedure("list->string",(o)->ScmString.toScmString((ScmPairOrNil)car(o)));
 		addNativeProcedure("string-copy",new NativeProcedureDefault(
 				(o)->((ScmString)car(o)).copy(((ScmComplex)cadr(o)).intValueExact(),((ScmComplex)caddr(o)).intValueExact()),
 				(o)->car(o),

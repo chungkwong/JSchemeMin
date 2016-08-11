@@ -248,7 +248,6 @@ public class StandardProcedureTest{
 		assertExpressionValue("(char>=? #\\b #\\a)","#t");
 		assertExpressionValue("(integer->char (char->integer #\\a))","#\\a");
 		assertExpressionValue("(char->integer (integer->char 50))","50");
-
 		assertExpressionValue("(let () (import (scheme char)) (char-alphabetic? #\\a))","#t");
 		assertExpressionValue("(let () (import (scheme char)) (char-alphabetic? #\\Z))","#t");
 		assertExpressionValue("(let () (import (scheme char)) (char-alphabetic? #\\5))","#f");
@@ -291,6 +290,78 @@ public class StandardProcedureTest{
 	}
 	@Test
 	public void testString(){
+		assertExpressionValue("(string? (car '(#\\a b)))","#f");
+		assertExpressionValue("(string? \"bar\")","#t");
+		assertExpressionValue("(string? 'nil)","#f");
+		assertExpressionValue("(string? '())","#f");
+		assertExpressionValue("(string? #t)","#f");
+		assertExpressionValue("(make-string 0 #\\a)","\"\"");
+		assertExpressionValue("(make-string 3 #\\a)","\"aaa\"");
+		assertExpressionValue("(string-length (make-string 0))","0");
+		assertExpressionValue("(string-length (make-string 4))","4");
+		assertExpressionValue("(string)","\"\"");
+		assertExpressionValue("(string #\\a #\\b)","\"ab\"");
+		assertExpressionValue("(string-length \"\")","0");
+		assertExpressionValue("(string-length \"hello\")","5");
+		assertExpressionValue("(string-ref \"world\" 0)","#\\w");
+		assertExpressionValue("(string-ref \"world\" 2)","#\\r");
+		assertExpressionValue("(string-ref \"world\" 4)","#\\d");
+		assertExpressionValue("(let ((str (make-string 4))) (string-set! str 2 #\\a) (string-ref str 2))","#\\a");
+		assertExpressionValue("(let ((str (make-string 4))) (string-set! str 2 #\\a) (string-length str))","4");
+		assertExpressionValue("(string=? \"\" \"\")","#t");
+		assertExpressionValue("(string=? \"hello\" \"hello\")","#t");
+		assertExpressionValue("(string=? \"hell\" \"hello\")","#f");
+		assertExpressionValue("(string=? \"hello\" \"heLlo\")","#f");
+		assertExpressionValue("(string<? \"\" \"\")","#f");
+		assertExpressionValue("(string<? \"hello\" \"hello\")","#f");
+		assertExpressionValue("(string<? \"hell\" \"hello\")","#t");
+		assertExpressionValue("(string<? \"hell\" \"heZlo\")","#f");
+		assertExpressionValue("(string>? \"\" \"\")","#f");
+		assertExpressionValue("(string>? \"hello\" \"hello\")","#f");
+		assertExpressionValue("(string>? \"hell\" \"hello\")","#f");
+		assertExpressionValue("(string>? \"hell\" \"heZlo\")","#t");
+		assertExpressionValue("(string<=? \"\" \"\")","#t");
+		assertExpressionValue("(string<=? \"hello\" \"hello\")","#t");
+		assertExpressionValue("(string<=? \"hell\" \"hello\")","#t");
+		assertExpressionValue("(string<=? \"hell\" \"heZlo\")","#f");
+		assertExpressionValue("(string>=? \"\" \"\")","#t");
+		assertExpressionValue("(string>=? \"hello\" \"hello\")","#t");
+		assertExpressionValue("(string>=? \"hell\" \"hello\")","#f");
+		assertExpressionValue("(string>=? \"hell\" \"heZlo\")","#t");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci=? \"\" \"\"))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci=? \"hello\" \"helLo\"))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci=? \"hell\" \"helLo\"))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci=? \"heZlo\" \"hell\"))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci<? \"\" \"\"))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci<? \"hello\" \"helLo\"))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci<? \"hell\" \"helLo\"))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci<? \"heZlo\" \"hell\"))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci>? \"\" \"\"))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci>? \"hello\" \"helLo\"))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci>? \"hell\" \"helLo\"))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci>? \"heZlo\" \"hell\"))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci<=? \"\" \"\"))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci<=? \"hello\" \"helLo\"))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci<=? \"hell\" \"helLo\"))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci<=? \"heZlo\" \"hell\"))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci>=? \"\" \"\"))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci>=? \"hello\" \"helLo\"))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci>=? \"hell\" \"helLo\"))","#f");
+		assertExpressionValue("(let () (import (scheme char)) (string-ci>=? \"heZlo\" \"hell\"))","#t");
+		assertExpressionValue("(let () (import (scheme char)) (string-upcase \"he Llo5\"))","\"HE LLO5\"");
+		assertExpressionValue("(let () (import (scheme char)) (string-downcase \"he Llo5\"))","\"he llo5\"");
+		assertExpressionValue("(let () (import (scheme char)) (string-foldcase \"he Llo5\"))","\"he llo5\"");
+		assertExpressionValue("(substring \"hello\" 5 5)","\"\"");
+		assertExpressionValue("(substring \"hello\" 2 4)","\"ll\"");
+		assertExpressionValue("(string-append)","\"\"");
+		assertExpressionValue("(string-append \"hello\")","\"hello\"");
+		assertExpressionValue("(string-append \"i\" \"hate\" \"you\")","\"ihateyou\"");
+		assertExpressionValue("(string->list \"\")","'()");
+		assertExpressionValue("(string->list \"hello\")","'(#\\h #\\e #\\l #\\l #\\o)");
+		assertExpressionValue("(string->list \"hello\" 3)","'(#\\l #\\o)");
+		assertExpressionValue("(string->list \"hello\" 3 4)","'(#\\l)");
+		assertExpressionValue("(list->string '())","\"\"");
+		assertExpressionValue("(list->string '(#\\h #\\e))","\"he\"");
 	}
 	@Test
 	public void testVector(){

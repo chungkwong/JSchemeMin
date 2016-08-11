@@ -46,7 +46,7 @@ public final class ScmString extends ScmObject implements Token,Comparable<ScmSt
 		StringBuilder buf=new StringBuilder(k);
 		int c=ch.getCodePoint();
 		while(--k>=0)
-			buf.appendCodePoint(k);
+			buf.appendCodePoint(c);
 		return new ScmString(buf.toString());
 	}
 	public static ScmString toScmString(ScmPairOrNil list){
@@ -57,7 +57,7 @@ public final class ScmString extends ScmObject implements Token,Comparable<ScmSt
 		return val.codePointCount(0,val.length());
 	}
 	public ScmCharacter get(int index){
-		return new ScmCharacter(val.offsetByCodePoints(0,index));
+		return new ScmCharacter(val.codePointAt(val.offsetByCodePoints(0,index)));
 	}
 	public ScmString set(int index,ScmCharacter c){
 		return setRange(c,index,index+1);
@@ -65,13 +65,14 @@ public final class ScmString extends ScmObject implements Token,Comparable<ScmSt
 	public ScmString setRange(ScmCharacter c,int start,int end){
 		int size=end-start;
 		start=val.offsetByCodePoints(0,start);
-		end=val.offsetByCodePoints(start,end-start);
+		end=val.offsetByCodePoints(start,size);
 		StringBuilder buf=new StringBuilder(val.length());
 		buf.append(val.substring(0,start));
 		while(--size>=0)
 			buf.appendCodePoint(c.getCodePoint());
 		buf.append(val.substring(end));
-		return new ScmString(buf.toString());
+		val=buf.toString();
+		return this;
 	}
 	public ScmString substring(int start,int end){
 		return copy(start,end);
