@@ -58,7 +58,7 @@ public class Base extends NativeLibrary{
 		addNativeProcedure("make-bytevector",new NativeProcedureDefault(
 				(o)->ScmByteVector.fill(((ScmComplex)cadr(o)).toScmInteger(),((ScmComplex)car(o)).intValueExact()),
 				(o)->car(o),
-				(o)->ScmNil.NIL
+				(o)->ScmInteger.ZERO
 		));
 		addNativeProcedure("bytevector",(o)->ScmByteVector.toByteVector((ScmPairOrNil)o));
 		addNativeProcedure("bytevector-length",(o)->new ScmInteger(((ScmByteVector)car(o)).getLength()));

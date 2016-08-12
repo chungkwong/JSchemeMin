@@ -14,6 +14,7 @@
  */
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
+import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 public final class ScmString extends ScmObject implements Token,Comparable<ScmString>{
@@ -142,7 +143,8 @@ public final class ScmString extends ScmObject implements Token,Comparable<ScmSt
 	public ScmByteVector toScmByteVector(int start,int end){
 		start=val.offsetByCodePoints(0,start);
 		end=val.offsetByCodePoints(0,end);
-		return new ScmByteVector(StandardCharsets.UTF_8.encode(val.substring(start,end)).array());
+		ByteBuffer buf=StandardCharsets.UTF_8.encode(val.substring(start,end));
+		return new ScmByteVector(Arrays.copyOf(buf.array(),buf.limit()));
 	}
 	public ScmVector toScmVector(int start,int end){
 		ArrayList<ScmObject> vector=new ArrayList<>(end-start);

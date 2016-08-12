@@ -51,6 +51,10 @@ public abstract class ScmNormalReal extends ScmReal implements Comparable<ScmNor
 		return toInExact().log();
 	}
 	@Override
+	public ScmComplex sqrt(){
+		return toInExact().sqrt();
+	}
+	@Override
 	public ScmReal exp(){
 		return toInExact().exp();
 	}

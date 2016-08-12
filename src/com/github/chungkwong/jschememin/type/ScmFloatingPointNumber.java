@@ -187,6 +187,13 @@ public class ScmFloatingPointNumber extends ScmNormalReal{
 		else
 			return ScmSpecialReal.POSITIVE_NAN;
 	}
+	@Override
+	public ScmComplex sqrt(){
+		if(signum()>=0)
+			return new ScmFloatingPointNumber(BigDecimal.valueOf(Math.sqrt(value.doubleValue())));
+		else
+			return new ScmComplexRectangular(ScmInteger.ZERO,(ScmReal)negate().sqrt());
+	}
 	public static ScmReal valueOf(double d){
 		if(Double.isNaN(d))
 			return ScmSpecialReal.POSITIVE_NAN;

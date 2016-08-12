@@ -161,6 +161,10 @@ public class StandardProcedureTest{
 		assertExpressionValue("(boolean? #f)","#t");
 		assertExpressionValue("(boolean? 0)","#f");
 		assertExpressionValue("(boolean? '())","#f");
+		assertExpressionValue("(boolean=? #t #t)","#t");
+		assertExpressionValue("(boolean=? #t #f)","#f");
+		assertExpressionValue("(boolean=? #f #f #f)","#t");
+		assertExpressionValue("(boolean=? #f #f #t)","#f");
 	}
 	@Test
 	public void testList(){
@@ -204,6 +208,10 @@ public class StandardProcedureTest{
 		assertExpressionValue("(symbol? 'nil)","#t");
 		assertExpressionValue("(symbol? '())","#f");
 		assertExpressionValue("(symbol? #f)","#f");
+		assertExpressionValue("(symbol=? 'hello 'hello)","#t");
+		assertExpressionValue("(symbol=? 'hello 'hell)","#f");
+		assertExpressionValue("(symbol=? 'hello 'hello 'hello)","#t");
+		assertExpressionValue("(symbol=? 'hello 'hello 'hell)","#f");
 		assertExpressionValue("(symbol->string 'flying-fish)","\"flying-fish\"");
 		assertExpressionValue("(symbol->string 'Martin)","\"Martin\"");
 		assertExpressionValue("(symbol->string (string->symbol \"Malvina\"))","\"Malvina\"");
@@ -362,23 +370,90 @@ public class StandardProcedureTest{
 		assertExpressionValue("(string->list \"hello\" 3 4)","'(#\\l)");
 		assertExpressionValue("(list->string '())","\"\"");
 		assertExpressionValue("(list->string '(#\\h #\\e))","\"he\"");
+		assertExpressionValue("(string-copy \"hello\")","\"hello\"");
+		assertExpressionValue("(string-copy \"hello\" 2)","\"llo\"");
+		assertExpressionValue("(string-copy \"hello\" 2 4)","\"ll\"");
+		assertExpressionValue("(let ((str (string #\\a #\\b #\\c))) (string-set! (string-copy str) 2 #\\d) str)","\"abc\"");
+		assertExpressionValue("(let ((str \"hello\")) (string-copy! str 2 \"big\") str)","\"hebig\"");
+		assertExpressionValue("(let ((str \"hello\")) (string-copy! str 2 \"big\") str)","\"hebig\"");
+		assertExpressionValue("(let ((str \"hello\")) (string-copy! str 2 \"big\" 1) str)","\"heigo\"");
+		assertExpressionValue("(let ((str \"hello\")) (string-copy! str 2 \"big\" 1 2) str)","\"heilo\"");
+		assertExpressionValue("(let ((str \"hello\")) (string-fill! str #\\a) str)","\"aaaaa\"");
+		assertExpressionValue("(let ((str \"hello\")) (string-fill! str #\\a 2) str)","\"heaaa\"");
+		assertExpressionValue("(let ((str \"hello\")) (string-fill! str #\\a 2 4) str)","\"heaao\"");
 	}
 	@Test
 	public void testVector(){
+		assertExpressionValue("(make-vector 2 12)","#(12 12)");
+		assertExpressionValue("(vector-length (make-vector 5))","5");
+		assertExpressionValue("(vector-length #())","0");
+		assertExpressionValue("(vector-length #(1 2 7))","3");
+		assertExpressionValue("(vector #t 3 5 #f 3 5)","#(#t 3 5 #f 3 5)");
+		assertExpressionValue("(vector)","#()");
+		assertExpressionValue("(vector 'a 'b 'c)","#(a b c)");
+		assertExpressionValue("(vector-ref '#(1 1 2 3 5 8 13 21) 5)","8");
+		assertExpressionValue("(let () (import (scheme inexact)) (vector-ref '#(1 1 2 3 5 8 13 21) (exact (round (* 2 (acos -1))))))",
+				"13");//TODO
+		assertExpressionValue("(let ((v (vector 1 2 3 4))) (vector-set! v 1 3) v)","#(1 3 3 4)");
+		assertExpressionValue("(let ((vec (vector 0 '(2 2 2 2) \"Anna\"))) (vector-set! vec 1 '(\"Sue\" \"Sue\")) vec)",
+				"#(0 (\"Sue\" \"Sue\") \"Anna\")");
+		assertExpressionValue("(vector-copy #(1 2 3 4 5) 2 4))","#(3 4)");
+		assertExpressionValue("(vector-copy #(1 2 3 4 5) 2))","#(3 4 5)");
+		assertExpressionValue("(vector-copy #(1 2 3 4 5)))","#(1 2 3 4 5)");
+		assertExpressionValue("(let ((a (vector 1 2 3 4 5)) (b (vector 10 20 30 40 50))) (vector-copy! b 1 a 0 2) b)"
+				,"#(10 1 2 40 50)");
+		assertExpressionValue("(let ((a (vector 1 2 3 4)) (b (vector 10 20 30 40 50))) (vector-copy! b 1 a 0) b)"
+				,"#(10 1 2 3 4)");
+		assertExpressionValue("(let ((a (vector 1 2 3 4)) (b (vector 10 20 30 40 50))) (vector-copy! b 1 a) b)"
+				,"#(10 1 2 3 4)");
+		assertExpressionValue("(vector->list #(1 a b))","'(1 a b)");
+		assertExpressionValue("(vector->list #(1 a b) 1)","'(a b)");
+		assertExpressionValue("(vector->list #(1 a b) 1 2)","'(a)");
+		assertExpressionValue("(vector->list '#(dah dah didah))","'(dah dah didah)");
+		assertExpressionValue("(vector->list '#(dah dah didah) 1 2)","'(dah)");
+		assertExpressionValue("(list->vector '(dididit dah))","#(dididit dah)");
+		assertExpressionValue("(list->vector '(1 a))","#(1 a)");
+		assertExpressionValue("(list->vector '())","#()");
+		assertExpressionValue("(vector->string #())","\"\"");
+		assertExpressionValue("(vector->string #(#\\a #\\b #\\c))","\"abc\"");
+		assertExpressionValue("(vector->string #(#\\a #\\b #\\c) 1)","\"bc\"");
+		assertExpressionValue("(vector->string #(#\\a #\\b #\\c) 1 2)","\"b\"");
+		assertExpressionValue("(string->vector \"he我llo\")","#(#\\h #\\e #\\我 #\\l #\\l #\\o)");
+		assertExpressionValue("(string->vector \"he我llo\" 4)","#(#\\l #\\o)");
+		assertExpressionValue("(string->vector \"he我llo\" 4 5)","#(#\\l)");
+		assertExpressionValue("(vector-append)","#()");
+		assertExpressionValue("(vector-append #(0 1 2) #(3 4 5))","#(0 1 2 3 4 5)");
+		assertExpressionValue("(vector-append #(a b c) #(d e f))","#(a b c d e f)");
+		assertExpressionValue("(let ((a (vector 1 2 3 4 5))) (vector-fill! a 'smash) a)","#(smash smash smash smash smash)");
+		assertExpressionValue("(let ((a (vector 1 2 3 4 5))) (vector-fill! a 'smash 2) a)","#(1 2 smash smash smash)");
+		assertExpressionValue("(let ((a (vector 1 2 3 4 5))) (vector-fill! a 'smash 2 4) a)","#(1 2 smash smash 5)");
 	}
 	@Test
 	public void testByteVector(){
 		assertExpressionValue("(make-bytevector 2 12)","#u8(12 12)");
+		assertExpressionValue("(bytevector-length (make-bytevector 5))","5");
+		assertExpressionValue("(bytevector-length #u8())","0");
 		assertExpressionValue("(bytevector 1 3 5 1 3 5)","#u8(1 3 5 1 3 5)");
 		assertExpressionValue("(bytevector)","#u8()");
 		assertExpressionValue("(bytevector-u8-ref '#u8(1 1 2 3 5 8 13 21) 5)","8");
 		assertExpressionValue("(let ((bv (bytevector 1 2 3 4))) (bytevector-u8-set! bv 1 3) bv)","#u8(1 3 3 4)");
 		assertExpressionValue("(bytevector-copy #u8(1 2 3 4 5) 2 4))","#u8(3 4)");
+		assertExpressionValue("(bytevector-copy #u8(1 2 3 4 5) 2))","#u8(3 4 5)");
+		assertExpressionValue("(bytevector-copy #u8(1 2 3 4 5)))","#u8(1 2 3 4 5)");
 		assertExpressionValue("(let ((a (bytevector 1 2 3 4 5)) (b (bytevector 10 20 30 40 50))) (bytevector-copy! b 1 a 0 2) b)"
-				,"#u8(10 1 2 40 50)%");
+				,"#u8(10 1 2 40 50)");
+		assertExpressionValue("(let ((a (bytevector 1 2 3 4)) (b (bytevector 10 20 30 40 50))) (bytevector-copy! b 1 a 0) b)"
+				,"#u8(10 1 2 3 4)");
+		assertExpressionValue("(let ((a (bytevector 1 2 3 4)) (b (bytevector 10 20 30 40 50))) (bytevector-copy! b 1 a) b)"
+				,"#u8(10 1 2 3 4)");
+		assertExpressionValue("(bytevector-append)","#u8()");
 		assertExpressionValue("(bytevector-append #u8(0 1 2) #u8(3 4 5))","#u8(0 1 2 3 4 5)");
+		assertExpressionValue("(string->utf8 \"hello 我\")","#u8(104 101 108 108 111 32 230 136 145)");
+		assertExpressionValue("(string->utf8 \"hello 我\" 2)","#u8(108 108 111 32 230 136 145)");
+		assertExpressionValue("(string->utf8 \"hello 我\" 2 4)","#u8(108 108)");
 		assertExpressionValue("(utf8->string #u8(#x41))","\"A\"");
-		assertExpressionValue("(string->utf8 \"λ\")","#u8(#xCE #xBB #x0)");
+		assertExpressionValue("(utf8->string #u8(#x41) 0)","\"A\"");
+		assertExpressionValue("(utf8->string #u8(#x41) 0 0)","\"\"");
 	}
 	@Test
 	public void testControl(){
