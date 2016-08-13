@@ -30,8 +30,8 @@ public class Complex extends NativeLibrary{
 	}
 	@Override
 	protected void init(Library lib){
-		addNativeProcedure("imag-part",(o)->((ScmComplex)car(o)).getReal());
-		addNativeProcedure("real-part",(o)->((ScmComplex)car(o)).getImag());
+		addNativeProcedure("imag-part",(o)->((ScmComplex)car(o)).getImag());
+		addNativeProcedure("real-part",(o)->((ScmComplex)car(o)).getReal());
 		addNativeProcedure("angle",(o)->((ScmComplex)car(o)).getAngle());
 		addNativeProcedure("magnitude",(o)->((ScmComplex)car(o)).getMagnitude());
 		addNativeProcedure("make-rectangular",(o)->new ScmComplexRectangular(

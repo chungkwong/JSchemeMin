@@ -28,9 +28,11 @@ public final class ScmRational extends ScmNormalReal{
 		}
 	}
 	public ScmInteger getDenominator(){
+		simplify();
 		return denominator;
 	}
 	public ScmInteger getNumerator(){
+		simplify();
 		return numerator;
 	}
 	public int compareTo(ScmRational num){
@@ -119,7 +121,7 @@ public final class ScmRational extends ScmNormalReal{
 	@Override
 	public ScmFloatingPointNumber toInExact(){
 		return new ScmFloatingPointNumber(new BigDecimal(numerator.getValue())
-				.divide(new BigDecimal(denominator.getValue()),MathContext.DECIMAL64));
+				.divide(new BigDecimal(denominator.getValue())));
 	}
 	@Override
 	public ScmReal add(ScmReal num){
@@ -203,12 +205,21 @@ public final class ScmRational extends ScmNormalReal{
 	public int signum(){
 		return numerator.signum();
 	}
+	public static ScmReal rationalize(ScmReal x,ScmReal error){
+		if(x instanceof ScmNormalReal)
+			return rationalize((ScmNormalReal)x,error);
+		else
+			throw new RuntimeException();
+	}
 	public static ScmReal rationalize(ScmNormalReal x,ScmReal error){
 		if(x.signum()<0)
 			return rationalize(x.negate(),error).negate();
 		ScmInteger d=ScmInteger.ONE;
 		ScmInteger n=x.floor().toScmInteger();
 		while(x.multiply(d).subtract(n).subtract(error.multiply(d)).isPositive()){
+			n=n.add(ScmInteger.ONE);
+			if(!n.subtract(x.multiply(d)).subtract(error.multiply(d)).isPositive())
+				break;
 			d=d.add(ScmInteger.ONE);
 			n=x.multiply(d).floor().toScmInteger();
 		}

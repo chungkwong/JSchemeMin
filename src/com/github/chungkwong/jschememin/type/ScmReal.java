@@ -51,15 +51,25 @@ public abstract class ScmReal extends ScmComplex{
 	public abstract boolean isPositive();
 	public abstract boolean isNegative();
 	public abstract double toDouble();
+	@Override
+	public boolean isNaN(){
+		return false;
+	}
 	public static ScmReal max(ScmReal a,ScmReal b){
 		if(isNonNaN(a,b))
-			return compare(a,b)>0?a:b;
+			if(a.isExact()&&b.isExact())
+				return compare(a,b)>0?a:b;
+			else
+				return compare(a,b)>0?a.toInExact():b.toInExact();
 		else
 			return ScmSpecialReal.POSITIVE_NAN;
 	}
 	public static ScmReal min(ScmReal a,ScmReal b){
 		if(isNonNaN(a,b))
-			return compare(a,b)<0?a:b;
+			if(a.isExact()&&b.isExact())
+				return compare(a,b)<0?a:b;
+			else
+				return compare(a,b)<0?a.toInExact():b.toInExact();
 		else
 			return ScmSpecialReal.POSITIVE_NAN;
 	}

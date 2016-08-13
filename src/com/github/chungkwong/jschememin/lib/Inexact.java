@@ -33,7 +33,7 @@ public class Inexact extends NativeLibrary{
 	protected void init(Library lib){
 		addNativeProcedure("finite?",(o)->ScmBoolean.valueOf(((ScmComplex)car(o)).isFinite()));
 		addNativeProcedure("infinite?",(o)->ScmBoolean.valueOf(((ScmComplex)car(o)).isInfinite()));
-		addNativeProcedure("nan?",(o)->ScmBoolean.valueOf(car(o)instanceof ScmSpecialReal.PositiveInf));
+		addNativeProcedure("nan?",(o)->ScmBoolean.valueOf(((ScmComplex)car(o)).isNaN()));
 		addNativeProcedure("log",(o)->cdr(o)instanceof ScmNil?((ScmComplex)car(o)).log():((ScmComplex)car(o)).log((ScmComplex)cadr(o)));
 		addNativeProcedure("exp",(o)->((ScmComplex)car(o)).exp());
 		addNativeProcedure("sin",(o)->((ScmComplex)car(o)).sin());

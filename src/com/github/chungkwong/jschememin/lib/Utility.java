@@ -75,6 +75,19 @@ public class Utility{
 			return result;
 		};
 	}
+	static final NativeProcedure reducer(BiFunction<ScmObject,ScmObject,ScmObject> f,Function<ScmObject,ScmObject> g){
+		return (list)->{
+			ScmObject result=car(list);
+			list=cdr(list);
+			if(list instanceof  ScmNil)
+				return g.apply(result);
+			while(list instanceof ScmPair){
+				result=f.apply(result,car(list));
+				list=cdr(list);
+			}
+			return result;
+		};
+	}
 	static final NativeProcedure reducer(BiFunction<ScmObject,ScmObject,ScmObject> f,ScmObject id){
 		return (list)->{
 			ScmObject result=id;
@@ -83,6 +96,15 @@ public class Utility{
 				list=cdr(list);
 			}
 			return result;
+		};
+	}
+	static final NativeProcedure correctExactness(NativeProcedure proc){
+		return (list)->{
+			ScmComplex result=(ScmComplex)proc.call(list);
+			if(ScmList.asStream((ScmPairOrNil)list).allMatch((o)->((ScmComplex)o).isExact()))
+				return result;
+			else
+				return result.toInExact();
 		};
 	}
 	static final void emergencyExit(ScmObject obj){

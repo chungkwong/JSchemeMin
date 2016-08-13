@@ -19,8 +19,16 @@ public abstract class ScmComplex extends ScmNumber{
 	public abstract ScmReal getImag();
 	public abstract ScmReal getMagnitude();
 	public abstract ScmReal getAngle();
-	public abstract ScmComplex toExact();
-	public abstract ScmComplex toInExact();
+	@Override
+	public boolean isExact(){
+		return getReal().isExact()&&getImag().isExact();
+	}
+	public ScmComplex toExact(){
+		return isExact()?this:new ScmComplexRectangular(getReal().toExact(),getImag().toExact());
+	}
+	public ScmComplex toInExact(){
+		return isExact()?new ScmComplexRectangular(getReal().toInExact(),getImag().toInExact()):this;
+	}
 	public ScmComplex log(){
 		return new ScmComplexRectangular(getMagnitude().log().toScmReal(),getAngle());
 	}
@@ -59,13 +67,13 @@ public abstract class ScmComplex extends ScmNumber{
 		return new ScmComplexRectangular(num.getReal().add(getReal()),num.getImag().add(getImag()));
 	}
 	public ScmComplex subtract(ScmComplex num){
-		return new ScmComplexRectangular(num.getReal().subtract(getReal()),num.getImag().subtract(getImag()));
+		return new ScmComplexRectangular(getReal().subtract(num.getReal()),getImag().subtract(num.getImag()));
 	}
 	public ScmComplex multiply(ScmComplex num){
 		return new ScmComplexPolar(num.getMagnitude().multiply(getMagnitude()),num.getAngle().add(getAngle()));
 	}
 	public ScmComplex divide(ScmComplex num){
-		return new ScmComplexPolar(num.getMagnitude().divide(getMagnitude()),getAngle().subtract(num.getAngle()));
+		return new ScmComplexPolar(getMagnitude().divide(num.getMagnitude()),getAngle().subtract(num.getAngle()));
 	}
 	public ScmComplex square(){
 		return multiply(this);
@@ -102,6 +110,9 @@ public abstract class ScmComplex extends ScmNumber{
 	}
 	public abstract boolean isFinite();
 	public abstract boolean isInfinite();
+	public boolean isNaN(){
+		return getReal().isNaN()||getImag().isNaN();
+	}
 	@Override
 	public String toExternalRepresentation(){
 		return toExternalRepresentation(10);

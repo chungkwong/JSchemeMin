@@ -38,24 +38,15 @@ public class ScmComplexRectangular extends ScmComplex{
 	}
 	@Override
 	public ScmReal getAngle(){
-		return ScmFloatingPointNumber.valueOf(Math.atan2(ScmFloatingPointNumber.toDouble(imag)
-				,ScmFloatingPointNumber.toDouble(real)));
-	}
-	@Override
-	public boolean isExact(){
-		return real.isExact()&&imag.isExact();
+		if(real.isPositive()&&imag.isZero())
+			return ScmInteger.ZERO;
+		else
+			return ScmFloatingPointNumber.valueOf(Math.atan2(ScmFloatingPointNumber.toDouble(imag)
+					,ScmFloatingPointNumber.toDouble(real)));
 	}
 	@Override
 	public boolean isZero(){
 		return real.isZero()&&imag.isZero();
-	}
-	@Override
-	public ScmComplex toExact(){
-		return isExact()?this:new ScmComplexRectangular(real.toExact(),imag.toExact());
-	}
-	@Override
-	public ScmComplex toInExact(){
-		return isExact()?new ScmComplexRectangular(real.toInExact(),imag.toInExact()):this;
 	}
 	@Override
 	public boolean isFinite(){

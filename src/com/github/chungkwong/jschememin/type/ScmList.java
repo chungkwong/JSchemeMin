@@ -29,8 +29,8 @@ public class ScmList{
 			list=((ScmPair)list).getCdr();
 			++len;
 		}
-		if(list!=ScmNil.NIL)
-			throw new RuntimeException();
+		/*if(list!=ScmNil.NIL)
+			throw new RuntimeException();*/
 		return len;
 	}
 	public static void forEach(ScmObject list,Consumer<ScmObject> proc){

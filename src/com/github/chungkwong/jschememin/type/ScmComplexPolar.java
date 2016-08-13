@@ -19,10 +19,11 @@ package com.github.chungkwong.jschememin.type;
  */
 public class ScmComplexPolar extends ScmComplex{
 	private static final ScmFloatingPointNumber TWOPI=ScmFloatingPointNumber.PI.multiply(ScmInteger.TWO.toInExact());
+	private static final ScmInteger THREE=new ScmInteger(3);
 	private final ScmReal abs,radius;
 	public ScmComplexPolar(ScmReal abs,ScmReal radius){
 		this.abs=abs;
-		if(radius instanceof ScmSpecialReal){
+		if(radius instanceof ScmSpecialReal||ScmReal.lessEquals(radius.getMagnitude(),THREE)){
 			this.radius=radius;
 		}else{
 			this.radius=radius.subtract(((ScmFloatingPointNumber)radius.divide(TWOPI)).round().multiply(TWOPI));
@@ -38,15 +39,11 @@ public class ScmComplexPolar extends ScmComplex{
 	}
 	@Override
 	public ScmReal getImag(){
-		return abs.multiply(radius.sin());
+		return radius.equals(ScmInteger.ZERO)?ScmInteger.ZERO:abs.multiply(radius.sin());
 	}
 	@Override
 	public ScmReal getReal(){
-		return abs.multiply(radius.cos());
-	}
-	@Override
-	public boolean isExact(){
-		return abs.isExact()&&radius.isExact();
+		return radius.equals(ScmInteger.ZERO)?abs:abs.multiply(radius.cos());
 	}
 	@Override
 	public String toExternalRepresentation(int radix){
@@ -55,14 +52,6 @@ public class ScmComplexPolar extends ScmComplex{
 	@Override
 	public boolean isZero(){
 		return abs.isZero();
-	}
-	@Override
-	public ScmComplex toExact(){
-		return isExact()?this:new ScmComplexPolar(abs.toExact(),radius.toExact());
-	}
-	@Override
-	public ScmComplex toInExact(){
-		return isExact()?new ScmComplexPolar(abs.toInExact(),radius.toInExact()):this;
 	}
 	@Override
 	public boolean isFinite(){

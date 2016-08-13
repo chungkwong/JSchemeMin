@@ -67,7 +67,7 @@ public final class ScmInteger extends ScmNormalReal{
 		return new ScmInteger(value.gcd(num.value));
 	}
 	public ScmInteger lcm(ScmInteger num){
-		return new ScmInteger(value.multiply(num.value).divide(value.gcd(num.value)));
+		return new ScmInteger(value.multiply(num.value).abs().divide(value.gcd(num.value)));
 	}
 	public ScmInteger[] sqrtExact(){
 		BigInteger root=BigInteger.ZERO;

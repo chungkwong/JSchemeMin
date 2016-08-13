@@ -85,6 +85,14 @@ public abstract class ScmNormalReal extends ScmReal implements Comparable<ScmNor
 		return false;
 	}
 	@Override
+	public boolean isRational(){
+		return true;
+	}
+	@Override
+	public boolean isInteger(){
+		return equals(truncate());
+	}
+	@Override
 	public double toDouble(){
 		return toInExact().getValue().doubleValue();
 	}

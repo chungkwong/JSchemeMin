@@ -40,6 +40,14 @@ public abstract class ScmSpecialReal extends ScmReal{
 		return false;
 	}
 	@Override
+	public boolean isRational(){
+		return false;
+	}
+	@Override
+	public boolean isInteger(){
+		return false;
+	}
+	@Override
 	public boolean isZero(){
 		return false;
 	}
@@ -120,6 +128,10 @@ public abstract class ScmSpecialReal extends ScmReal{
 		@Override
 		public boolean isInfinite(){
 			return false;
+		}
+		@Override
+		public boolean isNaN(){
+			return true;
 		}
 		@Override
 		public boolean isPositive(){
