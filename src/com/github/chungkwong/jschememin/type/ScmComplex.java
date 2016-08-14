@@ -82,7 +82,15 @@ public abstract class ScmComplex extends ScmNumber{
 		return log().divide(base.log());
 	}
 	public ScmComplex pow(ScmComplex e){
-		return log().multiply(e).exp();
+		if(isZero()){
+			if(e.isZero())
+				return isExact()&&e.isExact()?ScmInteger.ONE:ScmInteger.ONE.toInExact();
+			else if(e.getReal().isPositive())
+				return isExact()&&e.isExact()?ScmInteger.ZERO:ScmInteger.ZERO.toInExact();
+			else
+				throw new RuntimeException();
+		}else
+			return log().multiply(e).exp();
 	}
 	public ScmComplex sqrt(){
 		return pow(ScmInteger.ONE.divide(ScmInteger.TWO));

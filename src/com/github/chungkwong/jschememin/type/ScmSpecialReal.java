@@ -99,7 +99,7 @@ public abstract class ScmSpecialReal extends ScmReal{
 		}
 		@Override
 		public ScmReal multiply(ScmReal num){
-			return POSITIVE_NAN;
+			return num.isZero()&&num.isExact()?ScmInteger.ZERO:POSITIVE_NAN;
 		}
 		@Override
 		public ScmReal divide(ScmReal num){
