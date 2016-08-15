@@ -23,7 +23,9 @@ public class ScmComplexPolar extends ScmComplex{
 	private final ScmReal abs,radius;
 	public ScmComplexPolar(ScmReal abs,ScmReal radius){
 		this.abs=abs;
-		if(radius instanceof ScmSpecialReal||ScmReal.lessEquals(radius.getMagnitude(),THREE)){
+		if(abs.isZero()){
+			this.radius=ScmInteger.ZERO;
+		}else if(radius instanceof ScmSpecialReal||ScmReal.lessEquals(radius.getMagnitude(),THREE)){
 			this.radius=radius;
 		}else{
 			this.radius=radius.subtract(((ScmFloatingPointNumber)radius.divide(TWOPI)).round().multiply(TWOPI));

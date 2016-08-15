@@ -41,9 +41,9 @@ public class Inexact extends NativeLibrary{
 		addNativeProcedure("tan",(o)->((ScmComplex)car(o)).tan());
 		addNativeProcedure("asin",(o)->((ScmComplex)car(o)).arcsin());
 		addNativeProcedure("acos",(o)->((ScmComplex)car(o)).arccos());
-		addNativeProcedure("atan",(o)->cdr(o)instanceof ScmNil?((ScmComplex)car(o)).arctan():
-				new ScmComplexRectangular(((ScmComplex)cadr(o)).toScmReal(),((ScmComplex)car(o)).toScmReal()).getAngle());
+		addNativeProcedure("atan",new NativeProcedureDefault(
+				(o)->new ScmComplexRectangular(((ScmComplex)cadr(o)).toScmReal(),((ScmComplex)car(o)).toScmReal()).getAngle(),
+				(o)->car(o),(o)->ScmInteger.ONE));
 		addNativeProcedure("sqrt",(o)->((ScmComplex)car(o)).sqrt());
-
 	}
 }

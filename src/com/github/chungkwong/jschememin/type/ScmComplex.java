@@ -93,7 +93,7 @@ public abstract class ScmComplex extends ScmNumber{
 			return log().multiply(e).exp();
 	}
 	public ScmComplex sqrt(){
-		return pow(ScmInteger.ONE.divide(ScmInteger.TWO));
+		return pow(new ScmRational(ScmInteger.ONE,ScmInteger.TWO));
 	}
 	public ScmComplex sin(){
 		return multiply(I).exp().subtract(negate().multiply(I).exp()).divide(ScmInteger.TWO.multiply(I));
@@ -105,7 +105,7 @@ public abstract class ScmComplex extends ScmNumber{
 		return sin().divide(cos());
 	}
 	public ScmComplex arcsin(){
-		return ScmInteger.ONE.subtract(square()).sqrt().add(multiply(I)).multiply(I).negate();
+		return ScmInteger.ONE.subtract(square()).sqrt().add(multiply(I)).log().multiply(I).negate();
 	}
 	public ScmComplex arccos(){
 		return ScmFloatingPointNumber.PI.divide(ScmInteger.TWO).subtract(arcsin());
