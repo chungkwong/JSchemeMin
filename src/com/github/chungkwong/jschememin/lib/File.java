@@ -30,7 +30,12 @@ public class File extends NativeLibrary{
 	@Override
 	protected void init(Library lib){
 		addNativeProcedure("file-exists?",(o)->ScmBoolean.valueOf(new java.io.File(((ScmString)car(o)).getValue()).exists()));
-		addNativeProcedure("file-delete",(o)->ScmBoolean.valueOf(new java.io.File(((ScmString)car(o)).getValue()).delete()));
+		addNativeProcedure("file-delete",(o)->{
+			if(new java.io.File(((ScmString)car(o)).getValue()).delete())
+				return ScmBoolean.TRUE;
+			else
+				throw ScmError.toException(new ScmError(new ScmString("Failed to delete file"),ScmList.toList(car(o)),ScmError.ErrorType.FILE));
+		});
 		addNativeProcedure("open-input-file",(o)->new ScmTextualInputPort(((ScmString)car(o)).getValue()));
 		addNativeProcedure("open-binary-input-file",(o)->new ScmBinaryInputPort(((ScmString)car(o)).getValue()));
 		addNativeProcedure("open-output-file",(o)->new ScmTextualOutputPort(((ScmString)car(o)).getValue()));

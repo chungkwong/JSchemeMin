@@ -91,9 +91,7 @@ public class Continuation extends ScmObject{
 			if(actives.isEmpty())
 				throw ex;
 			arguments=ScmList.toList(ScmError.toScmObject(ex));
-			if(!actives.isEmpty()){
-				pointers.push(new WithExceptionHandler.ErrorInfo((ScmObject)pointers.pop()));
-			}
+			pointers.push(new WithExceptionHandler.ErrorInfo((ScmObject)pointers.pop()));
 		}
 	}
 	public boolean hasNext(){

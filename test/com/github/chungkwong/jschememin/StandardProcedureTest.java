@@ -278,7 +278,30 @@ public class StandardProcedureTest{
 		assertExpressionValue("(cdr '((a) b c d))","'(b c d)");
 		assertExpressionValue("(cdr '(1 . 2))","2");
 		expectException("(cdr '())");
+		assertExpressionValue("(let ((x (cons 1 2))) (set-car! x 3) x)","(cons 3 2)");
+		assertExpressionValue("(let ((x (cons 1 2))) (set-cdr! x 3) x)","(cons 1 3)");
+		assertExpressionValue("(caar (cons (cons 1 2) (cons 3 4)))","1");
+		assertExpressionValue("(cdar (cons (cons 1 2) (cons 3 4)))","2");
+		assertExpressionValue("(cadr (cons (cons 1 2) (cons 3 4)))","3");
+		assertExpressionValue("(cddr (cons (cons 1 2) (cons 3 4)))","4");
+		assertExpressionValue("(let () (import (scheme cxr)) (caaar '(((a)))))","'a");
+		assertExpressionValue("(let () (import (scheme cxr)) (cddddr '(1 2 3 4 5)))","'(5)");
+		assertExpressionValue("(null? #t)","#f");
+		assertExpressionValue("(null? #\\a)","#f");
+		assertExpressionValue("(null? \"\")","#f");
+		assertExpressionValue("(null? 2)","#f");
+		assertExpressionValue("(null? '())","#t");
+		assertExpressionValue("(null? '(1 2))","#f");
+		assertExpressionValue("(list? '())","#t");
+		assertExpressionValue("(list? '(1))","#t");
+		assertExpressionValue("(list? '(1 2))","#t");
+		assertExpressionValue("(list? '(1 2 . 3))","#f");
+		assertExpressionValue("(list? 1)","#f");
+		assertExpressionValue("(list? #(1 2))","#f");
+		assertExpressionValue("(list? #t)","#f");
+		assertExpressionValue("(list? \"\")","#f");
 		assertExpressionValue("(make-list 2 3)","'(3 3)");
+		assertExpressionValue("(length (make-list 5))","5");
 		assertExpressionValue("(list 'a (+ 3 4) 'c)","'(a 7 c)");
 		assertExpressionValue("(list)","'()");
 		assertExpressionValue("(length '(a b c))","3");
@@ -291,8 +314,26 @@ public class StandardProcedureTest{
 		assertExpressionValue("(append '() 'a)","'a");
 		assertExpressionValue("(reverse '(a b c))","'(c b a)");
 		assertExpressionValue("(reverse '(a (b c) d (e (f))))","'((e (f)) d (b c) a)");
+		assertExpressionValue("(list-tail '(a (b c) d (e (f))) 2)","'(d (e (f)))");
 		assertExpressionValue("(list-ref '(a b c d) 2)","'c");
 		assertExpressionValue("(list-ref '(a b c d) (exact (round 1.8)))","'c");
+		assertExpressionValue("(let ((ls (list 'one 'two 'five!))) (list-set! ls 2 'three) ls)","'(one two three)");
+		/*assertExpressionValue("(memq 'a '(a b c))","'(a b c)");
+		assertExpressionValue("(memq 'b '(a b c))","'(b c)");
+		assertExpressionValue("(memq 'a '(b c d))","#f");
+		assertExpressionValue("(memq (list 'a) '(b (a) c))","#f");
+		assertExpressionValue("(member (list 'a) '(b (a) c))","'((a) c)");
+		assertExpressionValue("(member \"B\" '(\"a\" \"b\" \"c\") string-ci=?)","'(\"b\" \"c\")");
+		assertExpressionValue("(memv 101 '(100 101 102))","'(101 102)");
+		assertExpressionValue("(assq 'a '((a 1) (b 2) (c 3)))","'(a 1)");
+		assertExpressionValue("(assq 'b '((a 1) (b 2) (c 3)))","'(b 2)");
+		assertExpressionValue("(assq 'd '((a 1) (b 2) (c 3)))","#f");
+		assertExpressionValue("(assq (list 'a) '(((a)) ((b)) ((c))))","#f");
+		assertExpressionValue("(assoc (list 'a) '(((a)) ((b)) ((c))))","((a))");
+		assertExpressionValue("(assoc 2.0 '((1 1) (2 4) (3 9)) =)","(2 4)");
+		assertExpressionValue("(assv 5 '((2 3) (5 7) (11 13)))","(5 7)");*/
+		assertExpressionValue("(let ((a '(1 8 2 8))) (let ((b (list-copy a))) (set-car! b 3) b))","'(3 8 2 8)");
+		assertExpressionValue("(let ((a '(1 8 2 8))) (let ((b (list-copy a))) (set-car! b 3) a))","'(1 8 2 8)");
 	}
 	@Test
 	public void testSymbol(){
@@ -554,9 +595,14 @@ public class StandardProcedureTest{
 	}
 	@Test
 	public void testException(){
+		expectException("(raise 'bad)");
+		expectException("(raise 'bad)");
 	}
 	@Test
 	public void testEnvironment(){
+		assertExpressionValue("(let () (import (scheme eval) (scheme repl)) (eval '(car (cons 1 2)) (interaction-environment)))","1");
+		assertExpressionValue("(let () (import (scheme eval) (scheme repl)) (eval '(car (cons 1 2)) (environment '(scheme base))))","1");
+		expectException("(let () (import (scheme eval) (scheme repl)) (eval '(car (cons 1 2)) (environment)))");
 	}
 	@Test
 	public void testIO(){

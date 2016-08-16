@@ -58,38 +58,7 @@
 		assertExpressionValue("        (let ((x (list 'a)))");
 		assertExpressionValue("          (set-cdr! x x)");
 		assertExpressionValue("          (list? x))","#f%");
-		assertExpressionValue("(let ((ls (list 'one 'two 'five!)))");
-		assertExpressionValue("  (list-set! ls 2 'three)");
-		assertExpressionValue("  ls)      \lev  (one two three)");
-		assertExpressionValue("");
 		assertExpressionValue("(list-set! '(0 1 2) 1 "oops")  \lev  \scherror  ; constant list%");
-		assertExpressionValue("(memq 'a '(a b c))","(a b c)");
-		assertExpressionValue("(memq 'b '(a b c))","(b c)");
-		assertExpressionValue("(memq 'a '(b c d))","#f");
-		assertExpressionValue("(memq (list 'a) '(b (a) c))","#f");
-		assertExpressionValue("(member (list 'a)");
-		assertExpressionValue("        '(b (a) c))","((a) c)");
-		assertExpressionValue("(member "B"");
-		assertExpressionValue("        '("a" "b" "c")");
-		assertExpressionValue("        string-ci=?)","("b" "c")");
-		assertExpressionValue("(memq 101 '(100 101 102))","\unspecified");
-		assertExpressionValue("(memv 101 '(100 101 102))","(101 102)%");
-		assertExpressionValue("(define e '((a 1) (b 2) (c 3)))");
-		assertExpressionValue("(assq 'a e)","(a 1)");
-		assertExpressionValue("(assq 'b e)","(b 2)");
-		assertExpressionValue("(assq 'd e)","#f");
-		assertExpressionValue("(assq (list 'a) '(((a)) ((b)) ((c))))","#f");
-		assertExpressionValue("(assoc (list 'a) '(((a)) ((b)) ((c))))","((a))");
-		assertExpressionValue("(assoc 2.0 '((1 1) (2 4) (3 9)) =)","(2 4)");
-		assertExpressionValue("(assq 5 '((2 3) (5 7) (11 13)))","\unspecified");
-		assertExpressionValue("(assv 5 '((2 3) (5 7) (11 13)))","(5 7)%");
-		assertExpressionValue("(define a '(1 8 2 8)) ; a may be immutable");
-		assertExpressionValue("(define b (list-copy a))");
-		assertExpressionValue("(set-car! b 3)        ; b is mutable");
-		assertExpressionValue("b","(3 8 2 8)");
-		assertExpressionValue("a","(1 8 2 8)%");
-
-
 
 		assertExpressionValue("(define (f) (make-string 3 \sharpsign\backwhack{}*))");
 		assertExpressionValue("(define (g) "***")");
@@ -102,7 +71,7 @@
 		assertExpressionValue("(define b (string-copy "abcde"))");
 		assertExpressionValue("(string-copy! b 1 a 0 2)");
 		assertExpressionValue("b",""a12de"%");
-		
+
 		assertExpressionValue("(procedure? car)","#t");
 		assertExpressionValue("(procedure? 'car)","#f");
 		assertExpressionValue("(procedure? (lambda (x) (* x x)))","#t");

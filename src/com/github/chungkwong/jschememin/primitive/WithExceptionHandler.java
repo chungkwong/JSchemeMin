@@ -28,10 +28,13 @@ public class WithExceptionHandler extends PrimitiveType{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		if(pointer==null)
+		if(pointer==null){
+			cont.replaceCurrent(this);
 			cont.call(ExpressionEvaluator.INSTANCE,((ScmPair)param).getCar(),((ScmPair)param).getCdr(),env);
-		else if(pointer instanceof ErrorInfo)
-			cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(((ErrorInfo)pointer).getHandler(),((ScmPair)param).getCar()),env);
+		}else if(pointer instanceof ErrorInfo)
+			cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(
+					((ErrorInfo)pointer).getHandler(),
+					ScmList.toList(new ScmSymbol("quote"),((ScmPair)param).getCar())),env);
 		else
 			cont.ret(((ScmPair)param).getCar());
 	}
