@@ -21,30 +21,13 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class WithExceptionHandler extends PrimitiveType{
-	public static final WithExceptionHandler INSTANCE=new WithExceptionHandler();
-	private WithExceptionHandler(){
-		super(new ScmSymbol("with-exception-handler"));
+public class Raise extends PrimitiveType{
+	public static final Raise INSTANCE=new Raise();
+	private Raise(){
+		super(new ScmSymbol("raise"));
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		if(pointer==null){
-			cont.replaceCurrent(this);
-			cont.call(ExpressionEvaluator.INSTANCE,((ScmPair)param).getCar(),((ScmPair)param).getCdr(),env);
-		}else if(pointer instanceof ErrorInfo)
-			cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(
-					((ErrorInfo)pointer).getHandler(),
-					ScmList.toList(new ScmSymbol("quote"),param)),env);
-		else
-			cont.ret(param);
-	}
-	public static class ErrorInfo{
-		private final ScmObject handler;
-		public ErrorInfo(ScmObject handler){
-			this.handler=handler;
-		}
-		public ScmObject getHandler(){
-			return handler;
-		}
+		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(cont.getErrorHandler(),((ScmPair)param).getCar()),env);
 	}
 }

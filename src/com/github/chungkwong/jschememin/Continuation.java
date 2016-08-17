@@ -87,17 +87,18 @@ public class Continuation extends ScmObject{
 			while(!actives.isEmpty()&&!(actives.peek() instanceof WithExceptionHandler)){
 				actives.pop();
 				pointers.pop();
+				environments.pop();
 			}
 			if(actives.isEmpty())
 				throw ex;
-			arguments=ScmList.toList(ScmError.toScmObject(ex));
+			arguments=ScmError.toScmObject(ex);
 			pointers.push(new WithExceptionHandler.ErrorInfo((ScmObject)pointers.pop()));
 		}
 	}
 	public boolean hasNext(){
 		return !pointers.isEmpty();
 	}
-	public ScmObject getValue(){
+	public ScmObject getCurrentValue(){
 		return arguments;
 	}
 	public Continuation getCopy(){
@@ -113,6 +114,6 @@ public class Continuation extends ScmObject{
 	}
 	public ScmObject getErrorHandler(){
 		int index=actives.search(WithExceptionHandler.INSTANCE);
-		return index>=0?((WithExceptionHandler.ErrorInfo)pointers.get(index)).getHandler():null;
+		return index>=0?(ScmObject)pointers.get(pointers.size()-index):null;
 	}
 }

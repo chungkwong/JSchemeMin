@@ -52,6 +52,9 @@ public class ScmList{
 		}
 		return list==ScmNil.NIL;
 	}
+	public static ScmPair singleton(ScmObject obj){
+		return new ScmPair(obj,ScmNil.NIL);
+	}
 	public static ScmPairOrNil toList(List<? extends ScmObject> list){
 		if(list.isEmpty()){
 			return ScmNil.NIL;

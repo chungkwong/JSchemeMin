@@ -596,7 +596,7 @@ public class StandardProcedureTest{
 	@Test
 	public void testException(){
 		expectException("(raise 'bad)");
-		expectException("(raise 'bad)");
+		assertExpressionValue("(with-exception-handler (lambda (e) 12) (lambda () (+ (raise-continuable #t) 2)))","14");
 	}
 	@Test
 	public void testEnvironment(){
