@@ -83,16 +83,9 @@ public class Continuation extends ScmObject{
 		try{
 			actives.peek().call(environments.peek(),this,pointers.peek(),arguments);
 		}catch(RuntimeException ex){
-			ex.printStackTrace();
-			while(!actives.isEmpty()&&!(actives.peek() instanceof WithExceptionHandler)){
-				actives.pop();
-				pointers.pop();
-				environments.pop();
-			}
-			if(actives.isEmpty())
-				throw ex;
-			arguments=ScmError.toScmObject(ex);
-			pointers.push(new WithExceptionHandler.ErrorInfo((ScmObject)pointers.pop()));
+			callTail(Raise.INSTANCE,ScmError.toScmObject(ex),environments.peek());
+		}catch(UncaughtExceptionError ex){
+			throw ex.getCause();
 		}
 	}
 	public boolean hasNext(){
@@ -100,6 +93,15 @@ public class Continuation extends ScmObject{
 	}
 	public ScmObject getCurrentValue(){
 		return arguments;
+	}
+	public Evaluable getCurrentEvaluable(){
+		return actives.peek();
+	}
+	public Object getCurrentPointer(){
+		return pointers.peek();
+	}
+	public Environment getCurrentEnvironment(){
+		return environments.peek();
 	}
 	public Continuation getCopy(){
 		return new Continuation((Stack)actives.clone(),(Stack)pointers.clone(),(Stack)environments.clone());
@@ -112,8 +114,24 @@ public class Continuation extends ScmObject{
 	public boolean isSelfevaluating(){
 		return false;
 	}
-	public ScmObject getErrorHandler(){
+	public ScmPair getErrorHandler(){
 		int index=actives.search(WithExceptionHandler.INSTANCE);
-		return index>=0?(ScmObject)pointers.get(pointers.size()-index):null;
+		if(index>0)
+			return new ScmPair((ScmObject)pointers.get(pointers.size()-index),environments.get(pointers.size()-index));
+		else
+			return null;
+	}
+	public void removeUntilErrorHandler(){
+		while(!actives.isEmpty()&&!(actives.peek() instanceof WithExceptionHandler)){
+			actives.pop();
+			pointers.pop();
+			environments.pop();
+		}
+	}
+	private void clear(){
+		actives.clear();
+		pointers.clear();
+		environments.clear();
+		arguments=null;
 	}
 }

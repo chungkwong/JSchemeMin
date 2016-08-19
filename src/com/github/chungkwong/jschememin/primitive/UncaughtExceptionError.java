@@ -15,29 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.primitive;
-import com.github.chungkwong.jschememin.*;
-import com.github.chungkwong.jschememin.type.*;
+
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Raise extends PrimitiveType{
-	public static final Raise INSTANCE=new Raise();
-	private Raise(){
-		super(new ScmSymbol("raise"));
+public class UncaughtExceptionError extends Error{
+	public UncaughtExceptionError(RuntimeException cause){
+		super(cause);
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		cont.removeUntilErrorHandler();
-		if(cont.hasNext()){
-			if(pointer!=null){
-				param=(ScmObject)pointer;
-			}
-			ScmObject handler=(ScmObject)cont.getCurrentPointer();
-			Environment e=cont.getCurrentEnvironment();
-			cont.callTail(this,param,env);
-			cont.call(ExpressionEvaluator.INSTANCE,param,ScmList.toList(handler,param),e);
-		}else
-			throw new UncaughtExceptionError(ScmError.toException(param));
+	public synchronized RuntimeException getCause(){
+		return (RuntimeException)super.getCause();
 	}
 }

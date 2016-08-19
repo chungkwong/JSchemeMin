@@ -16,6 +16,7 @@
  */
 package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
+import java.io.*;
 import org.junit.*;
 /**
  *
@@ -29,11 +30,21 @@ public class StandardProcedureTest{
 		ScmObject expectval=new Evaluator(true).eval(new Parser(result).nextDatum());
 		Assert.assertEquals(gotval,expectval);
 	}
+	public void assertStandardOutput(String expr,String result){
+		StringWriter out=new StringWriter();
+		ScmPort.CURRENT_OUTPUT=new ScmTextualOutputPort(out);
+		try{
+			new Evaluator(true).eval(new Parser(expr).nextDatum());
+		}catch(RuntimeException ex){
+
+		}
+		Assert.assertEquals(out.toString(),result);
+	}
 	void expectException(String expr){
 		try{
 			new Evaluator(true).eval(new Parser(expr).nextDatum());
 			Assert.assertTrue(false);
-		}catch(Exception ex){
+		}catch(Throwable ex){
 
 		}
 	}
@@ -597,6 +608,37 @@ public class StandardProcedureTest{
 	public void testException(){
 		expectException("(raise 'bad)");
 		assertExpressionValue("(with-exception-handler (lambda (e) 12) (lambda () (+ (raise-continuable #t) 2)))","14");
+		assertStandardOutput("(with-exception-handler "
+				+ "(lambda (x) (import (scheme write)) (display \"something went wrong\\n\") (flush-output-port)) "
+				+ "(lambda () (+ 1 (raise 'an-error))))" ,
+				"something went wrong\n");
+		assertStandardOutput("(with-exception-handler "
+				+ "(lambda (x) (import (scheme write)) (display (error-object? x)) (flush-output-port)) "
+				+ "(lambda () (+ 1 (raise 'an-error))))" ,
+				"#f");
+		assertStandardOutput("(with-exception-handler "
+				+ "(lambda (x) (import (scheme write)) (display (error-object? x)) (flush-output-port)) "
+				+ "(lambda () (+ 1 (error \"bad\" '(1 2 3)))))" ,
+				"#t");
+		assertStandardOutput("(with-exception-handler "
+				+ "(lambda (x) (import (scheme write)) (display (read-error? x)) (flush-output-port)) "
+				+ "(lambda () (+ 1 (error \"bad\" '(1 2 3)))))" ,
+				"#f");
+		assertStandardOutput("(with-exception-handler "
+				+ "(lambda (x) (import (scheme write)) (display (file-error? x)) (flush-output-port)) "
+				+ "(lambda () (+ 1 (error \"bad\" '(1 2 3)))))" ,
+				"#f");
+		assertStandardOutput("(with-exception-handler "
+				+ "(lambda (x) (import (scheme write)) (display (error-object-message x)) (flush-output-port)) "
+				+ "(lambda () (+ 1 (error \"bad\" 1 2 3))))" ,
+				"bad");
+		assertStandardOutput("(with-exception-handler "
+				+ "(lambda (x) (import (scheme write)) (display (error-object-irritants x)) (flush-output-port)) "
+				+ "(lambda () (+ 1 (error \"bad\" 1 2 3))))" ,
+				"(1 2 3)");
+		assertStandardOutput("(with-exception-handler (lambda (x) (import (scheme write)) (display (error-object-message x)) (flush-output-port)) "
+				+ "(lambda () (with-exception-handler (lambda (x) (import (scheme write)) (display (error-object-irritants x)) (flush-output-port)) (lambda () (+ 1 (error \"bad\" 1 2 3))))))",
+				"(1 2 3)bad");
 	}
 	@Test
 	public void testEnvironment(){
@@ -609,5 +651,28 @@ public class StandardProcedureTest{
 	}
 	@Test
 	public void testSystem(){
+		assertExpressionValue("(let () (import (scheme file)) (file-exists? \"test/com/github/chungkwong/jschememin/to_include.scm\"))","#t");
+		assertExpressionValue("(let () (import (scheme file)) (file-exists? \"test/com/github/chungkwong/jschememin/nothing.scm\"))","#f");
+		assertStandardOutput("(with-exception-handler "
+				+ "(lambda (x) (import (scheme write)) (display (file-error? x)) (flush-output-port)) "
+				+ "(lambda () (import (scheme file)) (file-delete \"test/com/github/chungkwong/jschememin/nothing.scm\")))" ,
+				"#t");
+		Main.main(new String[]{});
+		System.err.println(Main.COMMAND_LINE);
+		assertExpressionValue("(let () (import (scheme process-context)) (command-line))","'()");
+		Main.main(new String[]{"hello","world"});
+		assertExpressionValue("(let () (import (scheme process-context)) (command-line))","'(\"hello\" \"world\")");
+		assertExpressionValue("(let () (import (scheme process-context)) (string? (get-environment-variable \"PATH\")))","#t");
+		assertExpressionValue("(let () (import (scheme process-context)) (get-environment-variable \"NOTHING\"))","#f");
+		assertExpressionValue("(let () (import (scheme process-context)) (list? (get-environment-variables)))","#t");
+		assertExpressionValue("(let () (import (scheme process-context)) (let ((fst (car (get-environment-variables)))) (pair? fst)))","#t");
+		assertExpressionValue("(let () (import (scheme process-context)) (let ((fst (car (get-environment-variables)))) (string? (car fst))))","#t");
+		assertExpressionValue("(let () (import (scheme process-context)) (let ((fst (car (get-environment-variables)))) (string? (cdr fst))))","#t");
+		assertExpressionValue("(let () (import (scheme time)) (integer? (current-second)))","#t");
+		assertExpressionValue("(let () (import (scheme time)) (integer? (current-jiffy)))","#t");
+		assertExpressionValue("(let () (import (scheme time)) (integer? (jiffies-per-second)))","#t");
+		assertExpressionValue("(list? (features))","#t");
+		assertExpressionValue("(string? (car (features)))","#t");
+
 	}
 }

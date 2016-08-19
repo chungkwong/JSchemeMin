@@ -31,7 +31,8 @@ public class File extends NativeLibrary{
 	protected void init(Library lib){
 		addNativeProcedure("file-exists?",(o)->ScmBoolean.valueOf(new java.io.File(((ScmString)car(o)).getValue()).exists()));
 		addNativeProcedure("file-delete",(o)->{
-			if(new java.io.File(((ScmString)car(o)).getValue()).delete())
+			java.io.File file=new java.io.File(((ScmString)car(o)).getValue());
+			if(file.exists()&&file.delete())
 				return ScmBoolean.TRUE;
 			else
 				throw ScmError.toException(new ScmError(new ScmString("Failed to delete file"),ScmList.toList(car(o)),ScmError.ErrorType.FILE));

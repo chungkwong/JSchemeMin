@@ -31,20 +31,7 @@ public class WithExceptionHandler extends PrimitiveType{
 		if(pointer==null){
 			cont.replaceCurrent(this);
 			cont.call(ExpressionEvaluator.INSTANCE,((ScmPair)param).getCar(),((ScmPair)param).getCdr(),env);
-		}else if(pointer instanceof ErrorInfo)
-			cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(
-					((ErrorInfo)pointer).getHandler(),
-					ScmList.toList(new ScmSymbol("quote"),param)),env);
-		else
+		}else
 			cont.ret(param);
-	}
-	public static class ErrorInfo{
-		private final ScmObject handler;
-		public ErrorInfo(ScmObject handler){
-			this.handler=handler;
-		}
-		public ScmObject getHandler(){
-			return handler;
-		}
 	}
 }
