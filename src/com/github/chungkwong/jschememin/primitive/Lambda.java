@@ -21,7 +21,7 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Lambda extends PrimitiveType{
+public class Lambda extends BasicConstruct implements Primitive{
 	public static final Lambda INSTANCE=new Lambda();
 	private Lambda(){
 		super(new ScmSymbol("lambda"));

@@ -22,7 +22,7 @@ import java.util.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Import extends PrimitiveType{
+public class Import extends BasicConstruct implements Primitive{
 	public static final Import INSTANCE=new Import();
 	private static final ScmSymbol PREFIX=new ScmSymbol("prefix");
 	private static final ScmSymbol RENAME=new ScmSymbol("rename");

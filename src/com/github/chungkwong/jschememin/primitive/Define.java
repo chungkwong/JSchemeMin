@@ -21,7 +21,7 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Define extends PrimitiveType{
+public class Define extends BasicConstruct implements Primitive{
 	public static final Define INSTANCE=new Define();
 	private Define(){
 		super(new ScmSymbol("define"));

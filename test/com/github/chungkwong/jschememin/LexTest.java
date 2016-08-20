@@ -136,7 +136,7 @@ public class LexTest{
 		check("#e4.",new ScmInteger(BigInteger.valueOf(4)));
 		check("#e-4.",new ScmInteger(BigInteger.valueOf(-4)));
 		check("23.670",new ScmFloatingPointNumber(new BigDecimal("23.67")));
-		check("#e23.670",new ScmFloatingPointNumber(new BigDecimal("23.67")));
+		check("#e23.670",new ScmFloatingPointNumber(new BigDecimal("23.67")).toScmRational());
 		check(".670",new ScmFloatingPointNumber(new BigDecimal(".67")));
 		check("1.e-10",new ScmFloatingPointNumber(new BigDecimal("1e-10")));
 		check("1.e+10",new ScmFloatingPointNumber(new BigDecimal("10000000000")));

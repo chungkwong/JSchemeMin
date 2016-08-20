@@ -594,7 +594,7 @@ public final class Lex{
 			real=new BigDecimal(num);
 		if(!ate)
 			throw new LexicalException();
-		if(prefix=='e'){
+		if(prefix=='e'||prefix=='E'){
 			prefix=in.read();
 			boolean negexp=false;
 			if(prefix=='+'){

@@ -20,9 +20,9 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public abstract class PrimitiveType extends Evaluable{
+public abstract class BasicConstruct extends Evaluable{
 	private final ScmSymbol keyword;
-	public PrimitiveType(ScmSymbol keyword){
+	public BasicConstruct(ScmSymbol keyword){
 		this.keyword=keyword;
 	}
 	public ScmSymbol getKeyword(){

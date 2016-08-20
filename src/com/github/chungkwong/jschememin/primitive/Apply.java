@@ -21,7 +21,7 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Apply extends PrimitiveType{
+public class Apply extends BasicConstruct{
 	public static final Apply INSTANCE=new Apply();
 	private Apply(){
 		super(new ScmSymbol("apply"));
@@ -29,11 +29,12 @@ public class Apply extends PrimitiveType{
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
 		ScmListBuilder buf=new ScmListBuilder();
+		Evaluable proc=(Evaluable)((ScmPair)param).getCar();
 		ScmPair curr=(ScmPair)((ScmPair)param).getCdr();
 		for(;curr.getCdr() instanceof ScmPair;curr=(ScmPair)curr.getCdr()){
 			buf.add(curr.getCar());
 		}
 		ScmList.forEach(curr.getCar(),(o)->buf.add(o));
-		cont.callTail(ExpressionEvaluator.INSTANCE,new ScmPair(((ScmPair)param).getCar(),buf.toList()),env);
+		cont.callTail(proc,buf.toList(),env);
 	}
 }

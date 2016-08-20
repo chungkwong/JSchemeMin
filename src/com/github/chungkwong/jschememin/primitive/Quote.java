@@ -21,7 +21,7 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Quote extends PrimitiveType{
+public class Quote extends BasicConstruct implements Primitive{
 	public static final Quote INSTANCE=new Quote();
 	private Quote(){
 		super(new ScmSymbol("quote"));

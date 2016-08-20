@@ -21,7 +21,7 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class DynamicWind extends PrimitiveType{
+public class DynamicWind extends BasicConstruct{
 	public static final DynamicWind INSTANCE=new DynamicWind();
 	private DynamicWind(){
 		super(new ScmSymbol("dynamic-wind"));

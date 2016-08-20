@@ -603,6 +603,16 @@ public class StandardProcedureTest{
 	}
 	@Test
 	public void testControl(){
+		assertExpressionValue("(procedure? car)","#t");
+		assertExpressionValue("(procedure? (lambda (x) (+ x x)))","#t");
+		assertExpressionValue("(procedure? if)","#f");
+		assertExpressionValue("(procedure? let)","#f");
+		assertExpressionValue("(apply + (list 3 4))","7");
+		assertExpressionValue("(apply + 1 (list 3 4))","8");
+		assertExpressionValue("(let ((compose (lambda (f g) (lambda args (f (apply g args)))))) "
+				+ "(import (scheme inexact) (scheme complex)) (< (magnitude (- ((compose sqrt *) 12 75) 30)) 1e-12))","#t");
+		assertExpressionValue("(call-with-current-continuation (lambda (exit) (exit 7) #t))","7");
+		assertExpressionValue("(call-with-values (lambda () (values 4 5)) (lambda (a b) b))","5");
 	}
 	@Test
 	public void testException(){

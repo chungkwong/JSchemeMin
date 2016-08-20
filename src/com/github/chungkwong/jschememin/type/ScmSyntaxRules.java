@@ -166,7 +166,7 @@ public class ScmSyntaxRules extends ScmObject{
 			if(!(patt instanceof ScmNil)){
 				return match(expr,patt,bind,env,index);
 			}else
-				return true;
+				return expr instanceof ScmNil;
 		}
 		private boolean match(ScmObject expr,ScmObject patt,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
 			if(patt instanceof ScmSymbol){

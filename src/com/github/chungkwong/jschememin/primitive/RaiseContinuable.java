@@ -21,7 +21,7 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class RaiseContinuable extends PrimitiveType{
+public class RaiseContinuable extends BasicConstruct{
 	public static final RaiseContinuable INSTANCE=new RaiseContinuable();
 	private RaiseContinuable(){
 		super(new ScmSymbol("raise-continuable"));
@@ -31,6 +31,6 @@ public class RaiseContinuable extends PrimitiveType{
 		ScmPair handler=cont.getErrorHandler();
 		if(handler==null)
 			throw new UncaughtExceptionError(ScmError.toException(param));
-		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(handler.getCar(),((ScmPair)param).getCar()),(Environment)handler.getCdr());
+		cont.callTail((Evaluable)handler.getCar(),param,(Environment)handler.getCdr());
 	}
 }

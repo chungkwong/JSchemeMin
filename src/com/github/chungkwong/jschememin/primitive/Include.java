@@ -22,7 +22,7 @@ import java.io.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Include extends PrimitiveType{
+public class Include extends BasicConstruct implements Primitive{
 	public static final Include INSTANCE=new Include("include",false);
 	public static final Include INSTANCE_CI=new Include("include-ci",true);
 	private final boolean foldingCase;

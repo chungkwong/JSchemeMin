@@ -21,14 +21,14 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class CallWithValues extends PrimitiveType{
+public class CallWithValues extends BasicConstruct{
 	public static final CallWithValues INSTANCE=new CallWithValues();
 	private CallWithValues(){
 		super(new ScmSymbol("call-with-values"));
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(((ScmPair)param).getCadr()),env);
-		cont.call(ExpressionEvaluator.INSTANCE,null,ScmList.toList(((ScmPair)param).getCar()),env);
+		cont.callTail((Evaluable)((ScmPair)param).getCadr(),ScmNil.NIL,env);
+		cont.call((Evaluable)((ScmPair)param).getCar(),null,ScmNil.NIL,env);
 	}
 }

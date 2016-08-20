@@ -49,12 +49,12 @@ public class ExpressionEvaluator extends Evaluable{
 		}
 	}
 	private void evaluateRemaining(BackTrace b,ScmObject expr,Environment env,Continuation cont){
-		if(expr instanceof PrimitiveType){
-			((Evaluable)expr).call(env,cont,null,b.getAfter());
-		}else if(expr instanceof ScmSyntaxRules){
-			cont.callTail(this,((ScmSyntaxRules)expr).transform((ScmPairOrNil)b.getAfter(),env),env);
-		}else if(b.getBefore()==null){
-			if(b.getAfter()==ScmNil.NIL){
+		if(b.getBefore()==null){
+			if(expr instanceof Primitive){
+				((Evaluable)expr).call(env,cont,null,b.getAfter());
+			}else if(expr instanceof ScmSyntaxRules){
+				cont.callTail(this,((ScmSyntaxRules)expr).transform((ScmPairOrNil)b.getAfter(),env),env);
+			}else if(b.getAfter()==ScmNil.NIL){
 				cont.callTail((Evaluable)expr,ScmNil.NIL,env);
 			}else{
 				ScmPair before=new ScmPair(expr,ScmNil.NIL);

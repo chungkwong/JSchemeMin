@@ -21,14 +21,14 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class CallWithCurrentContinuation extends PrimitiveType{
+public class CallWithCurrentContinuation extends BasicConstruct{
 	public static final CallWithCurrentContinuation INSTANCE=new CallWithCurrentContinuation();
 	private CallWithCurrentContinuation(){
 		super(new ScmSymbol("call-with-current-continuation"));
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(((ScmPair)param).getCar(),getRollbackProcedure(cont.getCopy())),env);
+		cont.callTail((Evaluable)((ScmPair)param).getCar(),ScmList.singleton(getRollbackProcedure(cont.getCopy())),env);
 	}
 	static final ScmObject getRollbackProcedure(Continuation checkpoint){
 		return new Evaluable(){

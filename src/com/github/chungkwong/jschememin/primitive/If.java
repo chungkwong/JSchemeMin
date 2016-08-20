@@ -21,7 +21,7 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class If extends PrimitiveType{
+public class If extends BasicConstruct implements Primitive{
 	public static final If INSTANCE=new If();
 	private If(){
 		super(new ScmSymbol("if"));
@@ -35,7 +35,10 @@ public class If extends PrimitiveType{
 		}else{
 			ScmPair list=(ScmPair)pointer;
 			if(expr==ScmBoolean.FALSE){
-				cont.callTail(ExpressionEvaluator.INSTANCE,((ScmPair)list.getCdr()).getCar(),env);
+				if(list.getCdr() instanceof ScmPair)
+					cont.callTail(ExpressionEvaluator.INSTANCE,((ScmPair)list.getCdr()).getCar(),env);
+				else
+					cont.ret(new ScmSymbol("unspecified"));
 			}else{
 				cont.callTail(ExpressionEvaluator.INSTANCE,list.getCar(),env);
 			}

@@ -81,7 +81,7 @@ public class Environment extends ScmObject{
 	public boolean containsKey(ScmSymbol id){
 		return bindings.containsKey(id);
 	}
-	public void addPrimitiveType(PrimitiveType keyword){
+	public void addPrimitiveType(BasicConstruct keyword){
 		add(keyword.getKeyword(),keyword);
 	}
 	public boolean isREPL(){

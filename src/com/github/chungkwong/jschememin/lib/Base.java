@@ -320,7 +320,7 @@ public class Base extends NativeLibrary{
 		addPrimitiveType(CallWithValues.INSTANCE);
 	}
 	private void initControl(){
-		addNativeProcedure("procedure?",(o)->ScmBoolean.valueOf(car(o) instanceof Evaluable));
+		addNativeProcedure("procedure?",(o)->ScmBoolean.valueOf(car(o) instanceof Evaluable&&!(car(o) instanceof ScmSyntaxRules)&&!(car(o) instanceof Primitive)));
 		addPrimitiveType(Apply.INSTANCE);
 
 

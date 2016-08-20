@@ -21,7 +21,7 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Quasiquote extends PrimitiveType{
+public class Quasiquote extends BasicConstruct implements Primitive{
 	public static final Quasiquote INSTANCE=new Quasiquote();
 	private static final ScmSymbol QUASIQUOTE=new ScmSymbol("quasiquote");
 	private static final ScmSymbol UNQUOTE=new ScmSymbol("unquote");

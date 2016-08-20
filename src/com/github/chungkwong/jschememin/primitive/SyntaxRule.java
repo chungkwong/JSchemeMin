@@ -21,7 +21,7 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class SyntaxRule extends PrimitiveType{
+public class SyntaxRule extends BasicConstruct implements Primitive{
 	public static final SyntaxRule INSTANCE=new SyntaxRule();
 	public SyntaxRule(){
 		super(new ScmSymbol("syntax-rules"));

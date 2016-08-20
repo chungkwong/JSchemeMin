@@ -21,7 +21,7 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class WithExceptionHandler extends PrimitiveType{
+public class WithExceptionHandler extends BasicConstruct{
 	public static final WithExceptionHandler INSTANCE=new WithExceptionHandler();
 	private WithExceptionHandler(){
 		super(new ScmSymbol("with-exception-handler"));
@@ -30,7 +30,7 @@ public class WithExceptionHandler extends PrimitiveType{
 	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
 		if(pointer==null){
 			cont.replaceCurrent(this);
-			cont.call(ExpressionEvaluator.INSTANCE,((ScmPair)param).getCar(),((ScmPair)param).getCdr(),env);
+			cont.call((Evaluable)((ScmPair)param).getCadr(),((ScmPair)param).getCar(),ScmNil.NIL,env);
 		}else
 			cont.ret(param);
 	}

@@ -21,7 +21,7 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class DefineRecordType extends PrimitiveType{
+public class DefineRecordType extends BasicConstruct implements Primitive{
 	public static final DefineRecordType INSTANCE=new DefineRecordType();
 	public DefineRecordType(){
 		super(new ScmSymbol("define-record-type"));

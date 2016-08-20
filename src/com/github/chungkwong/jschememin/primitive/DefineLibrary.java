@@ -22,7 +22,7 @@ import java.util.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class DefineLibrary extends PrimitiveType{
+public class DefineLibrary extends BasicConstruct implements Primitive{
 	public static final DefineLibrary INSTANCE=new DefineLibrary();
 	private static final ScmSymbol EXPORT=new ScmSymbol("export");
 	private static final ScmSymbol IMPORT=new ScmSymbol("import");

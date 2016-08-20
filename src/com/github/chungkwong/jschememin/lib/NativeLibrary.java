@@ -46,7 +46,7 @@ public abstract class NativeLibrary{
 		lib.getInternalEnvironment().add(name,obj);
 		lib.getExportMap().put(name,name);
 	}
-	protected void addPrimitiveType(PrimitiveType type){
+	protected void addPrimitiveType(BasicConstruct type){
 		lib.getInternalEnvironment().addPrimitiveType(type);
 		lib.getExportMap().put(type.getKeyword(),type.getKeyword());
 	}

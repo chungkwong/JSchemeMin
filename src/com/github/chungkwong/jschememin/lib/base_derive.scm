@@ -262,18 +262,6 @@
     ((begin exp ...)
      ((lambda () exp ...)))))
 
-
-(define-syntax begin
-  (syntax-rules ()
-    ((begin exp)
-     exp)
-    ((begin exp1 exp2 ...)
-     (call-with-values
-         (lambda () exp1)
-       (lambda args
-         (begin exp2 ...))))))
-
-
 (define-syntax do
   (syntax-rules ()
     ((do ((var init step ...) ...)
