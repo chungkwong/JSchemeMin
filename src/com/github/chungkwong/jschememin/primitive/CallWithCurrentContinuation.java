@@ -27,15 +27,15 @@ public class CallWithCurrentContinuation extends BasicConstruct{
 		super(new ScmSymbol("call-with-current-continuation"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		cont.callTail((Evaluable)((ScmPair)param).getCar(),ScmList.singleton(getRollbackProcedure(cont.getCopy())),env);
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
+		cont.callTail((Evaluable)ScmList.first(param),ScmList.singleton(getRollbackProcedure(cont.getCopy())),env);
 	}
 	static final ScmObject getRollbackProcedure(Continuation checkpoint){
 		return new Evaluable(){
 			@Override
-			public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
+			public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
 				cont.reset(checkpoint);
-				cont.ret(param);
+				cont.ret((ScmPairOrNil)param);
 			}
 			@Override
 			public String toExternalRepresentation(){

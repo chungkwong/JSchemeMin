@@ -31,8 +31,8 @@ public class Quasiquote extends BasicConstruct implements Primitive{
 
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		cont.ret(quasiquote(((ScmPair)param).getCar(),1));
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
+		cont.ret(quasiquote(ScmList.first(param),1));
 	}
 	public static ScmObject quasiquote(ScmObject obj,int depth){
 		/*if(obj.isSelfevaluating())

@@ -27,13 +27,12 @@ public class Assignment extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("set!"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
 		if(pointer==null){
-			ScmPair remain=(ScmPair)expr;
 			cont.replaceCurrent(this);
-			cont.call(ExpressionEvaluator.INSTANCE,(ScmSymbol)remain.getCar(),((ScmPair)remain.getCdr()).getCar(),env);
+			cont.call(ExpressionEvaluator.INSTANCE,(ScmSymbol)ScmList.first(expr),ScmList.second(expr),env);
 		}else{
-			env.set((ScmSymbol)pointer,expr);
+			env.set((ScmSymbol)pointer,ScmList.first(expr));
 			cont.ret(expr);
 		}
 	}

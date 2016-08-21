@@ -26,7 +26,7 @@ public class Continuation extends ScmObject{
 	private final Stack<Evaluable> actives;
 	private final Stack<Object> pointers;
 	private final Stack<Environment> environments;
-	private ScmObject arguments;
+	private ScmPairOrNil arguments;
 	public Continuation(){
 		this.pointers=new Stack<>();
 		this.actives=new Stack<>();
@@ -37,13 +37,16 @@ public class Continuation extends ScmObject{
 		this.actives=actives;
 		this.environments=environments;
 	}
-	public void callInit(Evaluable proc,ScmObject arguments,Environment env){
+	public void callInit(Evaluable proc,ScmPairOrNil arguments,Environment env){
 		actives.push(proc);
 		pointers.push(null);
 		environments.push(env);
 		this.arguments=arguments;
 	}
-	public void call(Evaluable proc,Object pointer,ScmObject arguments,Environment env){
+	public void callInit(Evaluable proc,ScmObject arguments,Environment env){
+		callInit(proc,ScmList.singleton(arguments),env);
+	}
+	public void call(Evaluable proc,Object pointer,ScmPairOrNil arguments,Environment env){
 		actives.push(proc);
 		pointers.pop();
 		pointers.push(pointer);
@@ -51,7 +54,10 @@ public class Continuation extends ScmObject{
 		environments.push(env);
 		this.arguments=arguments;
 	}
-	public void callTail(Evaluable proc,ScmObject arguments,Environment env){
+	public void call(Evaluable proc,Object pointer,ScmObject arguments,Environment env){
+		call(proc,pointer,ScmList.singleton(arguments),env);
+	}
+	public void callTail(Evaluable proc,ScmPairOrNil arguments,Environment env){
 		actives.pop();
 		pointers.pop();
 		environments.pop();
@@ -60,15 +66,21 @@ public class Continuation extends ScmObject{
 		environments.push(env);
 		this.arguments=arguments;
 	}
+	public void callTail(Evaluable proc,ScmObject arguments,Environment env){
+		callTail(proc,ScmList.singleton(arguments),env);
+	}
 	public void replaceCurrent(Evaluable proc){
 		actives.pop();
 		actives.push(proc);
 	}
-	public void ret(ScmObject retValue){
+	public void ret(ScmPairOrNil retValue){
 		actives.pop();
 		pointers.pop();
 		environments.pop();
 		this.arguments=retValue;
+	}
+	public void ret(ScmObject retValue){
+		ret(ScmList.singleton(retValue));
 	}
 	public void reset(Continuation cont){
 		actives.clear();

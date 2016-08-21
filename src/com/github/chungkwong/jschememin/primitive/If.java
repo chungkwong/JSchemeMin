@@ -27,16 +27,16 @@ public class If extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("if"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
 		if(pointer==null){
 			ScmPair list=(ScmPair)expr;
 			cont.replaceCurrent(this);
 			cont.call(ExpressionEvaluator.INSTANCE,(ScmPair)list.getCdr(),list.getCar(),env);
 		}else{
 			ScmPair list=(ScmPair)pointer;
-			if(expr==ScmBoolean.FALSE){
+			if(ScmList.first(expr)==ScmBoolean.FALSE){
 				if(list.getCdr() instanceof ScmPair)
-					cont.callTail(ExpressionEvaluator.INSTANCE,((ScmPair)list.getCdr()).getCar(),env);
+					cont.callTail(ExpressionEvaluator.INSTANCE,list.getCadr(),env);
 				else
 					cont.ret(new ScmSymbol("unspecified"));
 			}else{

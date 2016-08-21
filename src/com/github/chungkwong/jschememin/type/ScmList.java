@@ -23,6 +23,12 @@ import java.util.stream.*;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmList{
+	public static ScmObject first(ScmObject list){
+		return ((ScmPair)list).getCar();
+	}
+	public static ScmObject second(ScmObject list){
+		return ((ScmPair)list).getCadr();
+	}
 	public static int getLength(ScmObject list){
 		int len=0;
 		while(list instanceof ScmPair){

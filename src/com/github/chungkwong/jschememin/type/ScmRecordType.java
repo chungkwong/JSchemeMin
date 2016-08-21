@@ -84,7 +84,7 @@ public class ScmRecordType extends ScmObject{
 		}
 		@Override
 		public ScmObject call(ScmObject param){
-			return ScmBoolean.valueOf(((ScmRecord)((ScmPair)param).getCar()).getType()==ScmRecordType.this);
+			return ScmBoolean.valueOf(((ScmRecord)ScmList.first(param)).getType()==ScmRecordType.this);
 		}
 	}
 	class Accessor implements NativeProcedure{
@@ -94,7 +94,7 @@ public class ScmRecordType extends ScmObject{
 		}
 		@Override
 		public ScmObject call(ScmObject param){
-			return ((ScmRecord)((ScmPair)param).getCar()).get(index);
+			return ((ScmRecord)ScmList.first(param)).get(index);
 		}
 	}
 	class Modifier implements NativeProcedure{
@@ -104,7 +104,7 @@ public class ScmRecordType extends ScmObject{
 		}
 		@Override
 		public ScmObject call(ScmObject param){
-			ScmRecord record=(ScmRecord)((ScmPair)param).getCar();
+			ScmRecord record=(ScmRecord)ScmList.first(param);
 			ScmObject obj=((ScmPair)((ScmPair)param).getCdr()).getCar();
 			record.set(index,obj);
 			return record;

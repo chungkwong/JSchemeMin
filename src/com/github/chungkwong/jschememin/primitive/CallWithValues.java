@@ -27,8 +27,8 @@ public class CallWithValues extends BasicConstruct{
 		super(new ScmSymbol("call-with-values"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		cont.callTail((Evaluable)((ScmPair)param).getCadr(),ScmNil.NIL,env);
-		cont.call((Evaluable)((ScmPair)param).getCar(),null,ScmNil.NIL,env);
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
+		cont.callTail((Evaluable)ScmList.second(param),ScmNil.NIL,env);
+		cont.call((Evaluable)ScmList.first(param),null,ScmNil.NIL,env);
 	}
 }

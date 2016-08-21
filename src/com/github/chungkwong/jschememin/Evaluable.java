@@ -25,5 +25,5 @@ public abstract class Evaluable extends ScmObject{
 	public boolean isSelfevaluating(){
 		return false;
 	}
-	public abstract void call(Environment env,Continuation cont,Object pointer,ScmObject param);
+	public abstract void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param);
 }

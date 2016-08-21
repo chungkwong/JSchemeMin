@@ -149,7 +149,7 @@ public class ScmSyntaxRules extends ScmObject{
 					if(count==0)
 						collectPatternVariables(sub,bind);
 					while(--count>=0&&expr instanceof ScmPair){
-						if(!match(((ScmPair)expr).getCar(),sub,bind,env,index))
+						if(!match(ScmList.first(expr),sub,bind,env,index))
 							return false;
 						expr=((ScmPair)expr).getCdr();
 						index.advance();
@@ -157,7 +157,7 @@ public class ScmSyntaxRules extends ScmObject{
 					index.pop();
 					patt=((ScmPair)patt).getCdr();
 				}else{
-					if(!(expr instanceof ScmPair)||!match(((ScmPair)expr).getCar(),sub,bind,env,index))
+					if(!(expr instanceof ScmPair)||!match(ScmList.first(expr),sub,bind,env,index))
 						return false;
 					expr=((ScmPair)expr).getCdr();
 				}

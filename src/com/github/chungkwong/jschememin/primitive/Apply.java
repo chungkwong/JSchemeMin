@@ -27,9 +27,9 @@ public class Apply extends BasicConstruct{
 		super(new ScmSymbol("apply"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
 		ScmListBuilder buf=new ScmListBuilder();
-		Evaluable proc=(Evaluable)((ScmPair)param).getCar();
+		Evaluable proc=(Evaluable)ScmList.first(param);
 		ScmPair curr=(ScmPair)((ScmPair)param).getCdr();
 		for(;curr.getCdr() instanceof ScmPair;curr=(ScmPair)curr.getCdr()){
 			buf.add(curr.getCar());

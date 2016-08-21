@@ -26,7 +26,7 @@ public final class ScmProcedure extends Evaluable{
 		return false;
 	}
 	@Override
-	public void call(Environment dynamicEnv,Continuation cont,Object pointer,ScmObject param){
+	public void call(Environment dynamicEnv,Continuation cont,Object pointer,ScmPairOrNil param){
 		if(pointer==null){
 			call(dynamicEnv,cont,new Backtrack(extendEnvironment((ScmPairOrNil)param),body),null);
 		}else{
@@ -52,7 +52,7 @@ public final class ScmProcedure extends Evaluable{
 		}else if(formal instanceof ScmPair){
 			ScmPair remainingFormal=(ScmPair)formal;
 			while(true){
-				env.add((ScmSymbol)remainingFormal.getCar(),((ScmPair)param).getCar());
+				env.add((ScmSymbol)remainingFormal.getCar(),ScmList.first(param));
 				param=(ScmPairOrNil)((ScmPair)param).getCdr();
 				ScmObject next=remainingFormal.getCdr();
 				if(next instanceof ScmPair){

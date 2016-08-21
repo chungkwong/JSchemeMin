@@ -27,7 +27,7 @@ public class DynamicWind extends BasicConstruct{
 		super(new ScmSymbol("dynamic-wind"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
 		if(pointer==null)
 			call(env,cont,new Backtrack((ScmPairOrNil)param,(ScmPairOrNil)param,null),param);
 		else if(((Backtrack)pointer).getThen() instanceof ScmPair){
@@ -35,8 +35,8 @@ public class DynamicWind extends BasicConstruct{
 			ScmPair all=(ScmPair)((Backtrack)pointer).getAll();
 			ScmObject ret=null;
 			if(then.getCddr() instanceof ScmNil)
-				ret=((ScmPair)param).getCar();
-			cont.call(ExpressionEvaluator.INSTANCE,new Backtrack(all,(ScmPairOrNil)then.getCdr(),ret),ScmList.toList(then.getCar()),env);
+				ret=ScmList.first(param);
+			cont.call(ExpressionEvaluator.INSTANCE,new Backtrack(all,(ScmPairOrNil)then.getCdr(),ret),(ScmObject)ScmList.toList(then.getCar()),env);
 		}else{
 			cont.ret(((Backtrack)pointer).getRet());
 		}

@@ -27,8 +27,8 @@ public class Quote extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("quote"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
-		cont.ret(((ScmPair)expr).getCar());
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
+		cont.ret(ScmList.first(expr));
 	}
 
 }

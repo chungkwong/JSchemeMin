@@ -35,9 +35,9 @@ public class DefineLibrary extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("define-library"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
 		ScmPair name=(ScmPair)((ScmPair)expr).getCar();
-		expr=((ScmPair)expr).getCdr();
+		expr=(ScmPairOrNil)((ScmPair)expr).getCdr();
 		Library lib=new Library(name,new HashMap<>(),new Environment(env));
 		while(expr instanceof ScmPair){
 			ScmPair declaration=(ScmPair)((ScmPair)expr).getCar();
@@ -47,7 +47,7 @@ public class DefineLibrary extends BasicConstruct implements Primitive{
 			}else if(dir.equals(EXPORT)){
 				addExportSet(lib,declaration.getCdr());
 			}else if(dir.equals(INCLUDE_LIBRARY)){
-				ScmPair content=Include.INSTANCE.getFileContent((ScmPair)declaration.getCdr());
+				ScmPair content=(ScmPair)Include.INSTANCE.getFileContent((ScmPair)declaration.getCdr());
 				if(content.getCdr()instanceof ScmPair){
 					ScmList.getLastListNode(content).setCdr(((ScmPair)expr).getCdr());
 					expr=content;
@@ -61,7 +61,7 @@ public class DefineLibrary extends BasicConstruct implements Primitive{
 			}else{
 				new Evaluator(lib.getInternalEnvironment()).eval(declaration);
 			}
-			expr=((ScmPair)expr).getCdr();
+			expr=(ScmPairOrNil)((ScmPair)expr).getCdr();
 		}
 		cont.ret(lib);
 	}

@@ -20,16 +20,16 @@ import com.github.chungkwong.jschememin.type.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class ExpressionEvaluator extends Evaluable{
+public class ExpressionEvaluator extends Evaluable implements Primitive{
 	public static final ExpressionEvaluator INSTANCE=new ExpressionEvaluator();
 	private ExpressionEvaluator(){
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
 		if(pointer==null){
-			evaluateFirst(expr,cont,env);
+			evaluateFirst(ScmList.first(expr),cont,env);
 		}else{
-			evaluateRemaining((BackTrace)pointer,expr,env,cont);
+			evaluateRemaining((BackTrace)pointer,ScmList.first(expr),env,cont);
 		}
 	}
 	private void evaluateFirst(ScmObject expr,Continuation cont,Environment env){
@@ -51,7 +51,7 @@ public class ExpressionEvaluator extends Evaluable{
 	private void evaluateRemaining(BackTrace b,ScmObject expr,Environment env,Continuation cont){
 		if(b.getBefore()==null){
 			if(expr instanceof Primitive){
-				((Evaluable)expr).call(env,cont,null,b.getAfter());
+				((Evaluable)expr).call(env,cont,null,(ScmPairOrNil)b.getAfter());
 			}else if(expr instanceof ScmSyntaxRules){
 				cont.callTail(this,((ScmSyntaxRules)expr).transform((ScmPairOrNil)b.getAfter(),env),env);
 			}else if(b.getAfter()==ScmNil.NIL){
@@ -64,7 +64,7 @@ public class ExpressionEvaluator extends Evaluable{
 			ScmPair newBeforeLast=new ScmPair(expr,ScmNil.NIL);
 			b.getBeforeLast().setCdr(newBeforeLast);
 			if(b.getAfter()==ScmNil.NIL){
-				cont.callTail((Evaluable)b.getBefore().getCar(),b.getBefore().getCdr(),env);
+				cont.callTail((Evaluable)b.getBefore().getCar(),(ScmPairOrNil)b.getBefore().getCdr(),env);
 			}else{
 				cont.call(this,new BackTrace(b.getBefore(),newBeforeLast,(ScmPairOrNil)((ScmPair)b.getAfter()).getCdr()),((ScmPair)b.getAfter()).getCar(),env);
 			}

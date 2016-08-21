@@ -31,17 +31,17 @@ public class Include extends BasicConstruct implements Primitive{
 		this.foldingCase=foldingCase;
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
 		cont.callTail(ExpressionEvaluator.INSTANCE,getFileContent((ScmPair)expr),env);
 	}
-	ScmPair getFileContent(ScmPair files){
+	ScmObject getFileContent(ScmPair files){
 		ScmPair content=new ScmPair(new ScmSymbol("begin"),ScmNil.NIL);
 		ScmList.forEach(files,(file)->{
 			ScmList.getLastListNode(content).setCdr(getFileContent(((ScmString)file).getValue()));
 		});//Low performance
 		return content;
 	}
-	ScmPairOrNil getFileContent(String file){
+	ScmObject getFileContent(String file){
 		try{
 			Parser parser=new Parser(new Lex(new InputStreamReader(new FileInputStream(file),"UTF-8"),foldingCase));
 			return ScmList.toList(parser.getRemainingDatums());

@@ -27,24 +27,24 @@ public class DefineRecordType extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("define-record-type"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
-		ScmSymbol name=(ScmSymbol)((ScmPair)param).getCar();
-		param=((ScmPair)param).getCdr();
-		ScmPair constructor=(ScmPair)((ScmPair)param).getCar();
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
+		ScmSymbol name=(ScmSymbol)ScmList.first(param);
+		param=(ScmPairOrNil)((ScmPair)param).getCdr();
+		ScmPair constructor=(ScmPair)ScmList.first(param);
 		ScmRecordType type=new ScmRecordType(name,constructor.getCdr());
 		env.add((ScmSymbol)constructor.getCar(),type.getConstractor());
-		param=((ScmPair)param).getCdr();
-		env.add((ScmSymbol)((ScmPair)param).getCar(),type.getPredicate());
-		param=((ScmPair)param).getCdr();
+		param=(ScmPairOrNil)((ScmPair)param).getCdr();
+		env.add((ScmSymbol)ScmList.first(param),type.getPredicate());
+		param=(ScmPairOrNil)((ScmPair)param).getCdr();
 		while(param instanceof ScmPair){
-			ScmPair field=(ScmPair)((ScmPair)param).getCar();
+			ScmPair field=(ScmPair)ScmList.first(param);
 			ScmSymbol fieldname=(ScmSymbol)field.getCar();
 			field=(ScmPair)field.getCdr();
 			env.add((ScmSymbol)field.getCar(),type.getAccessor(fieldname));
 			if(field.getCdr() instanceof ScmPair){
 				env.add((ScmSymbol)((ScmPair)field.getCdr()).getCar(),type.getModifier(fieldname));
 			}
-			param=((ScmPair)param).getCdr();
+			param=(ScmPairOrNil)((ScmPair)param).getCdr();
 		}
 	}
 }

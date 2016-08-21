@@ -35,7 +35,7 @@ public class NativeProcedureDefault implements NativeProcedure{
 			ScmListBuilder filled=new ScmListBuilder();
 			int i=0;
 			while(param instanceof ScmPair){
-				filled.add(((ScmPair)param).getCar());
+				filled.add(ScmList.first(param));
 				param=((ScmPair)param).getCdr();
 				++i;
 			}

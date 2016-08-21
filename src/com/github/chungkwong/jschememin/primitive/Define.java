@@ -27,7 +27,7 @@ public class Define extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("define"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject expr){
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
 		if(pointer==null){
 			ScmPair remain=(ScmPair)expr;
 			if(remain.getCar() instanceof ScmSymbol){
@@ -41,7 +41,7 @@ public class Define extends BasicConstruct implements Primitive{
 			}else
 				throw new SyntaxException();
 		}else{
-			env.add((ScmSymbol)pointer,expr);
+			env.add((ScmSymbol)pointer,ScmList.first(expr));
 			cont.ret(expr);
 		}
 	}

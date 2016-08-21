@@ -27,7 +27,7 @@ public class RaiseContinuable extends BasicConstruct{
 		super(new ScmSymbol("raise-continuable"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmObject param){
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
 		ScmPair handler=cont.getErrorHandler();
 		if(handler==null)
 			throw new UncaughtExceptionError(ScmError.toException(param));
