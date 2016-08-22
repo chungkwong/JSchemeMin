@@ -107,6 +107,18 @@ public class Utility{
 				return result.toInExact();
 		};
 	}
+	static final NativeProcedure correctExactnessMulti(NativeProcedure proc){
+		return (list)->{
+			ScmPairOrNil result=(ScmPairOrNil)proc.call(list);
+			if(ScmList.asStream((ScmPairOrNil)list).allMatch((o)->((ScmComplex)o).isExact()))
+				return result;
+			else{
+				ScmListBuilder buf=new ScmListBuilder();
+				ScmList.forEach(result,(o)->buf.add(((ScmComplex)o).toInExact()));
+				return buf.toList();
+			}
+		};
+	}
 	static final void emergencyExit(ScmObject obj){
 		int status;
 		if(obj==ScmBoolean.TRUE)

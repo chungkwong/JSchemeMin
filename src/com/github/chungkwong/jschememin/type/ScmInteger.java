@@ -51,17 +51,19 @@ public final class ScmInteger extends ScmNormalReal{
 	public ScmInteger[] divideAndRemainder(ScmInteger num){
 		BigInteger[] qr=value.divideAndRemainder(num.value);
 		return new ScmInteger[]{new ScmInteger(qr[0]),new ScmInteger(qr[1])};
-	}
-	public ScmInteger moduloQuotient(ScmInteger num){
-		return new ScmInteger(value.subtract(value.mod(num.value)).divide(num.value));
+	}public ScmInteger moduloQuotient(ScmInteger num){
+		return quotientAndRemainder(num)[0];
 	}
 	public ScmInteger moduloRemainder(ScmInteger num){
-		return new ScmInteger(value.mod(num.value));
+		return quotientAndRemainder(num)[1];
 	}
 	public ScmInteger[] quotientAndRemainder(ScmInteger num){
-		BigInteger r=value.mod(num.value);
-		BigInteger q=value.subtract(r).divide(num.value);
-		return new ScmInteger[]{new ScmInteger(q),new ScmInteger(r)};
+		BigInteger[] qr=value.divideAndRemainder(num.value);
+		if(num.signum()*qr[1].signum()<0){
+			qr[0]=qr[0].subtract(BigInteger.ONE);
+			qr[1]=qr[1].add(num.value);
+		}
+		return new ScmInteger[]{new ScmInteger(qr[0]),new ScmInteger(qr[1])};
 	}
 	public ScmInteger gcd(ScmInteger num){
 		return new ScmInteger(value.gcd(num.value));
@@ -71,7 +73,7 @@ public final class ScmInteger extends ScmNormalReal{
 	}
 	public ScmInteger[] sqrtExact(){
 		BigInteger root=BigInteger.ZERO;
-		for(int bit=(value.bitCount()-1)/2;bit>=0;bit--){
+		for(int bit=(value.bitLength()-1)/2;bit>=0;bit--){
 			BigInteger cand=root.setBit(bit);
 			if(cand.multiply(cand).compareTo(value)<=0){
 				root=cand;

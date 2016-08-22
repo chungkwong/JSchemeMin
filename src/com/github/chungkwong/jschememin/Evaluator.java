@@ -36,7 +36,6 @@ public class Evaluator{
 		cont.callInit(ExpressionEvaluator.INSTANCE,expr,env);
 		while(cont.hasNext())
 			cont.evalNext();
-		ScmObject val=cont.getCurrentValue();
 		return cont.getCurrentValue();
 	}
 	public Environment getEnvironment(){

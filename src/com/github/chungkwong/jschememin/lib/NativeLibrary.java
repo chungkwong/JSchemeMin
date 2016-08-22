@@ -67,5 +67,10 @@ public abstract class NativeLibrary{
 		lib.getInternalEnvironment().add(sym,new NativeEvaluable(proc));
 		lib.getExportMap().put(sym,sym);
 	}
+	protected void addNativeProcedureMulti(String name,NativeProcedure proc){
+		ScmSymbol sym=new ScmSymbol(name);
+		lib.getInternalEnvironment().add(sym,new NativeEvaluableMulti(proc));
+		lib.getExportMap().put(sym,sym);
+	}
 	protected abstract void init(Library lib);
 }

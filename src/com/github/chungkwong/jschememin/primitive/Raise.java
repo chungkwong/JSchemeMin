@@ -37,7 +37,8 @@ public class Raise extends BasicConstruct{
 			Environment e=cont.getCurrentEnvironment();
 			cont.callTail(this,param,env);
 			cont.call((Evaluable)handler,param,param,e);
-		}else
+		}else{
 			throw new UncaughtExceptionError(ScmError.toException(param));
+		}
 	}
 }

@@ -177,15 +177,15 @@ public class StandardProcedureTest{
 		assertExpressionValue("(/ 3)","1/3");
 		assertExpressionValue("(abs -7)","7");
 		assertExpressionValue("(abs 8/5)","8/5");
-		/*assertExpressionValue("(let-values ((q r) (floor/ 5 2)) (list q r))","'(2 1)");
-		assertExpressionValue("(let-values ((q r) (floor/ -5 2)) (list q r))","'(-3 1)");
-		assertExpressionValue("(let-values ((q r) (floor/ 5 -2)) (list q r))","'(-3 -1)");
-		assertExpressionValue("(let-values ((q r) (floor/ -5 -2)) (list q r))","'(2 -1)");
-		assertExpressionValue("(let-values ((q r) (truncate/ 5 2)) (list q r))","'(2 1)");
-		assertExpressionValue("(let-values ((q r) (truncate/ -5 2)) (list q r))","'(-2 -1)");
-		assertExpressionValue("(let-values ((q r) (truncate/ 5 -2)) (list q r))","'(-2 1)");
-		assertExpressionValue("(let-values ((q r) (truncate/ -5 -2)) (list q r))","'(2 -1)");
-		assertExpressionValue("(let-values ((q r) (truncate/ -5.0 -2)) (list q r))","'(2.0 -1.0)");*/
+		assertExpressionValue("(let-values (((q r) (truncate/ 5 2))) (list q r))","'(2 1)");
+		assertExpressionValue("(let-values (((q r) (truncate/ -5 2))) (list q r))","'(-2 -1)");
+		assertExpressionValue("(let-values (((q r) (truncate/ 5 -2))) (list q r))","'(-2 1)");
+		assertExpressionValue("(let-values (((q r) (truncate/ -5 -2))) (list q r))","'(2 -1)");
+		assertExpressionValue("(let-values (((q r) (truncate/ -5.0 -2))) (list q r))","'(2.0 -1.0)");
+		assertExpressionValue("(let-values (((q r) (floor/ 5 2))) (list q r))","'(2 1)");
+		assertExpressionValue("(let-values (((q r) (floor/ -5 2))) (list q r))","'(-3 1)");
+		assertExpressionValue("(let-values (((q r) (floor/ 5 -2))) (list q r))","'(-3 -1)");
+		assertExpressionValue("(let-values (((q r) (floor/ -5 -2))) (list q r))","'(2 -1)");
 		assertExpressionValue("(truncate-quotient 5 2)","2");
 		assertExpressionValue("(truncate-remainder 5 2)","1");
 		assertExpressionValue("(quotient 5 2)","2");
@@ -240,8 +240,9 @@ public class StandardProcedureTest{
 		assertExpressionValue("(let () (import (scheme inexact) (scheme complex)) (< (magnitude (- (expt 4 2.5) 32)) 1e-12))","#t");
 		assertExpressionValue("(let () (import (scheme inexact) (scheme complex)) (< (magnitude (- (expt 0 0) 1)) 1e-12))","#t");
 		assertExpressionValue("(let () (import (scheme inexact) (scheme complex)) (< (magnitude (- (expt 0 2+3i) 0)) 1e-12))","#t");
-		//assertExpressionValue("(let-values ((q r) (exact-integer-sqrt 4)) (list q r))","'(2 0)");
-		//assertExpressionValue("(let-values ((q r) (exact-integer-sqrt 5)) (list q r))","'(2 1)");
+		assertExpressionValue("(let-values (((q r) (exact-integer-sqrt -1))) (list q r))","'(0 -1)");
+		assertExpressionValue("(let-values (((q r) (exact-integer-sqrt 4))) (list q r))","'(2 0)");
+		assertExpressionValue("(let-values (((q r) (exact-integer-sqrt 5))) (list q r))","'(2 1)");
 		assertExpressionValue("(string->number \"100\")","100");
 		assertExpressionValue("(string->number \"100\" 16)","256");
 		assertExpressionValue("(string->number \"1e2\")","100.0");
@@ -613,6 +614,7 @@ public class StandardProcedureTest{
 				+ "(import (scheme inexact) (scheme complex)) (< (magnitude (- ((compose sqrt *) 12 75) 30)) 1e-12))","#t");
 		assertExpressionValue("(call-with-current-continuation (lambda (exit) (exit 7) #t))","7");
 		assertExpressionValue("(call-with-values (lambda () (values 4 5)) (lambda (a b) b))","5");
+		assertExpressionValue("(call-with-values * -)","-1");
 	}
 	@Test
 	public void testException(){

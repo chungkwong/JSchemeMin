@@ -26,7 +26,6 @@ public class NativeEvaluable extends Evaluable{
 	public NativeEvaluable(NativeProcedure proc){
 		this.proc=proc;
 	}
-
 	@Override
 	public String toExternalRepresentation(){
 		return this.getClass().getCanonicalName();

@@ -95,7 +95,7 @@ public class Environment extends ScmObject{
 	}
 	@Override
 	public String toExternalRepresentation(){
-		return "environemnt";
+		return '\"'+bindings.toString()+'\"';
 	}
 	@Override
 	public boolean isSelfevaluating(){

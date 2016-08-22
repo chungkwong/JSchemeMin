@@ -105,7 +105,7 @@ public class Continuation extends ScmObject{
 		return !pointers.isEmpty();
 	}
 	public ScmObject getCurrentValue(){
-		return arguments;
+		return ScmList.first(arguments);
 	}
 	public Evaluable getCurrentEvaluable(){
 		return actives.peek();

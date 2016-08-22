@@ -76,6 +76,7 @@ public class EvaluatorTest{
 		checkLast("((lambda (x y . z) z) 3 4 5 6)",ScmList.toList(new ScmInteger(5),new ScmInteger(6)));
 		assertExpressionValue("(let ((reverse-subtract (lambda (x y) (- y x)))) (reverse-subtract 7 10))","3");
 		assertExpressionValue("(let ((add4 (let ((x 4)) (lambda (y) (+ x y))))) (add4 6))","10");
+		assertExpressionValue("(let ((x 0)) (and (= x 0) (begin (set! x 5) (+ x 1))))","6");
 	}
 	@Test
 	public void testInclude(){
@@ -83,7 +84,7 @@ public class EvaluatorTest{
 	}
 	@Test
 	public void testSet(){
-		//check("(begin (* 2 3) (+ 4 5))",new ScmInteger(9));
+		check("(let ((x 1)) (set! x (+ x 2)) x)",new ScmInteger(3));
 	}
 	@Test
 	public void testImport(){
@@ -138,4 +139,29 @@ public class EvaluatorTest{
 		assertStandardOutput("(unless (= 1 1) (write-string \"hello\") (flush-output-port))","");
 		assertStandardOutput("(unless (= 1 2) (write-string \"hello\") (flush-output-port))","hello");
 	}
+	@Test
+	public void testBinding(){
+		assertExpressionValue("(let ((x 2) (y 3)) (* x y))","6");
+		assertExpressionValue("(let ((x 2) (y 3)) (let ((x 7) (z (+ x y))) (* z x)))","35");
+		assertExpressionValue("(let ((x 2) (y 3)) (let* ((x 7) (z (+ x y))) (* z x)))","70");
+		assertExpressionValue("(letrec ((even? (lambda (n) (if (zero? n) #t (odd? (- n 1))))) (odd? (lambda (n) (if (zero? n) #f (even? (- n 1)))))) (even? 88))","#t");
+		assertExpressionValue("(letrec ((even? (lambda (n) (if (zero? n) #t (odd? (- n 1))))) (odd? (lambda (n) (if (zero? n) #f (even? (- n 1)))))) (odd? 88))","#f");
+		assertExpressionValue("(letrec ((even? (lambda (n) (if (zero? n) #t (odd? (- n 1))))) (odd? (lambda (n) (if (zero? n) #f (even? (- n 1)))))) (even? 87))","#f");
+		assertExpressionValue("(letrec* ((p (lambda (x) (+ 1 (q (- x 1))))) (q (lambda (y) (if (zero? y) 0 (+ 1 (p (- y 1)))))) (x (p 5)) (y x)) y)","5");
+		assertExpressionValue("(let-values (((root rem) (exact-integer-sqrt 32))) (* root rem))","35");
+		assertExpressionValue("(let ((a 'a) (b 'b) (x 'x) (y 'y)) (let*-values (((a b) (values x y)) ((x y) (values a b))) (list a b x y)))","'(x y x y)");
+	}
+	@Test
+	public void testIteration(){
+		assertExpressionValue("(do ((vec (make-vector 5)) (i 0 (+ i 1))) ((= i 5) vec) (vector-set! vec i i))"
+				,"#(0 1 2 3 4)");
+		assertExpressionValue("(let ((x '(1 3 5 7 9))) (do ((x x (cdr x)) (sum 0 (+ sum (car x)))) ((null? x) sum)))"
+				,"25");
+	}
+	@Test
+	public void testLazy(){
+		assertExpressionValue("(begin (import (scheme lazy)) (force (delay (+ 1 2))))","3");
+		assertExpressionValue("(begin (import (scheme lazy)) (force (delay (+ 1 2))))","3");
+	}
+
 }

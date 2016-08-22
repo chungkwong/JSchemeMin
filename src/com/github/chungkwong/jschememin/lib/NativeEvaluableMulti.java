@@ -14,27 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.chungkwong.jschememin.primitive;
+package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Apply extends BasicConstruct{
-	public static final Apply INSTANCE=new Apply();
-	private Apply(){
-		super(new ScmSymbol("apply"));
+public class NativeEvaluableMulti extends Evaluable{
+	private final NativeProcedure proc;
+	public NativeEvaluableMulti(NativeProcedure proc){
+		this.proc=proc;
+	}
+	@Override
+	public String toExternalRepresentation(){
+		return this.getClass().getCanonicalName();
+	}
+	@Override
+	public boolean isSelfevaluating(){
+		return false;
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
-		ScmListBuilder buf=new ScmListBuilder();
-		Evaluable proc=(Evaluable)ScmList.first(param);
-		ScmPair curr=(ScmPair)((ScmPair)param).getCdr();
-		for(;curr.getCdr() instanceof ScmPair;curr=(ScmPair)curr.getCdr()){
-			buf.add(curr.getCar());
+		try{
+			cont.ret((ScmPairOrNil)proc.call(param));
+		}catch(Exception ex){
+			throw ex instanceof RuntimeException?(RuntimeException)ex:new RuntimeException(ex);
 		}
-		ScmList.forEach(curr.getCar(),(o)->buf.add(o));
-		cont.callTail(proc,(ScmPairOrNil)buf.toList(),env);
 	}
 }

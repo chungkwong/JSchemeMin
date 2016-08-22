@@ -70,10 +70,15 @@ public abstract class ScmComplex extends ScmNumber{
 		return new ScmComplexRectangular(getReal().subtract(num.getReal()),getImag().subtract(num.getImag()));
 	}
 	public ScmComplex multiply(ScmComplex num){
-		return new ScmComplexPolar(num.getMagnitude().multiply(getMagnitude()),num.getAngle().add(getAngle()));
+		return new ScmComplexRectangular(getReal().multiply(num.getReal()).subtract(getImag().multiply(num.getImag())),
+				getReal().multiply(num.getImag()).add(getImag().multiply(num.getReal())));
+		//return new ScmComplexPolar(num.getMagnitude().multiply(getMagnitude()),num.getAngle().add(getAngle()));
 	}
 	public ScmComplex divide(ScmComplex num){
-		return new ScmComplexPolar(getMagnitude().divide(num.getMagnitude()),getAngle().subtract(num.getAngle()));
+		ScmReal d=num.getReal().multiply(num.getReal()).add(num.getImag().multiply(num.getImag()));
+		num=new ScmComplexRectangular(num.getReal().divide(d),num.getImag().negate().divide(d));
+		return multiply(num);
+//return new ScmComplexPolar(getMagnitude().divide(num.getMagnitude()),getAngle().subtract(num.getAngle()));
 	}
 	public ScmComplex square(){
 		return multiply(this);

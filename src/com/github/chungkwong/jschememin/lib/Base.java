@@ -267,10 +267,10 @@ public class Base extends NativeLibrary{
 		addNativeProcedure("max",Utility.reducer((a,b)->ScmReal.max(((ScmComplex)a).toScmReal(),((ScmComplex)b).toScmReal())));
 		addNativeProcedure("min",Utility.reducer((a,b)->ScmReal.min(((ScmComplex)a).toScmReal(),((ScmComplex)b).toScmReal())));
 		addNativeProcedure("abs",(o)->((ScmComplex)car(o)).toScmReal().getMagnitude());
-		addNativeProcedure("floor/",(o)->ScmList.toList(((ScmComplex)car(o)).toScmInteger().divideAndRemainder(((ScmComplex)cadr(o)).toScmInteger())));
+		addNativeProcedureMulti("floor/",Utility.correctExactnessMulti((o)->ScmList.toList(((ScmComplex)car(o)).toScmInteger().quotientAndRemainder(((ScmComplex)cadr(o)).toScmInteger()))));
 		addNativeProcedure("floor-quotient",Utility.correctExactness((o)->((ScmComplex)car(o)).toScmInteger().moduloQuotient(((ScmComplex)cadr(o)).toScmInteger())));
 		addNativeProcedure("floor-remainder",Utility.correctExactness((o)->((ScmComplex)car(o)).toScmInteger().moduloRemainder(((ScmComplex)cadr(o)).toScmInteger())));
-		addNativeProcedure("truncate/",(o)->ScmList.toList(((ScmComplex)car(o)).toScmInteger().quotientAndRemainder(((ScmComplex)cadr(o)).toScmInteger())));
+		addNativeProcedureMulti("truncate/",Utility.correctExactnessMulti((o)->ScmList.toList(((ScmComplex)car(o)).toScmInteger().divideAndRemainder(((ScmComplex)cadr(o)).toScmInteger()))));
 		addNativeProcedure("truncate-quotient",Utility.correctExactness((o)->((ScmComplex)car(o)).toScmInteger().divide(((ScmComplex)cadr(o)).toScmInteger())));
 		addNativeProcedure("truncate-remainder",Utility.correctExactness((o)->((ScmComplex)car(o)).toScmInteger().remainder(((ScmComplex)cadr(o)).toScmInteger())));
 		addNativeProcedure("quotient",Utility.correctExactness((o)->((ScmComplex)car(o)).toScmInteger().divide(((ScmComplex)cadr(o)).toScmInteger())));
@@ -286,7 +286,7 @@ public class Base extends NativeLibrary{
 		addNativeProcedure("round",Utility.correctExactness((o)->((ScmComplex)car(o)).toScmReal().round()));
 		addNativeProcedure("truncate",Utility.correctExactness((o)->((ScmComplex)car(o)).toScmReal().truncate()));
 		addNativeProcedure("square",(o)->((ScmComplex)car(o)).square());
-		addNativeProcedure("exact-integer-sqrt",(o)->ScmList.toList(((ScmComplex)car(o)).toScmInteger().sqrtExact()));
+		addNativeProcedureMulti("exact-integer-sqrt",Utility.correctExactnessMulti((o)->ScmList.toList(((ScmComplex)car(o)).toScmInteger().sqrtExact())));
 		addNativeProcedure("expt",(o)->((ScmComplex)car(o)).pow((ScmComplex)cadr(o)));
 		addNativeProcedure("exact",(o)->((ScmComplex)car(o)).toExact());
 		addNativeProcedure("inexact",(o)->((ScmComplex)car(o)).toInExact());
