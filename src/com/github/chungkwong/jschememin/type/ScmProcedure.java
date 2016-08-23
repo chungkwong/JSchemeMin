@@ -12,7 +12,7 @@ public final class ScmProcedure extends Evaluable{
 	@Override
 	public String toExternalRepresentation(){
 		StringBuilder buf=new StringBuilder();
-		buf.append("(lambda ").append(formal.toExternalRepresentation()).append(' ').append(body.toExternalRepresentation());
+		buf.append("(lambda ").append(formal.toExternalRepresentation()).append(' ').append(body.getCar().toExternalRepresentation());
 		ScmPair tmp=body;
 		while(tmp.getCdr() instanceof ScmPair){
 			tmp=(ScmPair)tmp.getCdr();

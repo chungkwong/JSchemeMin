@@ -29,7 +29,7 @@ public class Library extends ScmObject{
 		this.name=name;
 		this.export=export;
 		this.internal=internal;
-		LibraryLoader.addLibrary(this);
+		LibraryManager.addLibrary(this);
 	}
 	public ScmPair getName(){
 		return name;

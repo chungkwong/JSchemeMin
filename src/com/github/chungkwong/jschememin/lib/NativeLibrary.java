@@ -24,7 +24,7 @@ import java.util.logging.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public abstract class NativeLibrary{
+public abstract class NativeLibrary implements LibraryLoader{
 	private Library lib=null;
 	private final ScmPair name;
 	public NativeLibrary(String... part){
@@ -35,6 +35,7 @@ public abstract class NativeLibrary{
 	public ScmPair getName(){
 		return name;
 	}
+	@Override
 	public Library getLibrary(){
 		if(lib==null){
 			lib=new Library(name,new HashMap<>(),new Environment(false));

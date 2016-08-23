@@ -32,6 +32,7 @@ public class Environment extends ScmObject{
 	public Environment(boolean repl){
 		this.parent=null;
 		this.repl=repl;
+		bindings.put(DefineLibrary.INSTANCE.getKeyword(),DefineLibrary.INSTANCE);
 		bindings.put(Import.INSTANCE.getKeyword(),Import.INSTANCE);
 		if(repl)
 			Base.INSTANCE.getLibrary().exportTo(this);

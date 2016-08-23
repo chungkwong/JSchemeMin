@@ -96,7 +96,10 @@ public class Continuation extends ScmObject{
 			actives.peek().call(environments.peek(),this,pointers.peek(),arguments);
 		}catch(RuntimeException ex){
 			ex.printStackTrace();
-			callTail(Raise.INSTANCE,ScmError.toScmObject(ex),environments.peek());
+			if(hasNext())
+				callTail(Raise.INSTANCE,ScmError.toScmObject(ex),environments.peek());
+			else
+				throw ex;
 		}catch(UncaughtExceptionError ex){
 			throw ex.getCause();
 		}
