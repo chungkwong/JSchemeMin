@@ -17,6 +17,7 @@
 package com.github.chungkwong.jschememin.primitive;
 import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
+import java.util.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -31,6 +32,9 @@ public class Define extends BasicConstruct implements Primitive{
 		if(pointer==null){
 			ScmPair remain=(ScmPair)expr;
 			if(remain.getCar() instanceof ScmSymbol){
+				Optional<ScmObject> old=env.getOptional((ScmSymbol)remain.getCar());
+				if(!old.isPresent()||isSyntax(old.get()))
+					env.add((ScmSymbol)remain.getCar(),null);
 				cont.replaceCurrent(this);
 				cont.call(ExpressionEvaluator.INSTANCE,(ScmSymbol)remain.getCar(),((ScmPair)remain.getCdr()).getCar(),env);
 			}else if(remain.getCar() instanceof ScmPair){
@@ -44,5 +48,8 @@ public class Define extends BasicConstruct implements Primitive{
 			env.add((ScmSymbol)pointer,ScmList.first(expr));
 			cont.ret(expr);
 		}
+	}
+	private static boolean isSyntax(ScmObject obj){
+		return obj instanceof ScmSyntaxRules||obj instanceof Primitive;
 	}
 }

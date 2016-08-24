@@ -464,7 +464,7 @@
     ((case-lambda (params body0 ...) ...)
      (lambda args
        (let ((len (length args)))
-         (let-syntax
+         (letrec-syntax
              ((cl (syntax-rules ::: ()
                     ((cl)
                      (error "no matching clause"))

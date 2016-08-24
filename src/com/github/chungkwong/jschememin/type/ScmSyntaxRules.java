@@ -268,9 +268,10 @@ public class ScmSyntaxRules extends ScmObject{
 			List toSearch=objects;
 			Stack<Integer> indices=index.getIndices();
 			for(int i=0;i<indices.size()-1;i++){
-				while(i>=toSearch.size())
+				int curr=indices.get(i);
+				while(curr>=toSearch.size())
 					toSearch.add(new ArrayList());
-				toSearch=(List)toSearch.get(i);
+				toSearch=(List)toSearch.get(curr);
 			}
 			toSearch.add(indices.get(indices.size()-1),obj);
 		}
