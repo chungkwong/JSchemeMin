@@ -16,6 +16,8 @@
  */
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
+import com.github.chungkwong.jschememin.primitive.*;
+import com.github.chungkwong.jschememin.type.ScmSyntaxRules.SyntaxRule;
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
@@ -199,12 +201,14 @@ public class ScmSyntaxRules extends ScmObject{
 		private ScmObject transformSymbol(ScmSymbol temp,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
 			if(bind.containsKey(temp))
 				return bind.get(temp).get(index);
-			if(!defEnv.getOptional(temp).isPresent()){
+			Optional<ScmObject> defVal=defEnv.getOptional(temp);
+			if(!defVal.isPresent()){
 				ScmSymbol rename=defEnv.getUnusedVariable();
 				bind.put(temp,new Rename(rename));
 				return rename;
+			}else{
+				return ScmList.toList(Quote.INSTANCE.getKeyword(),defVal.get());
 			}
-			return temp;
 		}
 		private ScmObject transformVector(ScmVector temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,Environment env,MultiIndex index){
 			ArrayList<ScmObject> list=new ArrayList<>();

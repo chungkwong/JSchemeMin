@@ -77,6 +77,11 @@ public class EvaluatorTest{
 		assertExpressionValue("(let ((reverse-subtract (lambda (x y) (- y x)))) (reverse-subtract 7 10))","3");
 		assertExpressionValue("(let ((add4 (let ((x 4)) (lambda (y) (+ x y))))) (add4 6))","10");
 		assertExpressionValue("(let ((x 0)) (and (= x 0) (begin (set! x 5) (+ x 1))))","6");
+		assertExpressionValue("(begin (import (scheme case-lambda)) (let ((range (case-lambda ((e) 3) ((b e) 4)))) (range 7)))","3");
+		assertExpressionValue("(begin (import (scheme case-lambda)) (let ((range (case-lambda ((e) 3) ((b e) 4)))) (range 7 7)))","4");
+		assertExpressionValue("(begin (import (scheme case-lambda)) (letrec ((range (case-lambda ((e) (range 0 e)) ((b e) (do ((r '() (cons e r)) (e (- e 1) (- e 1))) ((< e b) r)))))) (range 3)))","'(0 1 2)");
+		assertExpressionValue("(begin (import (scheme case-lambda)) (letrec ((range (case-lambda ((e) (range 0 e)) ((b e) (do ((r '() (cons e r)) (e (- e 1) (- e 1))) ((< e b) r)))))) (range 3 5)))","'(3 4)");
+
 	}
 	@Test
 	public void testInclude(){
@@ -119,9 +124,9 @@ public class EvaluatorTest{
 		assertExpressionValue("(cond ((> 3 2) 'greater) ((< 3 2) 'less))","'greater");
 		assertExpressionValue("(cond ((> 3 3) 'greater) ((< 3 3) 'less) (else 'equal))","'equal");
 		assertExpressionValue("(cond ((quote (b 2)) => cadr) (else #f))","2");
-		/*assertExpressionValue("(case (* 2 3) ((2 3 5 7) 'prime) ((1 4 6 8 9) 'composite))","'composite");
+		assertExpressionValue("(case (* 2 3) ((2 3 5 7) 'prime) ((1 4 6 8 9) 'composite))","'composite");
 		assertExpressionValue("(case (car '(c d)) ((a) 'a) ((b) 'b))","'unspecified");
-		assertExpressionValue("(case (car '(c d)) ((a e i o u) 'vowel) ((w y) 'semivowel) (else => (lambda (x) x)))","'c");*/
+		assertExpressionValue("(case (car '(c d)) ((a e i o u) 'vowel) ((w y) 'semivowel) (else => (lambda (x) x)))","'c");
 		assertExpressionValue("(and)","#t");
 		assertExpressionValue("(and 5)","5");
 		assertExpressionValue("(and (= 2 2) (> 2 1))","#t");
@@ -165,7 +170,23 @@ public class EvaluatorTest{
 	@Test
 	public void testLazy(){
 		assertExpressionValue("(begin (import (scheme lazy)) (force (delay (+ 1 2))))","3");
-		assertExpressionValue("(begin (import (scheme lazy)) (force (delay (+ 1 2))))","3");
+		assertExpressionValue("(begin (import (scheme lazy)) (let ((p (delay (+ 1 2)))) (list (force p) (force p))))","'(3 3)");
+		assertExpressionValue("(begin (import (scheme lazy)) (let ((integers (letrec ((next (lambda (n) (delay (cons n (next (+ n 1))))))) (next 0))) "
+				+ "(head (lambda (stream) (car (force stream)))) (tail (lambda (stream) (cdr (force stream))))) (head (tail (tail integers)))))","2");
+		assertExpressionValue("(begin (import (scheme lazy)) (letrec ((integers (letrec ((next (lambda (n) (delay (cons n (next (+ n 1))))))) (next 0))) "
+				+ "(head (lambda (stream) (car (force stream)))) (tail (lambda (stream) (cdr (force stream)))) "
+				+ "(stream-filter (lambda (p? s) (delay-force (if (null? (force s)) (delay '()) (let ((h (car (force s))) (t (cdr (force s)))) (if (p? h) (delay (cons h (stream-filter p? t))) (stream-filter p? t)))))))) "
+				+ "(head (tail (tail (stream-filter odd? integers))))))","5");
+		assertExpressionValue("(begin (import (scheme lazy)) (promise? (make-promise 4)))","#t");
+		assertExpressionValue("(begin (import (scheme lazy)) (promise? (delay 4)))","#t");
+		assertExpressionValue("(begin (import (scheme lazy)) (let* ((x 1) (y (delay x))) (set! x 4) (force y)))","4");
+		assertExpressionValue("(begin (import (scheme lazy)) (let* ((x 1) (y (delay x))) (force y) (set! x 4) (force y)))","1");
+		assertExpressionValue("(begin (import (scheme lazy)) (let* ((x 1) (y (make-promise x))) (set! x 4) (force y)))","1");
+	}
+	@Test
+	public void testMacro(){
+		assertExpressionValue("(let-syntax ((given-that (syntax-rules () ((given-that test stmt1 stmt2 ...) (if test (begin stmt1 stmt2 ...)))))) (let ((if #t)) (given-that if (set! if 'now)) if))","'now");
+		
 	}
 
 }

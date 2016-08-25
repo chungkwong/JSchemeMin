@@ -27,10 +27,8 @@ public class LibraryManager{
 	private static final HashMap<ScmPair,LibraryLoader> NATIVE_LIBRARIES=new HashMap<>();
 	static{
 		addNativeLibrary(Base.INSTANCE);
-		addNativeLibrary(CaseLambda.INSTANCE);
 		addNativeLibrary(Char.INSTANCE);
 		addNativeLibrary(Complex.INSTANCE);
-		addNativeLibrary(CxR.INSTANCE);
 		addNativeLibrary(Eval.INSTANCE);
 		addNativeLibrary(File.INSTANCE);
 		addNativeLibrary(Inexact.INSTANCE);
@@ -41,8 +39,11 @@ public class LibraryManager{
 		addNativeLibrary(Read.INSTANCE);
 		addNativeLibrary(Time.INSTANCE);
 		addNativeLibrary(Write.INSTANCE);
-		addNativeLibrary(R5RS.INSTANCE);
-		addNativeLibrary(Null.INSTANCE);
+		addNativeLibrary(new SimpleLibrary("/com/github/chungkwong/jschememin/lib/case-lambda.scm","scheme","case-lambda"));
+		addNativeLibrary(new SimpleLibrary("/com/github/chungkwong/jschememin/lib/cxr.scm","scheme","cxr"));
+		addNativeLibrary(new SimpleLibrary("/com/github/chungkwong/jschememin/lib/lazy.scm","scheme","lazy"));
+		addNativeLibrary(new SimpleLibrary("/com/github/chungkwong/jschememin/lib/null.scm","scheme","null"));
+		addNativeLibrary(new SimpleLibrary("/com/github/chungkwong/jschememin/lib/r5rs.scm","scheme","r5rs"));
 	}
 	private static void addNativeLibrary(LibraryLoader lib){
 		NATIVE_LIBRARIES.put(lib.getName(),lib);

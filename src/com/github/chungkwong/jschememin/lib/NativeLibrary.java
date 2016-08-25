@@ -32,6 +32,7 @@ public abstract class NativeLibrary implements LibraryLoader{
 		Arrays.stream(part).map((n)->new ScmSymbol(n)).forEach((o)->buf.add(o));
 		this.name=(ScmPair)buf.toList();
 	}
+	@Override
 	public ScmPair getName(){
 		return name;
 	}
@@ -51,14 +52,16 @@ public abstract class NativeLibrary implements LibraryLoader{
 		lib.getInternalEnvironment().addPrimitiveType(type);
 		lib.getExportMap().put(type.getKeyword(),type.getKeyword());
 	}
-	protected void addDeriveFile(String file){
+	protected void addDeriveFile(String file,String... export){
 		try{
 			Parser parser=new Parser(new Lex(new InputStreamReader(NativeLibrary.class.getResourceAsStream(file),"UTF-8")));
 			Environment internal=lib.getInternalEnvironment();
-			Environment tmp=new Environment(internal);
-			Evaluator evaluator=new Evaluator(tmp);
+			Evaluator evaluator=new Evaluator(internal);
 			parser.getRemainingDatums().forEach((d)->evaluator.eval(d));
-			tmp.getBindings().forEach((id,obj)->{addNative(id,obj);});
+			for(String name:export){
+				ScmSymbol id=new ScmSymbol(name);
+				lib.getExportMap().put(id,id);
+			}
 		}catch(UnsupportedEncodingException ex){
 			Logger.getGlobal().log(Level.SEVERE,null,ex);
 		}

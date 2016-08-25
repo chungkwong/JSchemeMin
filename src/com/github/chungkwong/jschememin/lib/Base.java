@@ -51,7 +51,11 @@ public class Base extends NativeLibrary{
 		initEval();
 		initIO();
 		initSystem();
-		addDeriveFile("/com/github/chungkwong/jschememin/lib/base_derive.scm");
+		addDeriveFile("/com/github/chungkwong/jschememin/lib/base_derive.scm",
+				"define-syntax","let","let*","letrec","letrec*","let-values","let*-values","define-values","let-syntax",
+				"letrec-syntax","cond","case","and","or","when","unless","begin","do","make-parameter","parameterize",
+				"guard","cond-expand","values","call-with-port","case-lambda","member","memq","memv","assoc","assq",
+				"assv","map","vector-map","string-map","foreach","vector-foreach","string-foreach","call/cc");
 	}
 	private void initByteVector(){
 		addNativeProcedure("bytevector?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmByteVector));
@@ -411,7 +415,4 @@ public class Base extends NativeLibrary{
 		addNativeProcedure("features",(o)->Feature.getAll());
 
 	}
-	/**
-	 * define-syntax let let* letrec letrec* let-values let*-values define-values let-syntax letrec-syntax cond case and or when unless begin do make-parameter parameterize guard cond-expand values call-with-port case-lambda member memq memv assoc assq assv map vector-map string-map foreach vector-foreach string-foreach call/cc
-	 */
 }

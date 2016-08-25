@@ -18,33 +18,36 @@ package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
 import java.io.*;
+import java.util.*;
 import java.util.logging.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Null implements LibraryLoader{
-	public static final Null INSTANCE=new Null();
-	private static final ScmPair NAME=(ScmPair)ScmList.toList(new ScmSymbol("scheme"),new ScmSymbol("null"));
-	private static final String PATH="/com/github/chungkwong/jschememin/lib/null.scm";
+public class SimpleLibrary implements LibraryLoader{
+	private final ScmPair name;
+	private final String path;
 	private Library lib=null;
-	private Null(){
-
+	public SimpleLibrary(String path,String... part){
+		ScmListBuilder buf=new ScmListBuilder();
+		Arrays.stream(part).map((n)->new ScmSymbol(n)).forEach((o)->buf.add(o));
+		this.name=(ScmPair)buf.toList();
+		this.path=path;
 	}
 	@Override
 	public Library getLibrary(){
 		if(lib==null){
 			try{
-				new Evaluator(false).eval(new Parser(new Lex(new InputStreamReader(R5RS.class.getResourceAsStream(PATH),"UTF-8"))).nextDatum());
+				new Evaluator(false).eval(new Parser(new Lex(new InputStreamReader(SimpleLibrary.class.getResourceAsStream(path),"UTF-8"))).nextDatum());
 			}catch(UnsupportedEncodingException ex){
 				Logger.getGlobal().log(Level.SEVERE,null,ex);
 			}
-			lib=LibraryManager.getLibrary(NAME);
+			lib=LibraryManager.getLibrary(name);
 		}
 		return lib;
 	}
 	@Override
 	public ScmPair getName(){
-		return NAME;
+		return name;
 	}
 }
