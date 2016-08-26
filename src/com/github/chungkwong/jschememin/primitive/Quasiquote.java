@@ -22,13 +22,12 @@ import com.github.chungkwong.jschememin.type.*;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Quasiquote extends BasicConstruct implements Primitive{
-	public static final Quasiquote INSTANCE=new Quasiquote();
 	private static final ScmSymbol QUASIQUOTE=new ScmSymbol("quasiquote");
 	private static final ScmSymbol UNQUOTE=new ScmSymbol("unquote");
 	private static final ScmSymbol UNQUOTE_SLICING=new ScmSymbol("unquote-slicing");
+	public static final Quasiquote INSTANCE=new Quasiquote();
 	private Quasiquote(){
 		super(QUASIQUOTE);
-
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){

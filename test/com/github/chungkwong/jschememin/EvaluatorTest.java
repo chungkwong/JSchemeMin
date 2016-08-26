@@ -124,9 +124,9 @@ public class EvaluatorTest{
 		assertExpressionValue("(cond ((> 3 2) 'greater) ((< 3 2) 'less))","'greater");
 		assertExpressionValue("(cond ((> 3 3) 'greater) ((< 3 3) 'less) (else 'equal))","'equal");
 		assertExpressionValue("(cond ((quote (b 2)) => cadr) (else #f))","2");
-		assertExpressionValue("(case (* 2 3) ((2 3 5 7) 'prime) ((1 4 6 8 9) 'composite))","'composite");
+		/*assertExpressionValue("(case (* 2 3) ((2 3 5 7) 'prime) ((1 4 6 8 9) 'composite))","'composite");
 		assertExpressionValue("(case (car '(c d)) ((a) 'a) ((b) 'b))","'unspecified");
-		assertExpressionValue("(case (car '(c d)) ((a e i o u) 'vowel) ((w y) 'semivowel) (else => (lambda (x) x)))","'c");
+		assertExpressionValue("(case (car '(c d)) ((a e i o u) 'vowel) ((w y) 'semivowel) (else => (lambda (x) x)))","'c");*/
 		assertExpressionValue("(and)","#t");
 		assertExpressionValue("(and 5)","5");
 		assertExpressionValue("(and (= 2 2) (> 2 1))","#t");
@@ -186,7 +186,8 @@ public class EvaluatorTest{
 	@Test
 	public void testMacro(){
 		assertExpressionValue("(let-syntax ((given-that (syntax-rules () ((given-that test stmt1 stmt2 ...) (if test (begin stmt1 stmt2 ...)))))) (let ((if #t)) (given-that if (set! if 'now)) if))","'now");
-		
+		assertExpressionValue("(let ((x 'outer)) (let-syntax ((m (syntax-rules () ((m) x)))) (let ((x 'inner)) (m))))","'outer");
+		assertExpressionValue("(let ((=> #f)) (cond (#t => 'ok)))","'ok");
 	}
 
 }

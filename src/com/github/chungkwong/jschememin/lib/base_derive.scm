@@ -36,7 +36,7 @@
        (temp1 ...)
        ((var1 init1) ...)
        body ...)
-     (let ((var1 <undefined>) ...)
+     (let ((var1 '<undefined>) ...)
        (let ((temp1 init1) ...)
          (set! var1 temp1)
          ...
@@ -57,7 +57,7 @@
 (define-syntax letrec*
   (syntax-rules ()
     ((letrec* ((var1 init1) ...) body1 body2 ...)
-     (let ((var1 <undefined>) ...)
+     (let ((var1 '<undefined>) ...)
        (set! var1 init1)
        ...
        (let () body1 body2 ...)))))
@@ -549,27 +549,27 @@
              (len (apply min (map string-length lists))))
         (string-map-range lists 0 len (make-string len))))
 
-(define (foreach proc . lists)
+(define (for-each proc . lists)
         (if (memq '() lists)
             #t
             (begin (apply proc (map car lists))
-                   (apply foreach proc (map cdr lists)))))
+                   (apply for-each proc (map cdr lists)))))
 
-(define (vector-foreach proc . lists)
-        (letrec ((vector-foreach-range
+(define (vector-for-each proc . lists)
+        (letrec ((vector-for-each-range
                   (lambda (lists start end)
                      (if (< start end)
                         (begin (apply proc (map (lambda (list) (vector-ref list start)) lists))
-                                (vector-foreach-range lists (+ start 1) end))
+                                (vector-for-each-range lists (+ start 1) end))
                          #t))))
-        (vector-foreach-range lists 0 (apply min (map vector-length lists)))))
+        (vector-for-each-range lists 0 (apply min (map vector-length lists)))))
 
-(define (string-foreach proc . lists)
-        (letrec ((string-foreach-range
+(define (string-for-each proc . lists)
+        (letrec ((string-for-each-range
                   (lambda (lists start end)
                      (if (< start end)
                         (begin (apply proc (map (lambda (list) (string-ref list start)) lists))
-                                (string-foreach-range lists (+ start 1) end))
+                                (string-for-each-range lists (+ start 1) end))
                          #t))))
-        (string-foreach-range lists 0 (apply min (map string-length lists)))))
+        (string-for-each-range lists 0 (apply min (map string-length lists)))))
 (define call/cc call-with-current-continuation)

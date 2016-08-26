@@ -64,8 +64,9 @@ public class ScmSyntaxRules extends ScmObject{
 	public ScmObject transform(ScmPairOrNil argument,Environment env){
 		for(SyntaxRule rule:rules){
 			ScmObject transformed=rule.apply(argument,env);
-			if(transformed!=null)
+			if(transformed!=null){
 				return transformed;
+			}
 		}
 		throw new SyntaxException();
 	}
@@ -105,7 +106,7 @@ public class ScmSyntaxRules extends ScmObject{
 		private boolean matchIdentifier(ScmObject expr,ScmSymbol patt,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
 			if(literals.contains(patt)){
 				return expr instanceof ScmSymbol&&((expr.equals(patt)&&!defEnv.containsKey(patt)&&!env.containsKey((ScmSymbol)expr))
-						||(env.containsKey(patt)&&env.containsKey((ScmSymbol)expr)&&env.get((ScmSymbol)expr).equals(env.get(patt))));
+						||(defEnv.containsKey(patt)&&env.containsKey((ScmSymbol)expr)&&defEnv.get((ScmSymbol)patt).equals(env.get((ScmSymbol)expr))));
 			}else if(patt.equals(WILDCARD))
 				return true;
 			else{
@@ -183,14 +184,14 @@ public class ScmSyntaxRules extends ScmObject{
 				throw new SyntaxException();
 			}
 		}
-		private ScmObject apply(ScmObject temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,Environment env,MultiIndex index){
+		private ScmObject transform(ScmObject temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,Environment env,MultiIndex index){
 			if(temp instanceof ScmSymbol)
 				return transformSymbol((ScmSymbol)temp,bind,env,index);
 			else if(temp.isSelfevaluating())
 				return temp;
 			else if(temp instanceof ScmPair){
-				if(((ScmPair)temp).getCar().equals(ellipsis))
-					return apply(((ScmPair)temp).getCdr(),bind,true,env,index);
+				if(((ScmPair)temp).getCar().equals(ellipsis)&&!ellipsed)
+					return transform(((ScmPair)temp).getCadr(),bind,true,env,index);
 				else
 					return transformList(temp,bind,ellipsed,env,index);
 			}else if(temp instanceof ScmVector){
@@ -201,23 +202,40 @@ public class ScmSyntaxRules extends ScmObject{
 		private ScmObject transformSymbol(ScmSymbol temp,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
 			if(bind.containsKey(temp))
 				return bind.get(temp).get(index);
+			/*if(env.containsKey(temp)){
+				if(defEnv.containsKey(temp)){
+					return ScmList.toList(quote(Eval.INSTANCE),quote(temp),quote(defEnv));
+				}else{
+					ScmSymbol rename=defEnv.getUnusedVariable();
+					bind.put(temp,new Rename(rename));
+					return rename;
+				}
+			}else
+				return temp;*/
 			Optional<ScmObject> defVal=defEnv.getOptional(temp);
 			if(!defVal.isPresent()){
 				ScmSymbol rename=defEnv.getUnusedVariable();
 				bind.put(temp,new Rename(rename));
 				return rename;
 			}else{
+				return ScmList.toList(quote(Eval.INSTANCE),quote(temp),quote(defEnv));
+			}/* if(env.containsKey(temp)){
+//				return ScmList.toList(quote(Eval.INSTANCE),quote(temp),quote(defEnv));
 				return ScmList.toList(Quote.INSTANCE.getKeyword(),defVal.get());
-			}
+			}else
+				return temp;*/
+		}
+		private ScmPair quote(ScmObject obj){
+			return new ScmPair(Quote.INSTANCE.getKeyword(),new ScmPair(obj,ScmNil.NIL));
 		}
 		private ScmObject transformVector(ScmVector temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,Environment env,MultiIndex index){
 			ArrayList<ScmObject> list=new ArrayList<>();
 			for(int i=0;i<temp.getLength();i++){
-				if(i+1<temp.getLength()&&temp.get(i+1).equals(ellipsis)){
+				if(i+1<temp.getLength()&&temp.get(i+1).equals(ellipsis)&&!ellipsed){
 					index.push();
 					try{
 						while(true){
-							list.add(apply(temp.get(i),bind,ellipsed,env,index));
+							list.add(transform(temp.get(i),bind,ellipsed,env,index));
 							index.advance();
 						}
 					}catch(RuntimeException ex){
@@ -225,7 +243,7 @@ public class ScmSyntaxRules extends ScmObject{
 					index.pop();
 					++i;
 				}else{
-					list.add(apply(temp.get(i),bind,ellipsed,env,index));
+					list.add(transform(temp.get(i),bind,ellipsed,env,index));
 				}
 			}
 			return new ScmVector(list);
@@ -234,11 +252,11 @@ public class ScmSyntaxRules extends ScmObject{
 			ScmListBuilder buf=new ScmListBuilder();
 			while(temp instanceof ScmPair){
 				ScmObject sub=((ScmPair)temp).getCar();
-				if(((ScmPair)temp).getCdr()instanceof ScmPair&&((ScmPair)temp).getCadr().equals(ellipsis)){
+				if(((ScmPair)temp).getCdr()instanceof ScmPair&&((ScmPair)temp).getCadr().equals(ellipsis)&&!ellipsed){
 					index.push();
 					try{
 						while(true){
-							buf.add(apply(sub,bind,ellipsed,env,index));
+							buf.add(transform(sub,bind,ellipsed,env,index));
 							index.advance();
 						}
 					}catch(RuntimeException ex){
@@ -246,19 +264,19 @@ public class ScmSyntaxRules extends ScmObject{
 					index.pop();
 					temp=((ScmPair)temp).getCdr();
 				}else{
-					buf.add(apply(sub,bind,ellipsed,env,index));
+					buf.add(transform(sub,bind,ellipsed,env,index));
 				}
 				temp=((ScmPair)temp).getCdr();
 			}
 			if(!(temp instanceof ScmNil)){
-				buf.setLast(apply(temp,bind,ellipsed,env,index));
+				buf.setLast(transform(temp,bind,ellipsed,env,index));
 			}
 			return buf.toList();
 		}
 		private ScmObject apply(ScmPairOrNil argument,Environment env){
 			HashMap<ScmSymbol,CapturedObjects> bind=new HashMap<>();
 			if(match(argument,pattern,bind,env,new MultiIndex()))
-				return apply(template,bind,false,env,new MultiIndex());
+				return transform(template,bind,false,env,new MultiIndex());
 			else
 				return null;
 		}

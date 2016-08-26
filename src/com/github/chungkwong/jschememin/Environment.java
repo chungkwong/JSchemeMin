@@ -80,7 +80,7 @@ public class Environment extends ScmObject{
 		bindings.remove(id);
 	}
 	public boolean containsKey(ScmSymbol id){
-		return bindings.containsKey(id);
+		return getOptional(id).isPresent();
 	}
 	public void addPrimitiveType(BasicConstruct keyword){
 		add(keyword.getKeyword(),keyword);
@@ -96,7 +96,8 @@ public class Environment extends ScmObject{
 	}
 	@Override
 	public String toExternalRepresentation(){
-		return '\"'+bindings.toString()+'\"';
+		return "'environment"+bindings.size();
+		//return '\"'+bindings.toString()+'\"';
 	}
 	@Override
 	public boolean isSelfevaluating(){

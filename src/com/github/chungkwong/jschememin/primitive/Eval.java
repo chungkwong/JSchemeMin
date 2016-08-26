@@ -14,23 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.chungkwong.jschememin;
+package com.github.chungkwong.jschememin.primitive;
+import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public abstract class BasicConstruct extends Evaluable{
-	private final ScmSymbol keyword;
-	protected BasicConstruct(ScmSymbol keyword){
-		this.keyword=keyword;
-	}
-	public ScmSymbol getKeyword(){
-		return keyword;
+public class Eval extends BasicConstruct{
+	public static final Eval INSTANCE=new Eval();
+	private Eval(){
+		super(new ScmSymbol("eval"));
 	}
 	@Override
-	public String toExternalRepresentation(){
-		return keyword.getValue();
+	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
+		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.singleton(ScmList.first(param)),(Environment)ScmList.second(param));
 	}
-
 }

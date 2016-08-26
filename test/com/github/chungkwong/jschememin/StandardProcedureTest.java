@@ -330,20 +330,20 @@ public class StandardProcedureTest{
 		assertExpressionValue("(list-ref '(a b c d) 2)","'c");
 		assertExpressionValue("(list-ref '(a b c d) (exact (round 1.8)))","'c");
 		assertExpressionValue("(let ((ls (list 'one 'two 'five!))) (list-set! ls 2 'three) ls)","'(one two three)");
-		/*assertExpressionValue("(memq 'a '(a b c))","'(a b c)");
+		assertExpressionValue("(memq 'a '(a b c))","'(a b c)");
 		assertExpressionValue("(memq 'b '(a b c))","'(b c)");
 		assertExpressionValue("(memq 'a '(b c d))","#f");
 		assertExpressionValue("(memq (list 'a) '(b (a) c))","#f");
 		assertExpressionValue("(member (list 'a) '(b (a) c))","'((a) c)");
-		assertExpressionValue("(member \"B\" '(\"a\" \"b\" \"c\") string-ci=?)","'(\"b\" \"c\")");
+		assertExpressionValue("(begin (import (scheme char)) (member \"B\" '(\"a\" \"b\" \"c\") string-ci=?))","'(\"b\" \"c\")");
 		assertExpressionValue("(memv 101 '(100 101 102))","'(101 102)");
 		assertExpressionValue("(assq 'a '((a 1) (b 2) (c 3)))","'(a 1)");
 		assertExpressionValue("(assq 'b '((a 1) (b 2) (c 3)))","'(b 2)");
 		assertExpressionValue("(assq 'd '((a 1) (b 2) (c 3)))","#f");
 		assertExpressionValue("(assq (list 'a) '(((a)) ((b)) ((c))))","#f");
-		assertExpressionValue("(assoc (list 'a) '(((a)) ((b)) ((c))))","((a))");
-		assertExpressionValue("(assoc 2.0 '((1 1) (2 4) (3 9)) =)","(2 4)");
-		assertExpressionValue("(assv 5 '((2 3) (5 7) (11 13)))","(5 7)");*/
+		assertExpressionValue("(assoc (list 'a) '(((a)) ((b)) ((c))))","'((a))");
+		assertExpressionValue("(assoc 2.0 '((1 1) (2 4) (3 9)) =)","'(2 4)");
+		assertExpressionValue("(assv 5 '((2 3) (5 7) (11 13)))","'(5 7)");
 		assertExpressionValue("(let ((a '(1 8 2 8))) (let ((b (list-copy a))) (set-car! b 3) b))","'(3 8 2 8)");
 		assertExpressionValue("(let ((a '(1 8 2 8))) (let ((b (list-copy a))) (set-car! b 3) a))","'(1 8 2 8)");
 	}
@@ -606,8 +606,10 @@ public class StandardProcedureTest{
 	public void testControl(){
 		assertExpressionValue("(procedure? car)","#t");
 		assertExpressionValue("(procedure? (lambda (x) (+ x x)))","#t");
+		assertExpressionValue("(procedure? '(lambda (x) (+ x x)))","#f");
 		assertExpressionValue("(procedure? if)","#f");
 		assertExpressionValue("(procedure? let)","#f");
+		assertExpressionValue("(call-with-current-continuation procedure?)","#t");
 		assertExpressionValue("(apply + (list 3 4))","7");
 		assertExpressionValue("(apply + 1 (list 3 4))","8");
 		assertExpressionValue("(let ((compose (lambda (f g) (lambda args (f (apply g args)))))) "
@@ -615,6 +617,13 @@ public class StandardProcedureTest{
 		assertExpressionValue("(call-with-current-continuation (lambda (exit) (exit 7) #t))","7");
 		assertExpressionValue("(call-with-values (lambda () (values 4 5)) (lambda (a b) b))","5");
 		assertExpressionValue("(call-with-values * -)","-1");
+		assertExpressionValue("(let ((v (make-vector 5))) (for-each (lambda (i) (vector-set! v i (* i i))) '(0 1 2 3 4))  v)"
+				,"#(0 1 4 9 16)");
+		assertExpressionValue("(let ((v '())) (string-for-each (lambda (c) (set! v (cons (char->integer c) v))) \"abcde\") v)"
+				,"'(101 100 99 98 97)");
+		assertExpressionValue("(let ((v (make-list 5))) (vector-for-each (lambda (i) (list-set! v i (* i i))) #(0 1 2 3 4)) v)"
+				,"'(0 1 4 9 16)");
+		assertExpressionValue("(map cadr '((a b) (d e) (g h)))","'(b e h)");
 	}
 	@Test
 	public void testException(){

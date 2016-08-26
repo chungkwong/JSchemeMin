@@ -55,7 +55,7 @@ public class Base extends NativeLibrary{
 				"define-syntax","let","let*","letrec","letrec*","let-values","let*-values","define-values","let-syntax",
 				"letrec-syntax","cond","case","and","or","when","unless","begin","do","make-parameter","parameterize",
 				"guard","cond-expand","values","call-with-port","case-lambda","member","memq","memv","assoc","assq",
-				"assv","map","vector-map","string-map","foreach","vector-foreach","string-foreach","call/cc");
+				"assv","map","vector-map","string-map","for-each","vector-for-each","string-for-each","call/cc");
 	}
 	private void initByteVector(){
 		addNativeProcedure("bytevector?",(o)->ScmBoolean.valueOf(car(o) instanceof ScmByteVector));

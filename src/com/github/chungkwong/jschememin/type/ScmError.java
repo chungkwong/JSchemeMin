@@ -55,7 +55,8 @@ public class ScmError extends ScmObject{
 	public static ScmObject toScmObject(RuntimeException obj){
 		if(obj instanceof ScmException)
 			return ((ScmException)obj).getObject();
-		return new ScmError(new ScmString(obj.getMessage()),ScmNil.NIL,ErrorType.OTHER);
+		obj.printStackTrace();
+		return new ScmError(new ScmString(obj.getMessage()==null?"":obj.getMessage()),ScmNil.NIL,ErrorType.OTHER);
 	}
 	private static class ScmException extends RuntimeException{
 		private final ScmObject obj;

@@ -16,8 +16,7 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
-import static com.github.chungkwong.jschememin.lib.Utility.cadr;
-import static com.github.chungkwong.jschememin.lib.Utility.car;
+import com.github.chungkwong.jschememin.lib.Eval;
 import com.github.chungkwong.jschememin.primitive.*;
 /**
  *
@@ -31,6 +30,7 @@ public class Eval extends NativeLibrary{
 	@Override
 	protected void init(Library lib){
 		addNativeProcedure("environment",(o)->Import.INSTANCE.importLibraries(new Environment(false),o));
-		addNativeProcedure("eval",(o)->new Evaluator((Environment)cadr(o)).eval(car(o)));
+		addPrimitiveType(com.github.chungkwong.jschememin.primitive.Eval.INSTANCE);
+		//addNativeProcedure("eval",(o)->new Evaluator((Environment)cadr(o)).eval(car(o)));
 	}
 }
