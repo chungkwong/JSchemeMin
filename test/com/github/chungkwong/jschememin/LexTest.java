@@ -34,6 +34,11 @@ public class LexTest{
 			while(ia.hasNext())
 				Assert.assertEquals(ia.next(),ib.next());
 	}
+	private static void assertComplexEqualSpecial(String expr,ScmComplex b){
+		ScmComplex a=(ScmComplex)new Lex(expr).nextToken();
+		Assert.assertEquals(a.getReal(),b.getReal());
+		Assert.assertSame(a.getImag(),b.getImag());
+	}
 	private static void check(String expr,Object... tokens){
 		List result=null;
 		try{
@@ -146,10 +151,10 @@ public class LexTest{
 		check("-1.e-10",new ScmFloatingPointNumber(new BigDecimal("-1e-10")));
 		check("#e-1.e+10",new ScmInteger(new BigInteger("-10000000000")));
 		check("-.5e10",new ScmFloatingPointNumber(new BigDecimal("-5000000000")));
-		check("+nan.0",ScmSpecialReal.POSITIVE_NAN);
-		check("-nan.0",ScmSpecialReal.POSITIVE_NAN);
-		check("+inf.0",ScmSpecialReal.POSITIVE_INF);
-		check("-inf.0",ScmSpecialReal.NEGATIVE_INF);
+		Assert.assertSame(new Lex("+nan.0").nextToken(),ScmSpecialReal.POSITIVE_NAN);
+		Assert.assertSame(new Lex("-nan.0").nextToken(),ScmSpecialReal.POSITIVE_NAN);
+		Assert.assertSame(new Lex("+inf.0").nextToken(),ScmSpecialReal.POSITIVE_INF);
+		Assert.assertSame(new Lex("-inf.0").nextToken(),ScmSpecialReal.NEGATIVE_INF);
 		check("0)",new ScmInteger(BigInteger.valueOf(0)),SimpleToken.getToken(")"));
 		check("13)",new ScmInteger(BigInteger.valueOf(13)),SimpleToken.getToken(")"));
 		check("#b1101)",new ScmInteger(BigInteger.valueOf(13)),SimpleToken.getToken(")"));
@@ -162,7 +167,13 @@ public class LexTest{
 		check("23.670)",new ScmFloatingPointNumber(new BigDecimal("23.67")),SimpleToken.getToken(")"));
 		check(".670)",new ScmFloatingPointNumber(new BigDecimal(".67")),SimpleToken.getToken(")"));
 		check("1.e-10)",new ScmFloatingPointNumber(new BigDecimal("1e-10")),SimpleToken.getToken(")"));
-		check("+nan.0)",ScmSpecialReal.POSITIVE_NAN,SimpleToken.getToken(")"));
+		Assert.assertSame(new Lex("+nan.0)").nextToken(),ScmSpecialReal.POSITIVE_NAN);
+		try{
+			Assert.assertSame(new Lex("+nan.0)").getRemainingTokens().size(),2);
+			Assert.assertEquals(new Lex("+nan.0)").getRemainingTokens().get(1),SimpleToken.getToken(")"));
+		}catch(IOException ex){
+			Assert.assertTrue(false);
+		}
 	}
 	@Test
 	public void testComplexNumber(){
@@ -172,27 +183,27 @@ public class LexTest{
 		check("-2.5e-1i",new ScmComplexRectangular(ScmInteger.ZERO,new ScmFloatingPointNumber(new BigDecimal(-0.25))));
 		check("1/2-i",new ScmComplexRectangular(new ScmRational(ScmInteger.ONE,ScmInteger.ONE.add(ScmInteger.ONE)),ScmInteger.ONE.negate()));
 		check("1+i",new ScmComplexRectangular(ScmInteger.ONE,ScmInteger.ONE));
-		check("1+nan.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.POSITIVE_NAN));
-		check("1-nan.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.POSITIVE_NAN));
-		check("1+inf.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.POSITIVE_INF));
-		check("1-inf.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.NEGATIVE_INF));
+		assertComplexEqualSpecial("1+nan.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.POSITIVE_NAN));
+		assertComplexEqualSpecial("1-nan.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.POSITIVE_NAN));
+		assertComplexEqualSpecial("1+inf.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.POSITIVE_INF));
+		assertComplexEqualSpecial("1-inf.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.NEGATIVE_INF));
 		check("2+3i",new ScmComplexRectangular(new ScmInteger(BigInteger.valueOf(2)),new ScmInteger(BigInteger.valueOf(3))));
 		check("#b1101+11i",new ScmComplexRectangular(new ScmInteger(BigInteger.valueOf(13)),new ScmInteger(BigInteger.valueOf(3))));
 		check("#b1101-11i",new ScmComplexRectangular(new ScmInteger(BigInteger.valueOf(13)),new ScmInteger(BigInteger.valueOf(-3))));
 		check("2-3i",new ScmComplexRectangular(new ScmInteger(BigInteger.valueOf(2)),new ScmInteger(BigInteger.valueOf(-3))));
 		check("2@3",new ScmComplexPolar(new ScmInteger(BigInteger.valueOf(2)),new ScmInteger(BigInteger.valueOf(3))));
 		check("2@-3",new ScmComplexPolar(new ScmInteger(BigInteger.valueOf(2)),new ScmInteger(BigInteger.valueOf(-3))));
-		check("+nan.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.POSITIVE_NAN));
-		check("-nan.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.POSITIVE_NAN));
-		check("+inf.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.POSITIVE_INF));
-		check("-inf.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.NEGATIVE_INF));
+		assertComplexEqualSpecial("+nan.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.POSITIVE_NAN));
+		assertComplexEqualSpecial("-nan.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.POSITIVE_NAN));
+		assertComplexEqualSpecial("+inf.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.POSITIVE_INF));
+		assertComplexEqualSpecial("-inf.0i",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.NEGATIVE_INF));
 		check("+i)",new ScmComplexRectangular(ScmInteger.ZERO,ScmInteger.ONE),SimpleToken.getToken(")"));
 		check("+40i)",new ScmComplexRectangular(ScmInteger.ZERO,new ScmInteger(BigInteger.valueOf(40))),SimpleToken.getToken(")"));
 		check("1+i)",new ScmComplexRectangular(ScmInteger.ONE,ScmInteger.ONE),SimpleToken.getToken(")"));
-		check("1+nan.0i)",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.POSITIVE_NAN),SimpleToken.getToken(")"));
+		assertComplexEqualSpecial("1+nan.0i)",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.POSITIVE_NAN));
 		check("2-3i)",new ScmComplexRectangular(new ScmInteger(BigInteger.valueOf(2)),new ScmInteger(BigInteger.valueOf(-3))),SimpleToken.getToken(")"));
 		check("2@-3)",new ScmComplexPolar(new ScmInteger(BigInteger.valueOf(2)),new ScmInteger(BigInteger.valueOf(-3))),SimpleToken.getToken(")"));
-		check("+nan.0i)",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.POSITIVE_NAN),SimpleToken.getToken(")"));
+		assertComplexEqualSpecial("+nan.0i)",new ScmComplexRectangular(ScmInteger.ZERO,ScmSpecialReal.POSITIVE_NAN));
 	}
 	@Test
 	public void testString(){

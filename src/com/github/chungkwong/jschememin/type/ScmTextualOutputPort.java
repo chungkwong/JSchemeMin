@@ -16,6 +16,7 @@
  */
 package com.github.chungkwong.jschememin.type;
 import java.io.*;
+import java.util.*;
 import java.util.stream.*;
 /**
  *
@@ -37,11 +38,11 @@ public class ScmTextualOutputPort extends ScmPort{
 		return this;
 	}
 	public ScmTextualOutputPort writeSimple(ScmObject obj) throws IOException{
-		out.write(toSimpleRepresentation(this));
+		out.write(toSimpleRepresentation(obj));
 		return this;
 	}
 	public ScmTextualOutputPort write(ScmObject obj) throws IOException{
-		out.write(obj.toExternalRepresentation());//TODO
+		out.write(hasCycle(obj,new HashSet<>())?obj.toExternalRepresentation():toSimpleRepresentation(obj));
 		return this;
 	}
 	public ScmTextualOutputPort writeCharacter(ScmCharacter obj) throws IOException{
@@ -59,6 +60,8 @@ public class ScmTextualOutputPort extends ScmPort{
 			out.write(((ScmString)obj).getValue());
 		else if(obj instanceof ScmCharacter)
 			out.write(new String(new int[]{((ScmCharacter)obj).getCodePoint()},0,1));
+		else if(obj instanceof ScmSymbol)
+			out.write(((ScmSymbol)obj).getValue());
 		else
 			out.write(obj.toExternalRepresentation());
 		return this;
@@ -94,5 +97,8 @@ public class ScmTextualOutputPort extends ScmPort{
 			return ((ScmVector)obj).stream().map((e)->toSimpleRepresentation(e)).collect(Collectors.joining(" ","#(",")"));
 		}else
 			return obj.toExternalRepresentation();
+	}
+	private static boolean hasCycle(ScmObject obj,HashSet<ScmObject> found){
+		return true;//TODO
 	}
 }

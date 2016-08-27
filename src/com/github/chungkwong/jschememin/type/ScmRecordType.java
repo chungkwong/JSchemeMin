@@ -84,7 +84,8 @@ public class ScmRecordType extends ScmObject{
 		}
 		@Override
 		public ScmObject call(ScmObject param){
-			return ScmBoolean.valueOf(((ScmRecord)ScmList.first(param)).getType()==ScmRecordType.this);
+			ScmObject obj=ScmList.first(param);
+			return ScmBoolean.valueOf(obj instanceof ScmRecord&&((ScmRecord)obj).getType()==ScmRecordType.this);
 		}
 	}
 	class Accessor implements NativeProcedure{

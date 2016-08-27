@@ -28,36 +28,42 @@ public class DynamicWind extends BasicConstruct{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
-		if(pointer==null)
-			call(env,cont,new Backtrack((ScmPairOrNil)param,(ScmPairOrNil)param,null),param);
-		else if(((Backtrack)pointer).getThen() instanceof ScmPair){
-			ScmPair then=(ScmPair)((Backtrack)pointer).getThen();
-			ScmPair all=(ScmPair)((Backtrack)pointer).getAll();
-			ScmObject ret=null;
-			if(then.getCddr() instanceof ScmNil)
-				ret=ScmList.first(param);
-			cont.call(ExpressionEvaluator.INSTANCE,new Backtrack(all,(ScmPairOrNil)then.getCdr(),ret),(ScmObject)ScmList.toList(then.getCar()),env);
+		if(pointer==null){
+			Backtrack track=new Backtrack((Evaluable)ScmList.first(param),
+					(Evaluable)ScmList.second(param),(Evaluable)ScmList.third(param),false);
+			cont.call(track.getBefore(),track,ScmNil.NIL,env);
+		}else if(pointer instanceof Backtrack){
+			Backtrack old=(Backtrack)pointer;
+			if(old.isStarted())
+				cont.call(((Backtrack)pointer).getAfter(),param,ScmNil.NIL,env);
+			else
+				cont.call(((Backtrack)pointer).getThunk(),new Backtrack(old.getBefore(),old.getThunk(),old.getAfter(),true),ScmNil.NIL,env);
 		}else{
-			cont.ret(((Backtrack)pointer).getRet());
+			cont.ret((ScmPairOrNil)pointer);
 		}
 	}
-	private static class Backtrack{
-		private final ScmPairOrNil all;
-		private final ScmPairOrNil then;
-		private final ScmObject ret;
-		public Backtrack(ScmPairOrNil all,ScmPairOrNil then,ScmObject ret){
-			this.all=all;
-			this.then=then;
-			this.ret=ret;
+	public static class Backtrack{
+		private final Evaluable before;
+		private final Evaluable thunk;
+		private final Evaluable after;
+		private final boolean started;
+		public Backtrack(Evaluable before,Evaluable thunk,Evaluable after,boolean started){
+			this.before=before;
+			this.thunk=thunk;
+			this.after=after;
+			this.started=started;
 		}
-		public ScmPairOrNil getAll(){
-			return all;
+		public Evaluable getBefore(){
+			return before;
 		}
-		public ScmPairOrNil getThen(){
-			return then;
+		public Evaluable getThunk(){
+			return thunk;
 		}
-		public ScmObject getRet(){
-			return ret;
+		public Evaluable getAfter(){
+			return after;
+		}
+		public boolean isStarted(){
+			return started;
 		}
 	}
 }

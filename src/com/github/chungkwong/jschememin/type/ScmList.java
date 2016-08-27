@@ -29,6 +29,9 @@ public class ScmList{
 	public static ScmObject second(ScmObject list){
 		return ((ScmPair)list).getCadr();
 	}
+	public static ScmObject third(ScmObject list){
+		return second(((ScmPair)list).getCdr());
+	}
 	public static int getLength(ScmObject list){
 		int len=0;
 		while(list instanceof ScmPair){

@@ -295,9 +295,9 @@
       (cond
        ((null? args)
         value)
-       ((eq? (car args) <param-set!>)
+       ((eq? (car args) '<param-set!>)
         (set! value (cadr args)))
-       ((eq? (car args) <param-convert>)
+       ((eq? (car args) '<param-convert>)
         converter)
        (else
         (error "bad parameter syntax"))))))
@@ -311,11 +311,11 @@
                    body)
      (let ((p param) ...)
        (let ((old (p)) ...
-             (new ((p <param-convert>) value)) ...)
+             (new ((p '<param-convert>) value)) ...)
          (dynamic-wind
-          (lambda () (p <param-set!> new) ...)
+          (lambda () (p '<param-set!> new) ...)
           (lambda () . body)
-          (lambda () (p <param-set!> old) ...)))))
+          (lambda () (p '<param-set!> old) ...)))))
     ((parameterize ("step")
                    args
                    ((param value) . rest)
@@ -329,8 +329,6 @@
                    ()
                    ((param value) ...)
                    body))))
-
-
 
 (define-syntax guard
   (syntax-rules ()
@@ -455,9 +453,9 @@
     (lambda (cont) (apply cont things))))
 
 (define (call-with-port port proc)
-  (dynamic-wind (lambda () '())
-                (lambda () (proc port))
-                (lambda () (close-port port))))
+  (let ((ret (proc port)))
+    (close-port port)
+    ret))
 
 (define-syntax case-lambda
   (syntax-rules ()

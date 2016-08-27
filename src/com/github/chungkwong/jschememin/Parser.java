@@ -198,11 +198,10 @@ public final class Parser{
 				throw new SyntaxException("A byte is Expected");
 			}
 			if(b>=0&&b<256){
-				for(int i=0;i<8;i++){
+				for(int i=0;i<8;i++)
 					if((b&(1<<i))!=0){
 						vector.set(length+i);
 					}
-				}
 				length+=8;
 				return false;
 			}else{
@@ -215,7 +214,7 @@ public final class Parser{
 		}
 		@Override
 		public ScmObject getContent(){
-			return new ScmByteVector(vector.toByteArray());
+			return new ScmByteVector(Arrays.copyOf(vector.toByteArray(),length/8));
 		}
 	}
 	interface Backtrack{

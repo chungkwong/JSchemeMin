@@ -46,5 +46,6 @@ public class DefineRecordType extends BasicConstruct implements Primitive{
 			}
 			param=(ScmPairOrNil)((ScmPair)param).getCdr();
 		}
+		cont.ret(type);
 	}
 }

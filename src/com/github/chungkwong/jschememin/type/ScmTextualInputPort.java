@@ -75,7 +75,7 @@ public class ScmTextualInputPort extends ScmPort{
 		StringBuilder buf=new StringBuilder(len);
 		int c;
 		while(--len>=0&&(c=readCodepoint())!=-1)
-			buf.append(c);
+			buf.appendCodePoint(c);
 		return buf.length()==0?ScmEndOfFileObject.INSTANCE:new ScmString(buf.toString());
 	}
 	public ScmObject readLine() throws IOException{

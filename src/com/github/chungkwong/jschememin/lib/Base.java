@@ -313,6 +313,7 @@ public class Base extends NativeLibrary{
 		addPrimitiveType(Quote.INSTANCE);
 		addPrimitiveType(Define.INSTANCE);
 		addPrimitiveType(DefineRecordType.INSTANCE);
+		addPrimitiveType(DynamicWind.INSTANCE);
 		//addPrimitiveType(DefineLibrary.INSTANCE);
 		//addPrimitiveType(Import.INSTANCE);
 		addPrimitiveType(SyntaxRule.INSTANCE);
@@ -394,7 +395,7 @@ public class Base extends NativeLibrary{
 			(o)->ScmPort.CURRENT_INPUT));
 		addNativeProcedure("read-bytevector",new NativeProcedureDefault((o)->((ScmBinaryInputPort)cadr(o)).readBytevector(((ScmComplex)car(o)).toScmInteger()),
 			(o)->car(o),(o)->ScmPort.CURRENT_INPUT));
-		addNativeProcedure("read-bytevector!",new NativeProcedureDefault((o)->((ScmBinaryInputPort)cadr(o)).readBytevector((ScmByteVector)car(o),((ScmComplex)cadr(o)).toScmInteger(),((ScmComplex)caddr(o)).toScmInteger()),
+		addNativeProcedure("read-bytevector!",new NativeProcedureDefault((o)->((ScmBinaryInputPort)cadr(o)).readBytevector((ScmByteVector)car(o),((ScmComplex)caddr(o)).toScmInteger(),((ScmComplex)cadddr(o)).toScmInteger()),
 			(o)->car(o),(o)->ScmPort.CURRENT_INPUT,(o)->ScmInteger.ZERO,(o)->new ScmInteger(((ScmByteVector)car(o)).getLength())));
 		addNativeProcedure("newline",new NativeProcedureDefault((o)->((ScmTextualOutputPort)car(o)).newline(),
 			(o)->ScmPort.CURRENT_OUTPUT));

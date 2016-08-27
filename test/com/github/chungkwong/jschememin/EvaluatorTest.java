@@ -124,9 +124,9 @@ public class EvaluatorTest{
 		assertExpressionValue("(cond ((> 3 2) 'greater) ((< 3 2) 'less))","'greater");
 		assertExpressionValue("(cond ((> 3 3) 'greater) ((< 3 3) 'less) (else 'equal))","'equal");
 		assertExpressionValue("(cond ((quote (b 2)) => cadr) (else #f))","2");
-		/*assertExpressionValue("(case (* 2 3) ((2 3 5 7) 'prime) ((1 4 6 8 9) 'composite))","'composite");
+		assertExpressionValue("(case (* 2 3) ((2 3 5 7) 'prime) ((1 4 6 8 9) 'composite))","'composite");
 		assertExpressionValue("(case (car '(c d)) ((a) 'a) ((b) 'b))","'unspecified");
-		assertExpressionValue("(case (car '(c d)) ((a e i o u) 'vowel) ((w y) 'semivowel) (else => (lambda (x) x)))","'c");*/
+		assertExpressionValue("(case (car '(c d)) ((a e i o u) 'vowel) ((w y) 'semivowel) (else => (lambda (x) x)))","'c");
 		assertExpressionValue("(and)","#t");
 		assertExpressionValue("(and 5)","5");
 		assertExpressionValue("(and (= 2 2) (> 2 1))","#t");
@@ -155,6 +155,14 @@ public class EvaluatorTest{
 		assertExpressionValue("(letrec* ((p (lambda (x) (+ 1 (q (- x 1))))) (q (lambda (y) (if (zero? y) 0 (+ 1 (p (- y 1)))))) (x (p 5)) (y x)) y)","5");
 		assertExpressionValue("(let-values (((root rem) (exact-integer-sqrt 32))) (* root rem))","35");
 		assertExpressionValue("(let ((a 'a) (b 'b) (x 'x) (y 'y)) (let*-values (((a b) (values x y)) ((x y) (values a b))) (list a b x y)))","'(x y x y)");
+		assertExpressionValue("(begin (define add3 (lambda (x) (+ x 3))) (add3 3))","6");
+		assertExpressionValue("(begin (define first car) (first '(1 2)))","1");
+		assertExpressionValue("(let ((x 5)) (define foo (lambda (y) (bar x y))) (define bar (lambda (a b) (+ (* a b) a))) " +
+				" (foo (+ x 3)))","45");
+		assertExpressionValue("(let ((x 1) (y 2)) (define-syntax swap! (syntax-rules ()\n" +
+				"((swap! a b) (let ((tmp a)) (set! a b) (set! b tmp))))) (swap! x y) (list x y))","'(2 1)");
+		//assertExpressionValue("(let () (define-values (x y) (integer-sqrt 17)) (list x y))","'(4 1)");
+		//assertExpressionValue("(let () (define-values (x y) (values 1 2)) (+ x y))","3");
 	}
 	@Test
 	public void testIteration(){
@@ -184,10 +192,23 @@ public class EvaluatorTest{
 		assertExpressionValue("(begin (import (scheme lazy)) (let* ((x 1) (y (make-promise x))) (set! x 4) (force y)))","1");
 	}
 	@Test
+	public void testGuard(){
+		assertExpressionValue("(guard (condition ((assq 'a condition) => cdr) ((assq 'b condition))) (raise (list (cons 'a 42))))","42");
+		assertExpressionValue("(guard (condition ((assq 'a condition) => cdr) ((assq 'b condition))) (raise (list (cons 'b 23))))","'(b . 23)");
+	}
+	@Test
 	public void testMacro(){
 		assertExpressionValue("(let-syntax ((given-that (syntax-rules () ((given-that test stmt1 stmt2 ...) (if test (begin stmt1 stmt2 ...)))))) (let ((if #t)) (given-that if (set! if 'now)) if))","'now");
 		assertExpressionValue("(let ((x 'outer)) (let-syntax ((m (syntax-rules () ((m) x)))) (let ((x 'inner)) (m))))","'outer");
 		assertExpressionValue("(let ((=> #f)) (cond (#t => 'ok)))","'ok");
 	}
-
+	@Test
+	public void testRecord(){
+		assertExpressionValue("(begin (define-record-type <pare> (kons x y) pare? (x kar set-kar!) (y kdr)) (pare? (kons 1 2)))","#t");
+		assertExpressionValue("(begin (define-record-type <pare> (kons x y) pare? (x kar set-kar!) (y kdr)) (pare? (cons 1 2)))","#f");
+		assertExpressionValue("(begin (define-record-type <pare> (kons x y) pare? (x kar set-kar!) (y kdr)) (kar (kons 1 2)))","1");
+		assertExpressionValue("(begin (define-record-type <pare> (kons x y) pare? (x kar set-kar!) (y kdr)) (kdr (kons 1 2)))","2");
+		assertExpressionValue("(begin (define-record-type <pare> (kons x y) pare? (x kar set-kar!) (y kdr)) "
+				+ "(let ((k (kons 1 2))) (set-kar! k 3) (kar k)))","3");
+	}
 }

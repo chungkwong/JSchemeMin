@@ -83,13 +83,41 @@ public class Continuation extends ScmObject{
 		ret(ScmList.singleton(retValue));
 	}
 	public void reset(Continuation cont){
+		ArrayList<Evaluable> actives2=new ArrayList<>();
+		ArrayList<Object> pointers2=new ArrayList<>();
+		ArrayList<Environment> environments2=new ArrayList<>();
+		for(int i=cont.actives.size()-1;i>=0;i--){
+			if(cont.actives.get(i)instanceof DynamicWind&&cont.pointers.get(i)instanceof DynamicWind.Backtrack){
+				DynamicWind.Backtrack track=(DynamicWind.Backtrack)cont.pointers.get(i);
+				if(track.isStarted()){
+					actives2.add(track.getBefore());
+					pointers2.add(null);
+					environments2.add(cont.environments.get(i));
+				}
+			}
+		}
+		for(int i=0;i<actives.size();i++){
+			if(actives.get(i)instanceof DynamicWind&&pointers.get(i)instanceof DynamicWind.Backtrack){
+				DynamicWind.Backtrack track=(DynamicWind.Backtrack)pointers.get(i);
+				if(track.isStarted()){
+					actives2.add(track.getAfter());
+					pointers2.add(null);
+					environments2.add(environments.get(i));
+				}
+			}
+		}
 		actives.clear();
 		pointers.clear();
 		environments.clear();
+		actives.addAll(actives2);
+		pointers.addAll(pointers2);
+		environments.addAll(environments2);
+		while(hasNext())
+			evalNext();
 		actives.addAll(cont.actives);
 		pointers.addAll(cont.pointers);
 		environments.addAll(cont.environments);
-		arguments=cont.arguments;//TODO dynamic-wind
+		arguments=cont.arguments;
 	}
 	public void evalNext(){
 		try{

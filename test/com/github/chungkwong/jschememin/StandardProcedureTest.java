@@ -59,10 +59,22 @@ public class StandardProcedureTest{
 		assertExpressionValue("(eqv? 0.0 +nan.0)","#f");
 		assertExpressionValue("(eqv? (cons 1 2) (cons 1 2))","#f");
 		assertExpressionValue("(eqv? (lambda () 1) (lambda () 2))","#f");
+		assertExpressionValue("(let ((p (lambda (x) x))) (eqv? p p))","#t");
+		assertExpressionValue("(eqv? #f 'nil)","#f");
+		assertExpressionValue("(let* ((gen-counter (lambda () (let ((n 0)) (lambda () (set! n (+ n 1)) n)))) "
+				+ "(g (gen-counter))) (eqv? g g))","#t");
+		assertExpressionValue("(let* ((gen-counter (lambda () (let ((n 0)) (lambda () (set! n (+ n 1)) n))))) "
+				+ "(eqv? (gen-counter) (gen-counter)))","#f");
+		assertExpressionValue("(letrec ((f (lambda () (if (eqv? f g) 'f 'both))) (g (lambda () (if (eqv? f g) 'g 'both))))"
+				+ " (eqv? f g))","#f");
+		assertExpressionValue("(let ((x '(a))) (eqv? x x))","#t");
 		assertExpressionValue("(eq? 'a 'a)","#t");
 		assertExpressionValue("(eq? (list 'a) (list 'a))","#f");
 		assertExpressionValue("(eq? '() '())","#t");
 		assertExpressionValue("(eq? car car)","#t");
+		assertExpressionValue("(let ((x '(a))) (eq? x x))","#t");
+		assertExpressionValue("(let ((x '#())) (eq? x x))","#t");
+		assertExpressionValue("(let ((p (lambda (x) x))) (eq? p p))","#t");
 		assertExpressionValue("(equal? 'a 'a)","#t");
 		assertExpressionValue("(equal? '(a) '(a))","#t");
 		assertExpressionValue("(equal? '(a (b) c) '(a (b) c))","#t");
@@ -308,6 +320,7 @@ public class StandardProcedureTest{
 		assertExpressionValue("(list? '(1))","#t");
 		assertExpressionValue("(list? '(1 2))","#t");
 		assertExpressionValue("(list? '(1 2 . 3))","#f");
+		assertExpressionValue("(list? '#88=(1 2 . #88#))","#f");
 		assertExpressionValue("(list? 1)","#f");
 		assertExpressionValue("(list? #(1 2))","#f");
 		assertExpressionValue("(list? #t)","#f");
@@ -612,9 +625,23 @@ public class StandardProcedureTest{
 		assertExpressionValue("(call-with-current-continuation procedure?)","#t");
 		assertExpressionValue("(apply + (list 3 4))","7");
 		assertExpressionValue("(apply + 1 (list 3 4))","8");
-		assertExpressionValue("(let ((compose (lambda (f g) (lambda args (f (apply g args)))))) "
-				+ "(import (scheme inexact) (scheme complex)) (< (magnitude (- ((compose sqrt *) 12 75) 30)) 1e-12))","#t");
+		assertExpressionValue("(let ((compose (lambda (f g) (lambda args (f (apply g args)))))) ((compose square *) 3 4))","144");
 		assertExpressionValue("(call-with-current-continuation (lambda (exit) (exit 7) #t))","7");
+		assertExpressionValue("(call-with-current-continuation (lambda (exit) "
+				+ "(for-each (lambda (x) (if (negative? x) (exit x))) '(54 0 37 -3 245 19)) #t))","-3");
+		assertExpressionValue("(let ((list-length (lambda (obj) (call-with-current-continuation (lambda (return) "
+				+ "(letrec ((r (lambda (obj) (cond ((null? obj) 0) ((pair? obj) (+ (r (cdr obj)) 1)) (else (return #f)))))) (r obj))))))) "
+				+ "(list-length '(1 2 3 4)))","4");
+		assertExpressionValue("(let ((list-length (lambda (obj) (call-with-current-continuation (lambda (return) "
+				+ "(letrec ((r (lambda (obj) (cond ((null? obj) 0) ((pair? obj) (+ (r (cdr obj)) 1)) (else (return #f)))))) (r obj))))))) "
+				+ "(list-length '(a b . c)))","#f");
+		assertStandardOutput("(dynamic-wind (lambda () (write-char #\\a)) (lambda () (write-char #\\b)) (lambda () (write-char #\\c) (flush-output-port)))","abc");
+		assertExpressionValue("(let ((path '()) (c #f)) (let ((add (lambda (s) (set! path (cons s path))))) "
+				+ "(dynamic-wind (lambda () (add 'connect)) "
+				+ "(lambda () (add (call-with-current-continuation (lambda (c0) (set! c c0) 'talk1)))) "
+				+ "(lambda () (add 'disconnect))) "
+				+ "(if (< (length path) 4) (c 'talk2) (reverse path))))",
+				"'(connect talk1 disconnect connect talk2 disconnect)");
 		assertExpressionValue("(call-with-values (lambda () (values 4 5)) (lambda (a b) b))","5");
 		assertExpressionValue("(call-with-values * -)","-1");
 		assertExpressionValue("(let ((v (make-vector 5))) (for-each (lambda (i) (vector-set! v i (* i i))) '(0 1 2 3 4))  v)"
@@ -624,6 +651,17 @@ public class StandardProcedureTest{
 		assertExpressionValue("(let ((v (make-list 5))) (vector-for-each (lambda (i) (list-set! v i (* i i))) #(0 1 2 3 4)) v)"
 				,"'(0 1 4 9 16)");
 		assertExpressionValue("(map cadr '((a b) (d e) (g h)))","'(b e h)");
+		assertExpressionValue("(map (lambda (n) (+ n n)) '(1 2 3 4 5))","'(2 4 6 8 10)");
+		assertExpressionValue("(map + '(1 2 3) '(4 5 6 7))","'(5 7 9)");
+		assertExpressionValue("(let ((count 0)) (map (lambda (ignored) (set! count (+ count 1)) count) '(a b)))","'(1 2)");
+		assertExpressionValue("(begin (import (scheme char)) (string-map char-foldcase \"AbdEgH\"))","\"abdegh\"");
+		assertExpressionValue("(string-map (lambda (c) (integer->char (+ 1 (char->integer c)))) \"HAL\")","\"IBM\"");
+		assertExpressionValue("(begin (import (scheme char)) (string-map (lambda (c k) ((if (eqv? k #\\u) char-upcase char-downcase) c))"
+				+ "\"studlycaps xxx\" \"ululululul\"))","\"StUdLyCaPs\"");
+		assertExpressionValue("(vector-map cadr '#((a b) (d e) (g h)))","#(b e h)");
+		assertExpressionValue("(vector-map (lambda (n) (* n n)) #(1 2 3 4 5))","#(1 4 9 16 25)");
+		assertExpressionValue("(vector-map + #(1 2 3) #(4 5 6 7))","#(5 7 9)");
+		assertExpressionValue("(let ((count 0)) (vector-map (lambda (ignored) (set! count (+ count 1)) count) #(a b)))","#(1 2)");
 	}
 	@Test
 	public void testException(){
@@ -660,15 +698,144 @@ public class StandardProcedureTest{
 		assertStandardOutput("(with-exception-handler (lambda (x) (import (scheme write)) (display (error-object-message x)) (flush-output-port)) "
 				+ "(lambda () (with-exception-handler (lambda (x) (import (scheme write)) (display (error-object-irritants x)) (flush-output-port)) (lambda () (+ 1 (error \"bad\" 1 2 3))))))",
 				"(1 2 3)bad");
+		assertExpressionValue("(begin (import (scheme write)) (call-with-current-continuation (lambda (k) (with-exception-handler "
+				+ "(lambda (x) (display \"condition: \") (write x) (flush-output-port) (k 'exception)) "
+				+ "(lambda () (+ 1 (raise 'an-error)))))))","'exception");
+		assertStandardOutput("(begin (import (scheme write)) (call-with-current-continuation (lambda (k) (with-exception-handler "
+				+ "(lambda (x) (display \"condition: \") (write x) (flush-output-port) (k 'exception)) "
+				+ "(lambda () (+ 1 (raise 'an-error)))))))","condition: |an-error|");
+		assertStandardOutput("(with-exception-handler (lambda (x) (write-string \"something went wrong\") (flush-output-port)) "
+				+ "(lambda () (+ 1 (raise 'an-error))))","something went wrong");
 	}
 	@Test
 	public void testEnvironment(){
 		assertExpressionValue("(let () (import (scheme eval) (scheme repl)) (eval '(car (cons 1 2)) (interaction-environment)))","1");
 		assertExpressionValue("(let () (import (scheme eval) (scheme repl)) (eval '(car (cons 1 2)) (environment '(scheme base))))","1");
 		expectException("(let () (import (scheme eval) (scheme repl)) (eval '(car (cons 1 2)) (environment)))");
+		assertExpressionValue("(let () (import (scheme eval) (scheme r5rs)) (eval '(exact->inexact 7) (scheme-report-environment 5)))","7.0");
+		assertExpressionValue("(let () (import (scheme eval) (scheme r5rs)) (eval '(inexact->exact 7) (scheme-report-environment 5)))","7");
+		assertExpressionValue("(begin (import (scheme r5rs)) (let ((f (eval '(lambda (f x) (f x x)) (null-environment 5)))) "
+				+ "(f + 10)))","20");
 	}
 	@Test
 	public void testIO(){
+		assertExpressionValue("(input-port-open? (current-input-port))","#t");
+		assertExpressionValue("(port? (current-input-port))","#t");
+		assertExpressionValue("(input-port? (current-input-port))","#t");
+		assertExpressionValue("(output-port? (current-input-port))","#f");
+		assertExpressionValue("(textual-port? (current-input-port))","#t");
+		assertExpressionValue("(binary-port? (current-input-port))","#f");
+		assertExpressionValue("(port? (current-output-port))","#t");
+		assertExpressionValue("(port? (current-error-port))","#t");
+		assertExpressionValue("(output-port-open? (current-error-port))","#t");
+		assertExpressionValue("(input-port? (current-output-port))","#f");
+		assertExpressionValue("(output-port? (current-output-port))","#t");
+		assertExpressionValue("(textual-port? (current-output-port))","#t");
+		assertExpressionValue("(binary-port? (current-output-port))","#f");
+		assertExpressionValue("(let ((port (open-input-string \" (hello '(#())) 4\"))) (import (scheme read)) "
+				+ "(read port))","'(hello '(#()))");
+		assertExpressionValue("(let ((port (open-input-string \" (hello '(#())) 4\"))) "
+				+ "(read-char port))","#\\space");
+		assertExpressionValue("(let* ((port (open-input-string \" (hello '(#())) 4\")) (x (peek-char port))) "
+				+ "(eqv? (read-char port) x))","#t");
+		assertExpressionValue("(let ((port (open-input-string \"hello \nworld\"))) "
+				+ "(read-line port))","\"hello \"");
+		assertExpressionValue("(let ((port (open-input-string \"hello \nworld\"))) "
+				+ "(read-line port) (read-line port) (eof-object? (read-line port)))","#t");
+		assertExpressionValue("(eof-object? (eof-object))","#t");
+		assertExpressionValue("(eof-object? '())","#f");
+		assertExpressionValue("(eof-object? \"\")","#f");
+		assertExpressionValue("(let ((port (open-input-string \"hello \nworld\"))) "
+				+ "(char-ready? port))","#t");
+		assertExpressionValue("(let ((port (open-input-string \"\"))) "
+				+ "(char-ready? port))","#t");
+		assertExpressionValue("(let ((port (open-input-string \"hello \nworld\"))) "
+				+ "(read-string 4 port))","\"hell\"");
+		assertExpressionValue("(let ((port (open-input-bytevector #u8(255 0 19)))) "
+				+ "(read-u8 port))","255");
+		assertExpressionValue("(let* ((port (open-input-bytevector #u8(255 0 19))) (x (peek-u8 port))) "
+				+ "(eqv? (read-u8 port) x))","#t");
+		assertExpressionValue("(let ((port (open-input-bytevector #u8(255 0 19)))) "
+				+ "(read-bytevector 2 port))","#u8(255 0)");
+		assertExpressionValue("(let ((port (open-input-bytevector #u8(255 0 19)))) "
+				+ "(read-bytevector 5 port))","#u8(255 0 19)");
+		assertExpressionValue("(let ((port (open-input-bytevector #u8(255 0 19))) (vec (make-bytevector 5 7))) "
+				+ "(read-bytevector! vec port) vec)","#u8(255 0 19 7 7)");
+		assertExpressionValue("(let ((port (open-input-bytevector #u8(255 0 19))) (vec (make-bytevector 2 7))) "
+				+ "(read-bytevector! vec port) vec)","#u8(255 0)");
+		assertExpressionValue("(let ((port (open-input-bytevector #u8(255 0 19))) (vec (make-bytevector 2 7))) "
+				+ "(read-bytevector! vec port 1) vec)","#u8(7 255)");
+		assertExpressionValue("(let ((port (open-input-bytevector #u8(255 0 19))) (vec (make-bytevector 2 7))) "
+				+ "(read-bytevector! vec port 0 1) vec)","#u8(255 7)");
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(write 'hello port) (get-output-string port))","\"|hello|\"");
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(write \"hello\\\"world\\\\\" port) (get-output-string port))","\"\\\"hello\\\\\\\"world\\\\\\\\\\\"\"");
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(write #\\a port) (get-output-string port))","\"#\\\\a\"");
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(write-shared 'hello port) (get-output-string port))","\"|hello|\"");
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(write-shared \"hello\\\"world\\\\\" port) (get-output-string port))","\"\\\"hello\\\\\\\"world\\\\\\\\\\\"\"");
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(write-shared #\\a port) (get-output-string port))","\"#\\\\a\"");
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(write-shared '#1088=(#1088# . #1088#) port) (get-output-string port))","\"#1089=(#1089# . #1089#)\"");
+
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(write-simple 'hello port) (get-output-string port))","\"|hello|\"");
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(write-simple \"hello\\\"world\\\\\" port) (get-output-string port))","\"\\\"hello\\\\\\\"world\\\\\\\\\\\"\"");
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(write-simple #\\a port) (get-output-string port))","\"#\\\\a\"");
+
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(display 'hello port) (get-output-string port))","\"hello\"");
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(display \"hello\\\"world\\\\\" port) (get-output-string port))","\"hello\\\"world\\\\\"");
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(display #\\a port) (get-output-string port))","\"a\"");
+
+		assertExpressionValue("(let ((port (open-output-string))) "
+				+ "(newline port) (get-output-string port))","\"\n\"");
+		assertExpressionValue("(let ((port (open-output-string))) "
+				+ "(write-char #\\a port) (get-output-string port))","\"a\"");
+		assertExpressionValue("(let ((port (open-output-string))) "
+				+ "(write-char #\\a port) (write-char #\\b port) (get-output-string port))","\"ab\"");
+		assertExpressionValue("(let ((port (open-output-string))) "
+				+ "(write-string \"hello world\" port) (get-output-string port))","\"hello world\"");
+		assertExpressionValue("(let ((port (open-output-string))) "
+				+ "(write-string \"hello world\" port 6) (get-output-string port))","\"world\"");
+		assertExpressionValue("(let ((port (open-output-string))) "
+				+ "(write-string \"hello world\" port 6 8) (get-output-string port))","\"wo\"");
+		assertExpressionValue("(let ((port (open-output-bytevector))) "
+				+ "(write-u8 0 port) (write-u8 255 port) (write-u8 34 port) (get-output-bytevector port))","#u8(0 255 34)");
+		assertExpressionValue("(let ((port (open-output-bytevector))) "
+				+ "(write-bytevector #u8(0 255 29) port) (get-output-bytevector port))","#u8(0 255 29)");
+		assertExpressionValue("(let ((port (open-output-bytevector))) "
+				+ "(write-bytevector #u8(0 255 29) port 1) (get-output-bytevector port))","#u8(255 29)");
+		assertExpressionValue("(let ((port (open-output-bytevector))) "
+				+ "(write-bytevector #u8(0 255 29) port 1 2) (get-output-bytevector port))","#u8(255)");
+		assertExpressionValue("(let ((port (open-output-string))) (call-with-port port (lambda (p) (write-string \"hello\" p))) "
+				+ "(get-output-string port))","\"hello\"");
+		assertExpressionValue("(let ((port (open-output-string))) (call-with-port port (lambda (p) (write-string \"hello\" p))) "
+				+ "(output-port-open? port))","#f");
+		assertExpressionValue("(begin (import (scheme file)) (let ((out (open-output-file \"temp.txt\"))) "
+				+ "(write-string \"hello world\" out) (close-port out) "
+				+ "(let* ((in (open-input-file \"temp.txt\")) (content (read-line in))) (close-port in) content)))","\"hello world\"");
+		assertExpressionValue("(begin (import (scheme file)) "
+				+ "(call-with-output-file \"temp.txt\" (lambda (port) (write-string \"hello world\" port))) "
+				+ "(call-with-input-file \"temp.txt\" (lambda (port) (read-line port))))","\"hello world\"");
+		assertExpressionValue("(begin (import (scheme file)) (let ((out (open-binary-output-file \"temp.bin\"))) "
+				+ "(write-u8 19 out) (close-port out) "
+				+ "(let* ((in (open-binary-input-file \"temp.bin\")) (content (read-u8 in))) (close-port in) content)))","19");
+		assertExpressionValue("(begin (import (scheme file)) (with-output-to-file \"temp.txt\" (lambda () (write-string \"hello cat\")))"
+				+ "(with-input-from-file \"temp.txt\" (lambda () (read-line))))","\"hello cat\"");
+		assertExpressionValue("(begin (import (scheme file)) (file-delete \"temp.txt\") (file-exists? \"temp.txt\"))","#f");
+		assertExpressionValue("(begin (import (scheme file)) (file-delete \"temp.bin\") (file-exists? \"temp.bin\"))","#f");
+		assertExpressionValue("(begin (close-port (current-error-port)) (output-port-open? (current-error-port)))","#f");
+		assertExpressionValue("(begin (close-input-port (current-input-port)) (input-port-open? (current-input-port)))","#f");
+		assertExpressionValue("(begin (close-output-port (current-output-port)) (output-port-open? (current-output-port)))","#f");
 	}
 	@Test
 	public void testSystem(){
@@ -693,7 +860,8 @@ public class StandardProcedureTest{
 		assertExpressionValue("(let () (import (scheme time)) (integer? (current-jiffy)))","#t");
 		assertExpressionValue("(let () (import (scheme time)) (integer? (jiffies-per-second)))","#t");
 		assertExpressionValue("(list? (features))","#t");
-		assertExpressionValue("(string? (car (features)))","#t");
-
+		assertExpressionValue("(symbol? (car (features)))","#t");
+		assertExpressionValue("(pair? (member 'r7rs (features)))","#t");
+		assertExpressionValue("(pair? (member 'jvm (features)))","#t");
 	}
 }
