@@ -19,7 +19,7 @@ public final class ScmCharacter extends ScmObject implements Comparable<ScmChara
 	static final HashMap<Integer,Integer> caseFoldMap=new HashMap<>();
 	private final int codepoint;
 	static{
-		Scanner in=new Scanner(ScmCharacter.class.getResourceAsStream("/com/github/chungkwong/jschememin/type/CaseFolding.txt"));
+		Scanner in=new Scanner(ScmCharacter.class.getResourceAsStream("/com/github/chungkwong/jschememin/type/CaseFolding.txt"),"UTF-8");
 		in.useRadix(16);
 		while(in.hasNextInt())
 			caseFoldMap.put(in.nextInt(),in.nextInt());

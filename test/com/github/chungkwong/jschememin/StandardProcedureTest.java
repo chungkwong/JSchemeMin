@@ -553,7 +553,7 @@ public class StandardProcedureTest{
 		assertExpressionValue("(vector 'a 'b 'c)","#(a b c)");
 		assertExpressionValue("(vector-ref '#(1 1 2 3 5 8 13 21) 5)","8");
 		assertExpressionValue("(let () (import (scheme inexact)) (vector-ref '#(1 1 2 3 5 8 13 21) (exact (round (* 2 (acos -1))))))",
-				"13");//TODO
+				"13");
 		assertExpressionValue("(let ((v (vector 1 2 3 4))) (vector-set! v 1 3) v)","#(1 3 3 4)");
 		assertExpressionValue("(let ((vec (vector 0 '(2 2 2 2) \"Anna\"))) (vector-set! vec 1 '(\"Sue\" \"Sue\")) vec)",
 				"#(0 (\"Sue\" \"Sue\") \"Anna\")");

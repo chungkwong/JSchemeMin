@@ -209,6 +209,8 @@ public class ScmList{
 			}
 			@Override
 			public ScmObject next(){
+				if(!hasNext())
+					throw new NoSuchElementException();
 				ScmObject obj=((ScmPair)rest).getCar();
 				rest=(ScmPairOrNil)((ScmPair)rest).getCdr();
 				return obj;

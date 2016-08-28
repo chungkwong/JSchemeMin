@@ -46,7 +46,7 @@ public final class ScmVector extends ScmObject{
 	 */
 	@Override
 	public boolean equals(Object obj){
-		return obj==this||ObjectPair.equals(this,obj,new HashSet<ObjectPair>());
+		return obj==this||ObjectPair.equals(this,obj,new HashSet<>());
 	}
 	@Override
 	public int hashCode(){

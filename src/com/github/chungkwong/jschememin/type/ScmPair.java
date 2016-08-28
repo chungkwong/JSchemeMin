@@ -52,7 +52,7 @@ public final class ScmPair extends ScmPairOrNil{
 	}
 	@Override
 	public boolean equals(Object obj){
-		return obj==this||ObjectPair.equals(this,obj,new HashSet<ObjectPair>());
+		return obj==this||ObjectPair.equals(this,obj,new HashSet<>());
 	}
 	@Override
 	public boolean equalsValue(ScmObject obj){

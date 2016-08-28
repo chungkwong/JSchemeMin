@@ -23,9 +23,7 @@ import java.util.stream.*;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmTextualOutputPort extends ScmPort{
-	public static ScmTextualOutputPort OUT=new ScmTextualOutputPort(new OutputStreamWriter(System.out));
-	public static ScmTextualOutputPort ERR=new ScmTextualOutputPort(new OutputStreamWriter(System.err));
-	public static String LINE_SEPARATOR=System.getProperty("line.separator");
+	public static final String LINE_SEPARATOR=System.getProperty("line.separator");
 	private final Writer out;
 	public ScmTextualOutputPort(Writer out){
 		this.out=out;

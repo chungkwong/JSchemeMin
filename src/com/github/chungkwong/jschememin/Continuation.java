@@ -172,10 +172,4 @@ public class Continuation extends ScmObject{
 			environments.pop();
 		}
 	}
-	private void clear(){
-		actives.clear();
-		pointers.clear();
-		environments.clear();
-		arguments=null;
-	}
 }

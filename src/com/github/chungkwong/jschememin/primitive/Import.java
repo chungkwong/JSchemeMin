@@ -52,10 +52,10 @@ public class Import extends BasicConstruct implements Primitive{
 			if(car.equals(PREFIX)){
 				ScmSymbol prefix=(ScmSymbol)list.getCar();
 				for(Map.Entry<ScmSymbol,ScmSymbol> entry:set.ex2im.entrySet()){
-					entry.setValue(new ScmSymbol(prefix.getValue()+entry.getValue()));
+					entry.setValue(new ScmSymbol(prefix.getValue()+entry.getValue().getValue()));
 				}
 			}else if(car.equals(RENAME)){
-				HashMap<ScmSymbol,ScmSymbol> rename=new HashMap<ScmSymbol,ScmSymbol>();
+				HashMap<ScmSymbol,ScmSymbol> rename=new HashMap<>();
 				ScmList.forEach(list,(c)->rename.put((ScmSymbol)((ScmPair)c).getCar(),(ScmSymbol)((ScmPair)c).getCadr()));
 				for(Map.Entry<ScmSymbol,ScmSymbol> entry:set.ex2im.entrySet())
 					if(rename.containsKey(entry.getValue()))

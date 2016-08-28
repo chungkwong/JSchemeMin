@@ -30,7 +30,6 @@ public class NativeProcedureDefault implements NativeProcedure{
 	}
 	@Override
 	public ScmObject call(ScmObject param) throws Exception{
-		//TODO fill default
 		if(ScmList.getLength(param)<def.length){
 			ScmListBuilder filled=new ScmListBuilder();
 			int i=0;

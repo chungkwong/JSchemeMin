@@ -44,7 +44,7 @@ public class EvaluatorTest{
 			new Evaluator(true).eval(new Parser(expr).nextDatum());
 			Assert.assertTrue(false);
 		}catch(Exception ex){
-
+			Assert.assertTrue(true);
 		}
 	}
 	public void assertStandardOutput(String expr,String result){
@@ -94,6 +94,16 @@ public class EvaluatorTest{
 	@Test
 	public void testImport(){
 		checkLast("(import (scheme cxr)) (cadddr '(1 2 3 4 5))",new ScmInteger(4));
+		checkLast("(import (only (scheme cxr) cadddr)) (cadddr '(1 2 3 4 5))",new ScmInteger(4));
+		checkLast("(import (only (scheme cxr) caddr cadddr)) (cadddr '(1 2 3 4 5))",new ScmInteger(4));
+		checkLast("(import (except (scheme cxr) cadddr)) (caddr '(1 2 3 4 5))",new ScmInteger(3));
+		checkLast("(import (prefix (scheme cxr) kk)) (kkcaddr '(1 2 3 4 5))",new ScmInteger(3));
+		checkLast("(import (rename (scheme cxr) (caddr third))) (third '(1 2 3 4 5))",new ScmInteger(3));
+		checkLast("(import (rename (scheme cxr) (cadddr fourth) (caddr third))) (third '(1 2 3 4 5))",new ScmInteger(3));
+		expectException("(begin (import (rename (scheme cxr) (caddr third))) (caddr '(1 2 3 4 5)))");
+		expectException("(begin (import (prefix (scheme cxr) kk)) (caddr '(1 2 3 4 5)))");
+		expectException("(begin (import (except (scheme cxr) cadddr)) (cadddr '(1 2 3 4 5)))");
+		expectException("(begin (import (except (scheme cxr) caddr cadddr)) (cadddr '(1 2 3 4 5)))");
 	}
 	@Test
 	public void testQuote(){

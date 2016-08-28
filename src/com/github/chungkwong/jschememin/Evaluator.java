@@ -23,7 +23,6 @@ import java.util.*;
  */
 public class Evaluator{
 	private final Environment env;
-	private final HashSet<ScmPair> imported=new HashSet<>();
 	private final Continuation cont=new Continuation();
 	private static final ScmSymbol ok=new ScmSymbol("ok"),fail=new ScmSymbol("fail");
 	public Evaluator(boolean repl){

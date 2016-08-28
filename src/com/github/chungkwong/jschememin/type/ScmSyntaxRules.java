@@ -218,15 +218,12 @@ public class ScmSyntaxRules extends ScmObject{
 				bind.put(temp,new Rename(rename));
 				return rename;
 			}else{
-				return ScmList.toList(quote(Eval.INSTANCE),quote(temp),quote(defEnv));
+				return ScmList.toList(Quote.INSTANCE.getKeyword(),defVal.get());
 			}/* if(env.containsKey(temp)){
 //				return ScmList.toList(quote(Eval.INSTANCE),quote(temp),quote(defEnv));
 				return ScmList.toList(Quote.INSTANCE.getKeyword(),defVal.get());
 			}else
 				return temp;*/
-		}
-		private ScmPair quote(ScmObject obj){
-			return new ScmPair(Quote.INSTANCE.getKeyword(),new ScmPair(obj,ScmNil.NIL));
 		}
 		private ScmObject transformVector(ScmVector temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,Environment env,MultiIndex index){
 			ArrayList<ScmObject> list=new ArrayList<>();
@@ -314,7 +311,7 @@ public class ScmSyntaxRules extends ScmObject{
 			return renameTo;
 		}
 	}
-	class MultiIndex{
+	static class MultiIndex{
 		private final Stack<Integer> indices=new Stack<>();
 		public MultiIndex(){
 			indices.push(0);

@@ -82,7 +82,6 @@ public final class ScmByteVector extends ScmObject{
 	public boolean equals(Object obj){
 		if(!(obj instanceof ScmByteVector))
 			return false;
-		ScmByteVector o=(ScmByteVector)obj;
 		return Arrays.equals(((ScmByteVector)obj).vector,vector);
 	}
 	@Override

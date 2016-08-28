@@ -23,7 +23,7 @@ import java.util.*;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class LibraryManager{
-	private static final HashMap<ScmPair,Library> LIBRARIES=new HashMap<ScmPair,Library>();
+	private static final HashMap<ScmPair,Library> LIBRARIES=new HashMap<>();
 	private static final HashMap<ScmPair,LibraryLoader> NATIVE_LIBRARIES=new HashMap<>();
 	static{
 		addNativeLibrary(Base.INSTANCE);

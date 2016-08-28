@@ -71,9 +71,9 @@ public final class ScmProcedure extends Evaluable{
 			throw new SyntaxException();
 		return env;
 	}
-	class Backtrack{
-		final Environment env;
-		final ScmPair remaining;
+	static class Backtrack{
+		private final Environment env;
+		private final ScmPair remaining;
 		public Backtrack(Environment env,ScmPair remaining){
 			this.env=env;
 			this.remaining=remaining;

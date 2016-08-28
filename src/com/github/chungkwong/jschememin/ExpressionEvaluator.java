@@ -78,7 +78,7 @@ public class ExpressionEvaluator extends Evaluable implements Primitive{
 	public String toExternalRepresentation(){
 		return "apply";
 	}
-	class BackTrace{
+	static class BackTrace{
 		private final ScmPair before, beforeLast;
 		private final ScmObject after;
 		public BackTrace(ScmPair before,ScmPair beforeLast,ScmObject after){

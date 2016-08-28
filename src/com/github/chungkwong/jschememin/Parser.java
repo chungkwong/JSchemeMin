@@ -17,7 +17,7 @@ import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
 public final class Parser{
 	private final Lex lex;
-	private Stack<Level> stack=new Stack<Level>();
+	private Stack<Level> stack=new Stack<>();
 	private final HashMap<DatumLabel,ScmObject> datumRef=new HashMap<>();
 	private final HashMap<DatumLabel,List<Backtrack>> datumBacktrack=new HashMap<>();
 	private static final HashMap<String,ScmSymbol> abbreviation=new HashMap<>();
@@ -101,7 +101,7 @@ public final class Parser{
 		return true;
 	}
 	public ArrayList<ScmObject> getRemainingDatums(){
-		ArrayList<ScmObject> datums=new ArrayList<ScmObject>();
+		ArrayList<ScmObject> datums=new ArrayList<>();
 		ScmObject datum;//=nextDatum();
 		while((datum=nextDatum())!=null){
 		//for(int i=0;i<10;i++){
