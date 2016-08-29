@@ -207,10 +207,27 @@ public class EvaluatorTest{
 		assertExpressionValue("(guard (condition ((assq 'a condition) => cdr) ((assq 'b condition))) (raise (list (cons 'b 23))))","'(b . 23)");
 	}
 	@Test
+	public void testQuasiquote(){
+		assertExpressionValue("`(list ,(+ 1 2) 4)","'(list 3 4)");
+		assertExpressionValue("(let ((name 'a)) `(list ,name ',name))","'(list a (quote a))");
+		assertExpressionValue("`(a ,(+ 1 2) ,@(map abs '(4 -5 6)) b)","'(a 3 4 5 6 b)");
+		//assertExpressionValue("`((foo ,(- 10 3)) ,@(cdr '(c)) . ,(car '(cons)))","'((foo 7) . cons)");
+		assertExpressionValue("`#(10 5 ,(square 2) ,@(map square '(4 3)) 8)","#(10 5 4 16 9 8)");
+		//assertExpressionValue("(let ((foo '(foo bar)) (@baz 'baz)) `(list ,@foo , @baz))","(list foo bar baz)");
+		assertExpressionValue("`(a `(b ,(+ 1 2) ,(foo ,(+ 1 3) d) e) f)","'(a `(b ,(+ 1 2) ,(foo 4 d) e) f)");
+		assertExpressionValue("(let ((name1 'x) (name2 'y)) `(a `(b ,,name1 ,',name2 d) e))",
+				"'(a `(b ,x ,'y d) e)");
+		assertExpressionValue("(quasiquote (list (unquote (+ 1 2)) 4))","(list 3 4)");
+		assertExpressionValue("'(quasiquote (list (unquote (+ 1 2)) 4))","`(list ,(+ 1 2) 4)");
+	}
+	@Test
 	public void testMacro(){
 		assertExpressionValue("(let-syntax ((given-that (syntax-rules () ((given-that test stmt1 stmt2 ...) (if test (begin stmt1 stmt2 ...)))))) (let ((if #t)) (given-that if (set! if 'now)) if))","'now");
 		assertExpressionValue("(let ((x 'outer)) (let-syntax ((m (syntax-rules () ((m) x)))) (let ((x 'inner)) (m))))","'outer");
 		assertExpressionValue("(let ((=> #f)) (cond (#t => 'ok)))","'ok");
+		assertExpressionValue("(let-syntax ((v2l (syntax-rules () ((foo #(x ...)) '(x ...))))) (v2l #()))","'()");
+		assertExpressionValue("(let-syntax ((v2l (syntax-rules () ((foo #(x ...)) '(x ...))))) (v2l #(1 2 3)))","'(1 2 3)");
+		assertExpressionValue("(let-syntax ((v2l (syntax-rules () ((foo #(x y ... z w)) '(w x z y ...))))) (v2l #(1 2 3 4 5)))","'(5 1 4 2 3)");
 	}
 	@Test
 	public void testRecord(){

@@ -151,55 +151,6 @@ public class ScmList{
 		}
 		return node;
 	}
-	public static ScmObject isMemberStrict(ScmObject item,ScmPairOrNil list){
-		while(list instanceof ScmPair){
-			if(((ScmPair)list).getCar().equalsStrict(item))
-				return list;
-			list=(ScmPairOrNil)((ScmPair)list).getCdr();
-		}
-		return ScmBoolean.FALSE;
-	}
-	public static ScmObject isMemberValue(ScmObject item,ScmPairOrNil list){
-		while(list instanceof ScmPair){
-			if(((ScmPair)list).getCar().equalsValue(item))
-				return list;
-			list=(ScmPairOrNil)((ScmPair)list).getCdr();
-		}
-		return ScmBoolean.FALSE;
-	}
-	public static ScmObject isMember(ScmObject item,ScmPairOrNil list){
-		while(list instanceof ScmPair){
-			if(((ScmPair)list).getCar().equals(item))
-				return list;
-			list=(ScmPairOrNil)((ScmPair)list).getCdr();
-		}
-		return ScmBoolean.FALSE;
-	}
-
-	public static ScmObject isKeyStrict(ScmObject item,ScmPairOrNil list){
-		while(list instanceof ScmPair){
-			if(((ScmPair)list).getCaar().equalsStrict(item))
-				return ((ScmPair)list).getCar();
-			list=(ScmPairOrNil)((ScmPair)list).getCdr();
-		}
-		return ScmBoolean.FALSE;
-	}
-	public static ScmObject isKeyValue(ScmObject item,ScmPairOrNil list){
-		while(list instanceof ScmPair){
-			if(((ScmPair)list).getCaar().equalsValue(item))
-				return ((ScmPair)list).getCar();
-			list=(ScmPairOrNil)((ScmPair)list).getCdr();
-		}
-		return ScmBoolean.FALSE;
-	}
-	public static ScmObject isKey(ScmObject item,ScmPairOrNil list){
-		while(list instanceof ScmPair){
-			if(((ScmPair)list).getCaar().equals(item))
-				return ((ScmPair)list).getCar();
-			list=(ScmPairOrNil)((ScmPair)list).getCdr();
-		}
-		return ScmBoolean.FALSE;
-	}
 	public static Stream<ScmObject> asStream(ScmPairOrNil list){
 		Iterable iter=()->new Iterator() {
 			ScmPairOrNil rest=list;

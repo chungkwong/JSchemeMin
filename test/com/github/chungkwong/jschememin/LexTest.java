@@ -259,7 +259,7 @@ public class LexTest{
 		check("_",new ScmSymbol("_"));
 		check("~",new ScmSymbol("~"));
 		check("!",new ScmSymbol("!"));
-		check("|H\\x65;llo|",new ScmSymbol("Hello"));
+		check("|H\\x65;llo\\|world|",new ScmSymbol("Hello|world"));
 		check("|\\x3BB;|",new ScmSymbol("λ"));
 		check("|\\t\\t|",new ScmSymbol("\u0009\u0009"));
 		check("...",new ScmSymbol("..."));

@@ -51,7 +51,6 @@
         ((2) (ref grid i j))
         (else #f)))
     (define (life-print grid)
-      (display "\x1B;[1H\x1B;[J")  ; clear vt100
       (each grid
        (lambda (i j v)
          (display (if v "*" " "))
@@ -76,7 +75,7 @@
                 (grid-make make-grid)))
 
 ;; Initialize a grid with a glider.
-(define grid (make-grid 24 24))
+(define grid (make-grid 5 6))
 (grid-set! grid 1 1 #t)
 (grid-set! grid 2 2 #t)
 (grid-set! grid 3 0 #t)
@@ -84,4 +83,5 @@
 (grid-set! grid 3 2 #t)
 
 ;; Run for 80 iterations.
-(life grid 80)
+(life grid 3)
+(flush-output-port)

@@ -27,7 +27,6 @@
 
 (parameterize ((radix 0))
   (f 12))                                    \ev \scherror%
-(load)
 (exit)
 (make-parameter init)
 (make-parameter init converter )
@@ -35,9 +34,6 @@
 (quasi-quote)
 define-values
 
-`(list ,(+ 1 2) 4)  \ev  (list 3 4)
-(let ((name 'a)) `(list ,name ',name)) %
-          \lev  (list a (quote a))
 `(a ,(+ 1 2) ,@(map abs '(4 -5 6)) b) %
           \lev  (a 3 4 5 6 b)
 `(({\cf foo} ,(- 10 3)) ,@(cdr '(c)) . ,(car '(cons))) %

@@ -642,6 +642,10 @@ public class StandardProcedureTest{
 				+ "(lambda () (add 'disconnect))) "
 				+ "(if (< (length path) 4) (c 'talk2) (reverse path))))",
 				"'(connect talk1 disconnect connect talk2 disconnect)");
+		assertExpressionValue("(call/cc (lambda (x) (dynamic-wind (lambda () (write-char #\\a)) "
+				+ "(lambda () (x 8) (write-char #\\b)) (lambda () (write-char #\\c)))))","8");
+		assertStandardOutput("(call/cc (lambda (x) (dynamic-wind (lambda () (write-char #\\a)) "
+				+ "(lambda () (x 8) (write-char #\\b)) (lambda () (write-char #\\c)))))","ac");
 		assertExpressionValue("(call-with-values (lambda () (values 4 5)) (lambda (a b) b))","5");
 		assertExpressionValue("(call-with-values * -)","-1");
 		assertExpressionValue("(let ((v (make-vector 5))) (for-each (lambda (i) (vector-set! v i (* i i))) '(0 1 2 3 4))  v)"
@@ -839,6 +843,10 @@ public class StandardProcedureTest{
 	}
 	@Test
 	public void testSystem(){
+		assertStandardOutput("(begin (import (scheme load)) (load \"test/com/github/chungkwong/jschememin/lib-example.scm\"))",
+				"   ** \n     *\n  *  *\n **  *\n    * \n" +
+				" *    \n*  *  \n ** * \n **** \n      \n" +
+				"      \n   *  \n    * \n *  * \n      \n");
 		assertExpressionValue("(let () (import (scheme file)) (file-exists? \"test/com/github/chungkwong/jschememin/to_include.scm\"))","#t");
 		assertExpressionValue("(let () (import (scheme file)) (file-exists? \"test/com/github/chungkwong/jschememin/nothing.scm\"))","#f");
 		assertStandardOutput("(with-exception-handler "
