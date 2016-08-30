@@ -313,6 +313,7 @@ public class Base extends NativeLibrary{
 		addPrimitiveType(Quote.INSTANCE);
 		addPrimitiveType(Define.INSTANCE);
 		addPrimitiveType(DefineRecordType.INSTANCE);
+		addPrimitiveType(DefineValues.INSTANCE);
 		addPrimitiveType(DynamicWind.INSTANCE);
 		//addPrimitiveType(DefineLibrary.INSTANCE);
 		//addPrimitiveType(Import.INSTANCE);

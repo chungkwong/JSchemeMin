@@ -171,8 +171,9 @@ public class EvaluatorTest{
 				" (foo (+ x 3)))","45");
 		assertExpressionValue("(let ((x 1) (y 2)) (define-syntax swap! (syntax-rules ()\n" +
 				"((swap! a b) (let ((tmp a)) (set! a b) (set! b tmp))))) (swap! x y) (list x y))","'(2 1)");
-		//assertExpressionValue("(let () (define-values (x y) (integer-sqrt 17)) (list x y))","'(4 1)");
-		//assertExpressionValue("(let () (define-values (x y) (values 1 2)) (+ x y))","3");
+		assertExpressionValue("(let () (define-values (x y) (exact-integer-sqrt 17)) (list x y))","'(4 1)");
+		assertExpressionValue("(let () (define-values (x y) (values 1 2)) (+ x y))","3");
+		assertExpressionValue("(let () (define-values z (values 1 2)) z)","'(1 2)");
 	}
 	@Test
 	public void testIteration(){
@@ -211,14 +212,28 @@ public class EvaluatorTest{
 		assertExpressionValue("`(list ,(+ 1 2) 4)","'(list 3 4)");
 		assertExpressionValue("(let ((name 'a)) `(list ,name ',name))","'(list a (quote a))");
 		assertExpressionValue("`(a ,(+ 1 2) ,@(map abs '(4 -5 6)) b)","'(a 3 4 5 6 b)");
-		//assertExpressionValue("`((foo ,(- 10 3)) ,@(cdr '(c)) . ,(car '(cons)))","'((foo 7) . cons)");
+		assertExpressionValue("`((foo ,(- 10 3)) ,@(cdr '(c)) . ,(car '(cons)))","'((foo 7) . cons)");
 		assertExpressionValue("`#(10 5 ,(square 2) ,@(map square '(4 3)) 8)","#(10 5 4 16 9 8)");
-		//assertExpressionValue("(let ((foo '(foo bar)) (@baz 'baz)) `(list ,@foo , @baz))","(list foo bar baz)");
+		assertExpressionValue("(let ((foo '(foo bar)) (kbaz 'baz)) `(list ,@foo , kbaz))","'(list foo bar baz)");
 		assertExpressionValue("`(a `(b ,(+ 1 2) ,(foo ,(+ 1 3) d) e) f)","'(a `(b ,(+ 1 2) ,(foo 4 d) e) f)");
 		assertExpressionValue("(let ((name1 'x) (name2 'y)) `(a `(b ,,name1 ,',name2 d) e))",
 				"'(a `(b ,x ,'y d) e)");
-		assertExpressionValue("(quasiquote (list (unquote (+ 1 2)) 4))","(list 3 4)");
-		assertExpressionValue("'(quasiquote (list (unquote (+ 1 2)) 4))","`(list ,(+ 1 2) 4)");
+		assertExpressionValue("(quasiquote (list (unquote (+ 1 2)) 4))","'(list 3 4)");
+		assertExpressionValue("'(quasiquote (list (unquote (+ 1 2)) 4))","'`(list ,(+ 1 2) 4)");
+	}
+	@Test
+	public void testParameterize(){
+		assertExpressionValue("(let ((q (make-parameter 5))) (q))","5");
+		assertExpressionValue("(let ((q (make-parameter 5 square))) (q))","25");
+		assertExpressionValue("(let ((q (make-parameter 5 square))) (q) (q))","25");
+		assertExpressionValue("(let* ((radix (make-parameter 10 (lambda (x) (if (and (exact-integer? x) (<= 2 x 16)) x (error \"invalid radix\")))))\n" +
+"(f (lambda (n) (number->string n (radix))))) (f 12))","\"12\"");
+		assertExpressionValue("(let* ((radix (make-parameter 10 (lambda (x) (if (and (exact-integer? x) (<= 2 x 16)) x (error \"invalid radix\")))))\n" +
+"(f (lambda (n) (number->string n (radix))))) (parameterize ((radix 2)) (f 12)))","\"1100\"");
+		assertExpressionValue("(let* ((radix (make-parameter 10 (lambda (x) (if (and (exact-integer? x) (<= 2 x 16)) x (error \"invalid radix\")))))\n" +
+"(f (lambda (n) (number->string n (radix))))) (parameterize ((radix 2)) (f 12)) (f 12))","\"12\"");
+		expectException("(let* ((radix (make-parameter 10 (lambda (x) (if (and (exact-integer? x) (<= 2 x 16)) x (error \"invalid radix\")))))\n" +
+"(f (lambda (n) (number->string n (radix))))) (parameterize ((radix 0)) (f 12)))");
 	}
 	@Test
 	public void testMacro(){

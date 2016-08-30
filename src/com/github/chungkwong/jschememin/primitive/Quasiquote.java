@@ -33,9 +33,7 @@ public class Quasiquote extends BasicConstruct implements Primitive{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
-		System.out.println(ScmList.first(param));
 		ScmObject val=ScmList.toList(QUOTE,quasiquote(ScmList.first(param),1,env));
-		System.out.println(val);
 		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.singleton(val),env);
 	}
 	private static ScmObject quasiquote(ScmObject obj,int depth,Environment env){
@@ -47,13 +45,23 @@ public class Quasiquote extends BasicConstruct implements Primitive{
 			return new ScmVector(vector);
 		}else if(obj instanceof ScmPair){
 			if(ScmList.first(obj).equals(UNQUOTE)){
-				return quasiquote(ScmList.second(obj),depth-1,env);
+				ScmObject content=quasiquote(ScmList.second(obj),depth-1,env);
+				return depth==1?content:ScmList.toList(UNQUOTE,content);
 			}else if(ScmList.first(obj).equals(QUASIQUOTE)){
-				return quasiquote(ScmList.second(obj),depth+1,env);
+				ScmObject content=quasiquote(ScmList.second(obj),depth+1,env);
+				return ScmList.toList(QUASIQUOTE,content);
+			}else if(ScmList.first(obj).equals(QUOTE)){
+				ScmObject content=quasiquote(ScmList.second(obj),depth,env);
+				return ScmList.toList(QUOTE,content);
 			}else{
 				ScmListBuilder buf=new ScmListBuilder();
 				while(obj instanceof ScmPair){
-					processList(ScmList.first(obj),buf,depth,env);
+					ScmObject curr=ScmList.first(obj);
+					if(curr instanceof ScmSymbol&&(curr.equals(UNQUOTE)||curr.equals(QUASIQUOTE)||curr.equals(QUOTE))){
+						buf.setLast(quasiquote(obj,depth,env));
+						return buf.toList();
+					}
+					processList(curr,buf,depth,env);
 					obj=((ScmPair)obj).getCdr();
 				}
 				if(!(obj instanceof ScmNil))
@@ -64,15 +72,25 @@ public class Quasiquote extends BasicConstruct implements Primitive{
 			return obj;
 	}
 	private static void processVector(ScmObject obj,List<ScmObject> vector,int depth,Environment env){
-		if(depth==1&&obj instanceof ScmPair&&ScmList.first(obj).equals(UNQUOTE_SLICING)){
-			ScmList.forEach(quasiquote(ScmList.second(obj),depth-1,env),(o)->vector.add(o));
+		if(obj instanceof ScmPair&&ScmList.first(obj).equals(UNQUOTE_SLICING)){
+			ScmObject content=quasiquote(ScmList.second(obj),depth-1,env);
+			if(depth==1)
+				ScmList.forEach(content,(o)->vector.add(o));
+			else{
+				vector.add(ScmList.toList(UNQUOTE_SLICING,content));
+			}
 		}else{
 			vector.add(quasiquote(obj,depth,env));
 		}
 	}
 	private static void processList(ScmObject obj,ScmListBuilder buf,int depth,Environment env){
 		if(obj instanceof ScmPair&&ScmList.first(obj).equals(UNQUOTE_SLICING)){
-			ScmList.forEach(quasiquote(ScmList.second(obj),depth-1,env),(o)->buf.add(o));
+			ScmObject content=quasiquote(ScmList.second(obj),depth-1,env);
+			if(depth==1)
+				ScmList.forEach(content,(o)->buf.add(o));
+			else{
+				buf.add(ScmList.toList(UNQUOTE_SLICING,content));
+			}
 		}else{
 			buf.add(quasiquote(obj,depth,env));
 		}
