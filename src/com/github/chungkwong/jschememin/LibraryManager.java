@@ -32,6 +32,7 @@ public class LibraryManager{
 		addNativeLibrary(Eval.INSTANCE);
 		addNativeLibrary(File.INSTANCE);
 		addNativeLibrary(Inexact.INSTANCE);
+		addNativeLibrary(Java.INSTANCE);
 		addNativeLibrary(Lazy.INSTANCE);
 		addNativeLibrary(Load.INSTANCE);
 		addNativeLibrary(ProcessContext.INSTANCE);
