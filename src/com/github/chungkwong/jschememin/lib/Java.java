@@ -19,7 +19,7 @@ import com.github.chungkwong.jschememin.*;
 import static com.github.chungkwong.jschememin.lib.Utility.cadr;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
-import java.lang.reflect.*;
+import java.lang.invoke.*;
 import java.util.*;
 /**
  *
@@ -32,7 +32,14 @@ public class Java extends NativeLibrary{
 	}
 	@Override
 	protected void init(Library lib){
+		addNativeProcedure("null",(o)->new ScmJavaObject(null));
+		addNativeProcedure("symbol->String",(o)->new ScmJavaObject(((ScmSymbol)car(o)).getValue()));
+		addNativeProcedure("string->String",(o)->new ScmJavaObject(((ScmString)car(o)).getValue()));
+		addNativeProcedure("String->symbol",(o)->new ScmSymbol((String)((ScmJavaObject)car(o)).getJavaObject()));
+		addNativeProcedure("String->string",(o)->new ScmString((String)((ScmJavaObject)car(o)).getJavaObject()));
 		addNativeProcedure("invoke",(o)->invoke(o));
+		addNativeProcedure("invoke-static",(o)->invokeStatic(o));
+		addNativeProcedure("cast-to",(o)->cast(o));
 	}
 	private static Object[] toArray(ScmObject obj){
 		int length=ScmList.getLength(obj);
@@ -43,22 +50,41 @@ public class Java extends NativeLibrary{
 		}
 		return array;
 	}
-	protected ScmObject invoke(ScmObject param) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+	private ScmObject invoke(ScmObject param) throws ClassNotFoundException{
 		ScmObject subject=car(param);
-		Object obj;
-		Class cls;
-		if(subject instanceof ScmSymbol){
-			cls=Class.forName(((ScmSymbol)subject).getValue());
-			obj=null;
-		}else{
-			obj=((ScmJavaObject)subject).getJavaObject();
-			cls=obj.getClass();
-		}
+		Object obj=((ScmJavaObject)subject).getJavaObject();
+		Class cls=obj.getClass();
 		String method=((ScmSymbol)cadr(param)).getValue();
-		Object[] arguments=toArray(((ScmPair)param).getCddr());;
+		Object[] arguments=toArray(((ScmPair)param).getCddr());
 		Object retValue;
 		Class[] paraType=Arrays.stream(arguments).map((arg)->arg.getClass()).toArray(Class[]::new);
-		retValue=cls.getMethod(method,paraType).invoke(obj,arguments);
+		try{
+			retValue=MethodHandles.lookup().findVirtual(cls,method,MethodType.methodType(Object.class,paraType)).invoke(obj,arguments);
+		}catch(Throwable ex){
+			throw new RuntimeException(ex);
+		}
+		//retValue=cls.getMethod(method,paraType).invoke(obj,arguments);
 		return new ScmJavaObject(retValue);
+	}
+	private ScmObject invokeStatic(ScmObject param) throws ClassNotFoundException{
+		ScmObject subject=car(param);
+		Class cls=Class.forName(((ScmSymbol)subject).getValue());
+		String method=((ScmSymbol)cadr(param)).getValue();
+		Object[] arguments=toArray(((ScmPair)param).getCddr());
+		Object retValue;
+		Class[] paraType=Arrays.stream(arguments).map((arg)->arg.getClass()).toArray(Class[]::new);
+		try{
+			retValue=MethodHandles.lookup().findStatic(cls,method,MethodType.methodType(Object.class,paraType)).invoke(arguments);
+		}catch(Throwable ex){
+			throw new RuntimeException(ex);
+		}
+		//retValue=cls.getMethod(method,paraType).invoke(obj,arguments);
+		return new ScmJavaObject(retValue);
+	}
+	private ScmObject cast(ScmObject param) throws ClassNotFoundException{
+		return new ScmJavaObject(Class.forName(((ScmSymbol)cadr(param)).getValue()).cast(((ScmJavaObject)car(param)).getJavaObject()));
+	}
+	public static void main(String[] args) throws Throwable{
+
 	}
 }
