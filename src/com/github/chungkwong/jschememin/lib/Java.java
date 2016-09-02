@@ -21,6 +21,7 @@ import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
 import java.lang.invoke.*;
 import java.util.*;
+import java.util.stream.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -50,41 +51,50 @@ public class Java extends NativeLibrary{
 		}
 		return array;
 	}
-	private ScmObject invoke(ScmObject param) throws ClassNotFoundException{
-		ScmObject subject=car(param);
-		Object obj=((ScmJavaObject)subject).getJavaObject();
+	private static Class[] toClassArray(Object[] args){
+		Class[] types=new Class[args.length];
+		for(int i=0;i<args.length;i++)
+			types[i]=args[i].getClass();
+		return types;
+	}
+	private ScmObject invoke(ScmObject param) throws ClassNotFoundException, NoSuchMethodException{//TODO Improve performance
+		Object obj=((ScmJavaObject)car(param)).getJavaObject();
 		Class cls=obj.getClass();
 		String method=((ScmSymbol)cadr(param)).getValue();
 		Object[] arguments=toArray(((ScmPair)param).getCddr());
-		Object retValue;
-		Class[] paraType=Arrays.stream(arguments).map((arg)->arg.getClass()).toArray(Class[]::new);
-		try{
-			retValue=MethodHandles.lookup().findVirtual(cls,method,MethodType.methodType(Object.class,paraType)).invoke(obj,arguments);
-		}catch(Throwable ex){
-			throw new RuntimeException(ex);
-		}
-		//retValue=cls.getMethod(method,paraType).invoke(obj,arguments);
-		return new ScmJavaObject(retValue);
+		Class[] paraType=toClassArray(arguments);
+		ArrayList<Object> args=new ArrayList<>(arguments.length+1);
+		args.add(obj);
+		Arrays.stream(arguments).forEach((o)->args.add(o));
+		for(Class retType:getPossibleReturnType(cls,method))
+			try{
+				return new ScmJavaObject(MethodHandles.lookup().findVirtual(cls,method,MethodType.methodType(retType,paraType))
+						.invokeWithArguments(args));
+			}catch(Throwable ex){
+
+			}
+		throw new NoSuchMethodException(method);
 	}
-	private ScmObject invokeStatic(ScmObject param) throws ClassNotFoundException{
-		ScmObject subject=car(param);
-		Class cls=Class.forName(((ScmSymbol)subject).getValue());
+	private ScmObject invokeStatic(ScmObject param) throws ClassNotFoundException, NoSuchMethodException{//TODO Improve performance
+		Class cls=Class.forName(((ScmSymbol)car(param)).getValue());
 		String method=((ScmSymbol)cadr(param)).getValue();
 		Object[] arguments=toArray(((ScmPair)param).getCddr());
-		Object retValue;
-		Class[] paraType=Arrays.stream(arguments).map((arg)->arg.getClass()).toArray(Class[]::new);
-		try{
-			retValue=MethodHandles.lookup().findStatic(cls,method,MethodType.methodType(Object.class,paraType)).invoke(arguments);
-		}catch(Throwable ex){
-			throw new RuntimeException(ex);
-		}
-		//retValue=cls.getMethod(method,paraType).invoke(obj,arguments);
-		return new ScmJavaObject(retValue);
+		Class[] paraType=toClassArray(arguments);
+		for(Class retType:getPossibleReturnType(cls,method))
+			try{
+				return new ScmJavaObject(MethodHandles.lookup().findStatic(cls,method,MethodType.methodType(retType,paraType)).invokeWithArguments(Arrays.asList(arguments)));
+			}catch(Throwable ex){
+
+			}
+		throw new NoSuchMethodException(method);
 	}
 	private ScmObject cast(ScmObject param) throws ClassNotFoundException{
 		return new ScmJavaObject(Class.forName(((ScmSymbol)cadr(param)).getValue()).cast(((ScmJavaObject)car(param)).getJavaObject()));
 	}
-	public static void main(String[] args) throws Throwable{
-
+	private static Set<Class> getPossibleReturnType(Class cls,String method){
+		return Arrays.stream(cls.getMethods()).filter((m)->m.getName().equals(method)).map((m)->m.getReturnType()).collect(Collectors.toSet());
+	}
+	public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException{
+		System.err.println(MethodHandles.lookup().findStatic(Collections.class,"singleton",MethodType.genericMethodType(1)));
 	}
 }

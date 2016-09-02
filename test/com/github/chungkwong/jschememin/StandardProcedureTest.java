@@ -15,8 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin;
-import com.github.chungkwong.jschememin.type.*;
-import java.io.*;
+import static com.github.chungkwong.jschememin.SchemeAssert.assertExpressionValue;
+import static com.github.chungkwong.jschememin.SchemeAssert.assertStandardOutput;
+import static com.github.chungkwong.jschememin.SchemeAssert.expectException;
 import org.junit.*;
 /**
  *
@@ -24,29 +25,6 @@ import org.junit.*;
  */
 public class StandardProcedureTest{
 	public StandardProcedureTest(){
-	}
-	public void assertExpressionValue(String expr,String result){
-		ScmObject gotval=new Evaluator(true).eval(new Parser(expr).nextDatum());
-		ScmObject expectval=new Evaluator(true).eval(new Parser(result).nextDatum());
-		Assert.assertEquals(gotval,expectval);
-	}
-	public void assertStandardOutput(String expr,String result){
-		StringWriter out=new StringWriter();
-		ScmPort.CURRENT_OUTPUT=new ScmTextualOutputPort(out);
-		try{
-			new Evaluator(true).eval(new Parser(expr).nextDatum());
-		}catch(RuntimeException ex){
-
-		}
-		Assert.assertEquals(out.toString(),result);
-	}
-	void expectException(String expr){
-		try{
-			new Evaluator(true).eval(new Parser(expr).nextDatum());
-			Assert.assertTrue(false);
-		}catch(Throwable ex){
-
-		}
 	}
 	@Test
 	public void testEquivalent(){

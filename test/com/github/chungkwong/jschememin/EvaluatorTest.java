@@ -16,8 +16,10 @@
  */
 package com.github.chungkwong.jschememin;
 
+import static com.github.chungkwong.jschememin.SchemeAssert.assertExpressionValue;
+import static com.github.chungkwong.jschememin.SchemeAssert.assertStandardOutput;
+import static com.github.chungkwong.jschememin.SchemeAssert.expectException;
 import com.github.chungkwong.jschememin.type.*;
-import java.io.*;
 import org.junit.*;
 
 /**
@@ -33,29 +35,6 @@ public class EvaluatorTest{
 		Evaluator evaluator=new Evaluator(true);
 		Object[] result=new Parser(expr).getRemainingDatums().stream().map((d)->evaluator.eval(d)).toArray();
 		Assert.assertEquals(result[result.length-1],obj);
-	}
-	public void assertExpressionValue(String expr,String result){
-		ScmObject gotval=new Evaluator(true).eval(new Parser(expr).nextDatum());
-		ScmObject expectval=new Evaluator(true).eval(new Parser(result).nextDatum());
-		Assert.assertEquals(gotval,expectval);
-	}
-	void expectException(String expr){
-		try{
-			new Evaluator(true).eval(new Parser(expr).nextDatum());
-			Assert.assertTrue(false);
-		}catch(Exception ex){
-			Assert.assertTrue(true);
-		}
-	}
-	public void assertStandardOutput(String expr,String result){
-		StringWriter out=new StringWriter();
-		ScmPort.CURRENT_OUTPUT=new ScmTextualOutputPort(out);
-		try{
-			new Evaluator(true).eval(new Parser(expr).nextDatum());
-		}catch(RuntimeException ex){
-
-		}
-		Assert.assertEquals(out.toString(),result);
 	}
 	@Test
 	public void testIf(){
