@@ -25,5 +25,8 @@ public class JavaInteractionTest{
 	@Test
 	public void test(){
 		assertExpressionValue("(begin (import (java)) (String->string (invoke (string->String \"  hello\n\") 'trim)))","\"hello\"");
+		assertExpressionValue("(begin (import (java)) (String->string (invoke-static 'java.lang.String 'join (string->String \"hello \") (string->String \"world\"))))","\"hello world\"");
+		assertExpressionValue("(begin (import (java)) (+ 2 (Integer->integer (integer->Integer 4)))","6");
+
 	}
 }
