@@ -49,10 +49,14 @@ public class ScmError extends ScmObject{
 	public boolean isSelfevaluating(){
 		return true;
 	}
+	public static RuntimeException toRuntimeException(Throwable t){
+		return new ScmException(toScmObject(t));
+	}
 	public static RuntimeException toException(ScmObject obj){
 		return new ScmException(obj);
 	}
-	public static ScmObject toScmObject(RuntimeException obj){
+	public static ScmObject toScmObject(Throwable obj){
+		obj.printStackTrace();
 		if(obj instanceof ScmException)
 			return ((ScmException)obj).getObject();
 		return new ScmError(new ScmString(obj.getMessage()==null?"":obj.getMessage()),ScmNil.NIL,ErrorType.OTHER);

@@ -26,7 +26,11 @@ public class JavaInteractionTest{
 	public void test(){
 		assertExpressionValue("(begin (import (java)) (String->string (invoke (string->String \"  hello\n\") 'trim)))","\"hello\"");
 		assertExpressionValue("(begin (import (java)) (String->string (invoke-static 'java.lang.String 'join (string->String \"hello \") (string->String \"world\"))))","\"hello world\"");
+		assertExpressionValue("(begin (import (java)) (String->string (invoke-static 'java.lang.System 'getProperty (string->String \"Hello\") (string->String \"World\"))))","\"World\"");
 		assertExpressionValue("(begin (import (java)) (+ 2 (Integer->integer (integer->Integer 4)))","6");
+		assertExpressionValue("(begin (import (java)) (instanceof (string->String \"hello\") 'java.lang.String))","#t");
+		assertExpressionValue("(begin (import (java)) (instanceof (string->String \"hello\") 'java.lang.Object))","#t");
+		assertExpressionValue("(begin (import (java)) (instanceof (string->String \"hello\") 'java.lang.Integer))","#f");
 
 	}
 }

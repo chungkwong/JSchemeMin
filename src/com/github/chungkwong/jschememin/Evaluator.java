@@ -42,8 +42,11 @@ public class Evaluator{
 	public static void main(String[] args) throws Exception{
 		Scanner in=new Scanner(System.in);
 		Evaluator eval=new Evaluator(true);
-		while(in.hasNextLine()){
-			new Parser(in.nextLine()).getRemainingDatums().forEach((d)->System.out.println(eval.eval(d)));
-		}
+		while(in.hasNextLine())
+			try{
+				new Parser(in.nextLine()).getRemainingDatums().forEach((d)->System.out.println(eval.eval(d)));
+			}catch(RuntimeException ex){
+				ex.printStackTrace();
+			}
 	}
 }

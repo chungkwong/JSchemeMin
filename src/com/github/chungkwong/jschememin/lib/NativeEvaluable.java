@@ -39,7 +39,7 @@ public class NativeEvaluable extends Evaluable{
 		try{
 			cont.ret(proc.call(param));
 		}catch(Exception ex){
-			throw ex instanceof RuntimeException?(RuntimeException)ex:new RuntimeException(ex);
+			throw ScmError.toRuntimeException(ex);
 		}
 	}
 }
