@@ -13,7 +13,7 @@
  *
  */
 package com.github.chungkwong.jschememin.type;
-
+import java.math.*;
 public abstract class ScmReal extends ScmComplex{
 	public abstract boolean needPlusSign();
 	@Override
@@ -100,5 +100,13 @@ public abstract class ScmReal extends ScmComplex{
 			return -1;
 		else// if(a==ScmSpecialReal.POSITIVE_INF||b==ScmSpecialReal.NEGATIVE_INF)
 			return 1;
+	}
+	public static ScmReal valueOf(double d){
+		if(Double.isNaN(d))
+			return ScmSpecialReal.POSITIVE_NAN;
+		else if(Double.isInfinite(d))
+			return d>0?ScmSpecialReal.POSITIVE_INF:ScmSpecialReal.NEGATIVE_INF;
+		else
+			return new ScmFloatingPointNumber(BigDecimal.valueOf(d));
 	}
 }

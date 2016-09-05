@@ -23,6 +23,7 @@ import static com.github.chungkwong.jschememin.lib.Utility.cdr;
 import com.github.chungkwong.jschememin.type.*;
 import java.lang.invoke.*;
 import java.lang.reflect.*;
+import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 /**
@@ -45,7 +46,14 @@ public class Java extends NativeLibrary{
 		addNativeProcedure("String->string",(o)->new ScmString((String)((ScmJavaObject)car(o)).getJavaObject()));
 		addNativeProcedure("integer->Integer",(o)->new ScmJavaObject(((ScmComplex)car(o)).intValueExact()));
 		addNativeProcedure("Integer->integer",(o)->new ScmInteger((Integer)((ScmJavaObject)car(o)).getJavaObject()));
-
+		addNativeProcedure("integer->BigInteger",(o)->new ScmJavaObject(((ScmComplex)car(o)).toScmInteger().getValue()));
+		addNativeProcedure("BigInteger->integer",(o)->new ScmInteger((BigInteger)((ScmJavaObject)car(o)).getJavaObject()));
+		addNativeProcedure("real->Double",(o)->new ScmJavaObject(((ScmComplex)car(o)).toScmReal().toDouble()));
+		addNativeProcedure("Double->real",(o)->ScmReal.valueOf((Double)((ScmJavaObject)car(o)).getJavaObject()));
+		addNativeProcedure("real->BigDecimal",(o)->new ScmJavaObject(((ScmFloatingPointNumber)((ScmComplex)car(o)).toScmReal().toInExact()).getValue()));
+		addNativeProcedure("BigDecimal->real",(o)->new ScmFloatingPointNumber((BigDecimal)((ScmJavaObject)car(o)).getJavaObject()));
+		addNativeProcedure("bytevector->ByteArray",(o)->new ScmJavaObject(((ScmByteVector)car(o)).getByteArray()));
+		addNativeProcedure("ByteArray->bytevector",(o)->new ScmByteVector((byte[])((ScmJavaObject)car(o)).getJavaObject()));
 		addNativeProcedure("instanceof",(o)->is(o));
 		addNativeProcedure("construct",(o)->construct(o));
 		addNativeProcedure("invoke",(o)->invoke(o));
@@ -146,9 +154,10 @@ public class Java extends NativeLibrary{
 	private static Object[] adjustForVarargs(Object[] args,Executable m){
 		if(m.isVarArgs()){
 			Object[] arguments=new Object[m.getParameterCount()];
-			for(int i=0;i<arguments.length-1;i++)
+			int len=arguments.length-1;
+			for(int i=0;i<len;i++)
 				arguments[i]=args[i];
-			arguments[arguments.length-1]=Arrays.copyOfRange(args,arguments.length-1,args.length);
+			arguments[len]=Arrays.copyOfRange(args,len,args.length,(Class)m.getParameterTypes()[len]);
 			return arguments;
 		}else{
 			return args;
