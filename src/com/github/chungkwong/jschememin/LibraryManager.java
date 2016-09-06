@@ -33,6 +33,7 @@ public class LibraryManager{
 		addNativeLibrary(File.INSTANCE);
 		addNativeLibrary(Inexact.INSTANCE);
 		addNativeLibrary(Java.INSTANCE);
+		addNativeLibrary(JSchemeMin.INSTANCE);
 		addNativeLibrary(Lazy.INSTANCE);
 		addNativeLibrary(Load.INSTANCE);
 		addNativeLibrary(ProcessContext.INSTANCE);
@@ -51,6 +52,9 @@ public class LibraryManager{
 	}
 	public static void addLibrary(Library lib){
 		LIBRARIES.put(lib.getName(),lib);
+	}
+	public static boolean hasLibrary(ScmPair name){
+		return LIBRARIES.containsKey(name)||NATIVE_LIBRARIES.containsKey(name);
 	}
 	public static Library getLibrary(ScmPair name){
 		if(LIBRARIES.containsKey(name))

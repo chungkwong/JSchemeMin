@@ -83,6 +83,10 @@ public class EvaluatorTest{
 		expectException("(begin (import (prefix (scheme cxr) kk)) (caddr '(1 2 3 4 5)))");
 		expectException("(begin (import (except (scheme cxr) cadddr)) (cadddr '(1 2 3 4 5)))");
 		expectException("(begin (import (except (scheme cxr) caddr cadddr)) (cadddr '(1 2 3 4 5)))");
+		assertExpressionValue("(begin (import (jschememin)) (library-exists? '(scheme base)))","#t");
+		assertExpressionValue("(begin (import (jschememin)) (library-exists? '(scheme cxr)))","#t");
+		assertExpressionValue("(begin (import (jschememin)) (library-exists? '(java)))","#t");
+		assertExpressionValue("(begin (import (jschememin)) (library-exists? '(java nonexist)))","#f");
 	}
 	@Test
 	public void testQuote(){
@@ -213,6 +217,26 @@ public class EvaluatorTest{
 "(f (lambda (n) (number->string n (radix))))) (parameterize ((radix 2)) (f 12)) (f 12))","\"12\"");
 		expectException("(let* ((radix (make-parameter 10 (lambda (x) (if (and (exact-integer? x) (<= 2 x 16)) x (error \"invalid radix\")))))\n" +
 "(f (lambda (n) (number->string n (radix))))) (parameterize ((radix 0)) (f 12)))");
+	}
+	@Test
+	public void testCondExpand(){
+		assertExpressionValue("(cond-expand (else 5 #f))","#f");
+		assertExpressionValue("(cond-expand (r7rs 5 #f))","#f");
+		assertExpressionValue("(cond-expand (r7rs 5 #f) (else #t))","#f");
+		assertExpressionValue("(cond-expand (r2rs 5 #f) (else #t))","#t");
+		assertExpressionValue("(cond-expand ((and) 5 #f) (else #t))","#f");
+		assertExpressionValue("(cond-expand ((and r7rs) 5 #f) (else #t))","#f");
+		assertExpressionValue("(cond-expand ((and r2rs) 5 #f) (else #t))","#t");
+		assertExpressionValue("(cond-expand ((and r7rs jvm) 5 #f) (else #t))","#f");
+		assertExpressionValue("(cond-expand ((and r7rs r2rs) 5 #f) (else #t))","#t");
+		assertExpressionValue("(cond-expand ((and r2rs r7rs) 5 #f) (else #t))","#t");
+		assertExpressionValue("(cond-expand ((or) 5 #f) (else #t))","#t");
+		assertExpressionValue("(cond-expand ((or r7rs) 5 #f) (else #t))","#f");
+		assertExpressionValue("(cond-expand ((or r2rs) 5 #f) (else #t))","#t");
+		assertExpressionValue("(cond-expand ((or r7rs jvm) 5 #f) (else #t))","#f");
+		assertExpressionValue("(cond-expand ((or r7rs r2rs) 5 #f) (else #t))","#f");
+		assertExpressionValue("(cond-expand ((or r2rs r7rs) 5 #f) (else #t))","#f");
+		assertExpressionValue("(cond-expand ((or r2rs r4rs) 5 #f) (else #t))","#t");
 	}
 	@Test
 	public void testMacro(){

@@ -346,66 +346,6 @@
          (begin result1 result2 ...)
          (guard-aux reraise clause1 clause2 ...)))))
 
-
-(define-syntax cond-expand
-  ;; Extend this to mention all feature ids and libraries
-  (syntax-rules (and or not else r7rs library scheme base)
-    ((cond-expand)
-     (syntax-error "Unfulfilled cond-expand"))
-    ((cond-expand (else body ...))
-     (begin body ...))
-    ((cond-expand ((and) body ...) more-clauses ...)
-     (begin body ...))
-    ((cond-expand ((and req1 req2 ...) body ...)
-                  more-clauses ...)
-     (cond-expand
-       (req1
-         (cond-expand
-           ((and req2 ...) body ...)
-           more-clauses ...))
-       more-clauses ...))
-    ((cond-expand ((or) body ...) more-clauses ...)
-     (cond-expand more-clauses ...))
-    ((cond-expand ((or req1 req2 ...) body ...)
-                  more-clauses ...)
-     (cond-expand
-       (req1
-        (begin body ...))
-       (else
-        (cond-expand
-           ((or req2 ...) body ...)
-           more-clauses ...))))
-    ((cond-expand ((not req) body ...)
-                  more-clauses ...)
-     (cond-expand
-       (req
-         (cond-expand more-clauses ...))
-       (else body ...)))
-    ((cond-expand (r7rs body ...)
-                  more-clauses ...)
-       (begin body ...))
-    ;; Add clauses here for each
-    ;; supported feature identifier.
-    ;; Samples:
-    ;; ((cond-expand (exact-closed body ...)
-    ;;               more-clauses ...)
-    ;;   (begin body ...))
-    ;; ((cond-expand (ieee-float body ...)
-    ;;               more-clauses ...)
-    ;;   (begin body ...))
-    ((cond-expand ((library (scheme base))
-                   body ...)
-                  more-clauses ...)
-      (begin body ...))
-    ;; Add clauses here for each library
-    ((cond-expand (feature-id body ...)
-                  more-clauses ...)
-       (cond-expand more-clauses ...))
-    ((cond-expand ((library (name ...))
-                   body ...)
-                  more-clauses ...)
-       (cond-expand more-clauses ...))))
-
 (define (values . things)
   (call-with-current-continuation
     (lambda (cont) (apply cont things))))
@@ -529,3 +469,50 @@
                          #t))))
         (string-for-each-range lists 0 (apply min (map string-length lists)))))
 (define call/cc call-with-current-continuation)
+
+
+(define-syntax cond-expand
+  ;; Extend this to mention all feature ids and libraries
+  (syntax-rules (and or not else library)
+    ((cond-expand)
+     (syntax-error "Unfulfilled cond-expand"))
+    ((cond-expand (else body ...))
+     (begin body ...))
+    ((cond-expand ((and) body ...) more-clauses ...)
+     (begin body ...))
+    ((cond-expand ((and req1 req2 ...) body ...)
+                  more-clauses ...)
+     (cond-expand
+       (req1
+         (cond-expand
+           ((and req2 ...) body ...)
+           more-clauses ...))
+       more-clauses ...))
+    ((cond-expand ((or) body ...) more-clauses ...)
+     (cond-expand more-clauses ...))
+    ((cond-expand ((or req1 req2 ...) body ...)
+                  more-clauses ...)
+     (cond-expand
+       (req1
+        (begin body ...))
+       (else
+        (cond-expand
+           ((or req2 ...) body ...)
+           more-clauses ...))))
+    ((cond-expand ((not req) body ...)
+                  more-clauses ...)
+     (cond-expand
+       (req
+         (cond-expand more-clauses ...))
+       (else body ...)))
+    ((cond-expand ((library (name ...))
+                   body ...)
+                  more-clauses ...)
+       (if (begin (import (jschememin)) (library-exists? '(name ...)))
+           (begin body ...)
+           (cond-expand more-clauses ...)))
+    ((cond-expand (feature-id body ...)
+                  more-clauses ...)
+       (if (memq 'feature-id (features))
+           (begin body ...)
+           (cond-expand more-clauses ...)))))
