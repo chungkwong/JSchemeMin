@@ -62,6 +62,6 @@ public class LibraryManager{
 		else if(NATIVE_LIBRARIES.containsKey(name))
 			return NATIVE_LIBRARIES.get(name).getLibrary();
 		else
-			throw new RuntimeException();
+			throw new RuntimeException("Library not found: "+name);
 	}
 }

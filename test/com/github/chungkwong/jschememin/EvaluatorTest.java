@@ -224,6 +224,8 @@ public class EvaluatorTest{
 		assertExpressionValue("(cond-expand (r7rs 5 #f))","#f");
 		assertExpressionValue("(cond-expand (r7rs 5 #f) (else #t))","#f");
 		assertExpressionValue("(cond-expand (r2rs 5 #f) (else #t))","#t");
+		assertExpressionValue("(cond-expand ((library (scheme base)) 5 #f) (else #t))","#f");
+		assertExpressionValue("(cond-expand ((library (bad)) 5 #f) (else #t))","#t");
 		assertExpressionValue("(cond-expand ((and) 5 #f) (else #t))","#f");
 		assertExpressionValue("(cond-expand ((and r7rs) 5 #f) (else #t))","#f");
 		assertExpressionValue("(cond-expand ((and r2rs) 5 #f) (else #t))","#t");
