@@ -60,7 +60,6 @@ public class EvaluatorTest{
 		assertExpressionValue("(begin (import (scheme case-lambda)) (let ((range (case-lambda ((e) 3) ((b e) 4)))) (range 7 7)))","4");
 		assertExpressionValue("(begin (import (scheme case-lambda)) (letrec ((range (case-lambda ((e) (range 0 e)) ((b e) (do ((r '() (cons e r)) (e (- e 1) (- e 1))) ((< e b) r)))))) (range 3)))","'(0 1 2)");
 		assertExpressionValue("(begin (import (scheme case-lambda)) (letrec ((range (case-lambda ((e) (range 0 e)) ((b e) (do ((r '() (cons e r)) (e (- e 1) (- e 1))) ((< e b) r)))))) (range 3 5)))","'(3 4)");
-
 	}
 	@Test
 	public void testInclude(){
