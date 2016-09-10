@@ -243,8 +243,6 @@
     ((do "step" x y)
      y)))
 
-
-
 (define (make-parameter init . o)
   (let* ((converter
           (if (pair? o) (car o) (lambda (x) x)))
@@ -253,9 +251,9 @@
       (cond
        ((null? args)
         value)
-       ((eq? (car args) '<param-set!>)
+       ((equal? (car args) "<param-set!>")
         (set! value (cadr args)))
-       ((eq? (car args) '<param-convert>)
+       ((equal? (car args) "<param-convert>")
         converter)
        (else
         (error "bad parameter syntax"))))))
@@ -269,11 +267,11 @@
                    body)
      (let ((p param) ...)
        (let ((old (p)) ...
-             (new ((p '<param-convert>) value)) ...)
+             (new ((p "<param-convert>") value)) ...)
          (dynamic-wind
-          (lambda () (p '<param-set!> new) ...)
+          (lambda () (p "<param-set!>" new) ...)
           (lambda () . body)
-          (lambda () (p '<param-set!> old) ...)))))
+          (lambda () (p "<param-set!>" old) ...)))))
     ((parameterize ("step")
                    args
                    ((param value) . rest)
@@ -470,6 +468,7 @@
         (string-for-each-range lists 0 (apply min (map string-length lists)))))
 (define call/cc call-with-current-continuation)
 
+(import (only (jschememin) library-exists?))
 
 (define-syntax cond-expand
   ;; Extend this to mention all feature ids and libraries
@@ -508,7 +507,7 @@
     ((cond-expand ((library (name ...))
                    body ...)
                   more-clauses ...)
-       (if (begin (import (jschememin)) (library-exists? '(name ...)))
+       (if (begin (library-exists? '(name ...)))
            (begin body ...)
            (cond-expand more-clauses ...)))
     ((cond-expand (feature-id body ...)

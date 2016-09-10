@@ -42,7 +42,7 @@ public class Environment extends ScmObject{
 		this.repl=parent.repl;
 	}
 	public Optional<ScmObject> getOptional(ScmSymbol id){
-		Environment env=this;
+		Environment env=id instanceof ScmLabeledSymbol?((ScmLabeledSymbol)id).getEnvironment():this;
 		while(env!=null){
 			ScmObject obj=env.bindings.get(id);
 			if(obj!=null)
@@ -62,7 +62,7 @@ public class Environment extends ScmObject{
 		return bindings;
 	}
 	public void set(ScmSymbol id,ScmObject obj){
-		Environment env=this;
+		Environment env=id instanceof ScmLabeledSymbol?((ScmLabeledSymbol)id).getEnvironment():this;
 		while(env!=null){
 			if(env.bindings.containsKey(id)){
 				env.bindings.put(id,obj);

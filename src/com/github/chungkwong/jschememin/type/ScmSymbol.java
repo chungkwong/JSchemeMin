@@ -15,7 +15,7 @@
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
 import java.util.*;
-public final class ScmSymbol extends ScmObject implements Token{
+public class ScmSymbol extends ScmObject implements Token{
 	private final String id;
 	public ScmSymbol(String id){
 		this.id=id;

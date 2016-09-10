@@ -16,7 +16,6 @@
  */
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
-import com.github.chungkwong.jschememin.primitive.*;
 import com.github.chungkwong.jschememin.type.ScmSyntaxRules.SyntaxRule;
 import java.io.*;
 import java.util.*;
@@ -202,23 +201,18 @@ public class ScmSyntaxRules extends ScmObject{
 		private ScmObject transformSymbol(ScmSymbol temp,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
 			if(bind.containsKey(temp))
 				return bind.get(temp).get(index);
-			/*if(env.containsKey(temp)){
-				if(defEnv.containsKey(temp)){
-					return ScmList.toList(quote(Eval.INSTANCE),quote(temp),quote(defEnv));
-				}else{
-					ScmSymbol rename=defEnv.getUnusedVariable();
-					bind.put(temp,new Rename(rename));
-					return rename;
-				}
-			}else
-				return temp;*/
 			Optional<ScmObject> defVal=defEnv.getOptional(temp);
+			if(literals.contains(temp))
+				return temp;
 			if(!defVal.isPresent()){
-				ScmSymbol rename=defEnv.getUnusedVariable();
+				ScmSymbol rename=env.getUnusedVariable();
 				bind.put(temp,new Rename(rename));
 				return rename;
 			}else{
-				return ScmList.toList(Quote.INSTANCE.getKeyword(),defVal.get());
+				ScmLabeledSymbol rename=new ScmLabeledSymbol(temp.getValue(),defEnv);
+				bind.put(temp,new Rename(rename));
+				return rename;
+//return ScmList.toList(Quote.INSTANCE.getKeyword(),defVal.get());
 			}/* if(env.containsKey(temp)){
 //				return ScmList.toList(quote(Eval.INSTANCE),quote(temp),quote(defEnv));
 				return ScmList.toList(Quote.INSTANCE.getKeyword(),defVal.get());
