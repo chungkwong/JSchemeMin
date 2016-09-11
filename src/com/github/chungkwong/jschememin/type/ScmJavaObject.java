@@ -30,7 +30,7 @@ public class ScmJavaObject extends ScmObject{
 	}
 	@Override
 	public boolean equals(Object o){
-		return o instanceof ScmJavaObject&&((ScmJavaObject)o).obj.equals(obj);
+		return o instanceof ScmJavaObject&&Objects.equals(((ScmJavaObject)o).obj,obj);
 	}
 	@Override
 	public int hashCode(){

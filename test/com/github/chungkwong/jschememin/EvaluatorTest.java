@@ -194,6 +194,9 @@ public class EvaluatorTest{
 		assertExpressionValue("`(list ,(+ 1 2) 4)","'(list 3 4)");
 		assertExpressionValue("(let ((name 'a)) `(list ,name ',name))","'(list a (quote a))");
 		assertExpressionValue("`(a ,(+ 1 2) ,@(map abs '(4 -5 6)) b)","'(a 3 4 5 6 b)");
+		assertExpressionValue("`(a ,(+ 1 2) `(2 ,@(map abs '(4 -5 6))) b)","'(a 3 `(2 ,@(map abs '(4 -5 6))) b)");
+		assertExpressionValue("`(a ,(+ 1 2) `#(2 ,@(map abs '(4 -5 6))) b)","'(a 3 `#(2 ,@(map abs '(4 -5 6))) b)");
+		assertExpressionValue("`(1 2 . 3)","'(1 2 . 3)");
 		assertExpressionValue("`((foo ,(- 10 3)) ,@(cdr '(c)) . ,(car '(cons)))","'((foo 7) . cons)");
 		assertExpressionValue("`#(10 5 ,(square 2) ,@(map square '(4 3)) 8)","#(10 5 4 16 9 8)");
 		assertExpressionValue("(let ((foo '(foo bar)) (kbaz 'baz)) `(list ,@foo , kbaz))","'(list foo bar baz)");

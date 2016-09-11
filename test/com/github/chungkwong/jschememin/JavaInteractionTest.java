@@ -16,7 +16,7 @@
  */
 package com.github.chungkwong.jschememin;
 import static com.github.chungkwong.jschememin.SchemeAssert.assertExpressionValue;
-import org.junit.*;
+import static com.github.chungkwong.jschememin.SchemeAssert.expectException;import org.junit.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -24,6 +24,12 @@ import org.junit.*;
 public class JavaInteractionTest{
 	public static String sf;
 	public String f;
+	public static String overloaded(String a,Object b){
+		return "0";
+	}
+	public static String overloaded(Object a,String b){
+		return "1";
+	}
 	@Test
 	public void test(){
 		assertExpressionValue("(begin (import (java)) (String->string (invoke (string->String \"  hello\n\") 'trim)))","\"hello\"");
@@ -48,5 +54,22 @@ public class JavaInteractionTest{
 		assertExpressionValue("(begin (import (java)) "
 				+ "(set-static! 'com.github.chungkwong.jschememin.JavaInteractionTest 'sf (string->String \"world\")) "
 				+ "(String->string (get-static 'com.github.chungkwong.jschememin.JavaInteractionTest 'sf)))","\"world\"");
+		assertExpressionValue("(begin (import (java)) (let ((obj (construct 'com.github.chungkwong.jschememin.JavaInteractionTest)))"
+				+ "(set! obj 'f (string->String \"world\")) "
+				+ "(String->string (get obj 'f))))","\"world\"");
+		assertExpressionValue("(begin (import (java)) (Boolean->boolean (invoke-static 'java.util.Objects 'isNull (null))))","#t");
+		assertExpressionValue("(begin (import (java)) (String->string (invoke-static 'com.github.chungkwong.jschememin.JavaInteractionTest "
+				+ "'overloaded (string->String \"q\") (integer->Integer -5))))","\"0\"");
+		assertExpressionValue("(begin (import (java)) (String->string (invoke-static 'com.github.chungkwong.jschememin.JavaInteractionTest "
+				+ "'overloaded (integer->Integer -5) (string->String \"q\"))))","\"1\"");
+		assertExpressionValue("(begin (import (java)) (Integer->integer (invoke-static 'java.lang.Math 'abs (integer->Integer -5))))","5");
+		expectException("(begin (import (java)) (invoke-static 'java.lang.math 'abs (integer->Integer -5)))");
+		expectException("(begin (import (java)) (invoke-static 'java.lang.Math 'abs (string->String \"hello\")))");
+		expectException("(begin (import (java)) (invoke 'java.lang.Math 'abs))");
+		expectException("(begin (import (java)) (construct 'java.lang.Math (integer->Integer -5)))");
+		expectException("(begin (import (java)) (invoke-static 'com.github.chungkwong.jschememin.JavaInteractionTest "
+				+ "'overloaded (integer->Integer -5) (integer->Integer -5)))");
+		expectException("(begin (import (java)) (invoke-static 'com.github.chungkwong.jschememin.JavaInteractionTest "
+				+ "'overloaded (string->String \"q\") (string->String \"w\")))");
 	}
 }

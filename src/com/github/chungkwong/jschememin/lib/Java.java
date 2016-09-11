@@ -76,7 +76,7 @@ public class Java extends NativeLibrary{
 	private static Class[] toClassArray(Object[] args){
 		Class[] types=new Class[args.length];
 		for(int i=0;i<args.length;i++)
-			types[i]=args[i].getClass();
+			types[i]=args[i]==null?null:args[i].getClass();
 		return types;
 	}
 	private static ScmObject is(ScmObject param) throws ClassNotFoundException{
@@ -210,7 +210,7 @@ public class Java extends NativeLibrary{
 		}
 	}
 	private static boolean canAssignFrom(Class left,Class right){
-		return left.isAssignableFrom(right)||(left.isPrimitive()&&boxTo(left,right))||(right.isPrimitive()&&boxTo(right,left));
+		return right==null||left.isAssignableFrom(right)||(left.isPrimitive()&&boxTo(left,right))||(right.isPrimitive()&&boxTo(right,left));
 	}
 	private static boolean boxTo(Class left,Class right){
 		return (left==int.class&&right==Integer.class)||
@@ -236,19 +236,5 @@ public class Java extends NativeLibrary{
 			if(!paraType2[i].isAssignableFrom(paraType1[paraType1.length-1]))
 				return false;
 		return true;
-	}
-	public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, Throwable{
-		//System.err.println(MethodHandles.lookup().findStatic(Collections.class,"singleton",MethodType.methodType(Set.class,Object.class))
-		//		.invokeWithArguments("hello"));
-		System.err.println(String.class.getMethod("join",CharSequence.class,CharSequence[].class)
-				.invoke(null,"hello","world"));
-		System.err.println(isBetterThan(null,true,null,false)==false);
-		System.err.println(isBetterThan(null,false,null,true)==true);
-		System.err.println(isBetterThan(new Class[]{String.class},false,new Class[]{Object.class},false)==true);
-		System.err.println(isBetterThan(new Class[]{Object.class},false,new Class[]{String.class},false)==false);
-		System.err.println(isBetterThan(new Class[]{Object.class,String.class},false,new Class[]{String.class,Object.class},false)==false);
-		System.err.println(isBetterThan(new Class[]{String.class,Object.class},false,new Class[]{Object.class,String.class},false)==false);
-		System.err.println(int.class.isAssignableFrom(Integer.class));
-		//System.err.println(MethodHandles.lookup().findVirtual(String.class,"substring",MethodType.methodType(String.class,int.class)).invoke("hello",(Integer)2));
 	}
 }

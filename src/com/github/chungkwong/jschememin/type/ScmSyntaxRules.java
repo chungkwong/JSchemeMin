@@ -212,12 +212,7 @@ public class ScmSyntaxRules extends ScmObject{
 				ScmLabeledSymbol rename=new ScmLabeledSymbol(temp.getValue(),defEnv);
 				bind.put(temp,new Rename(rename));
 				return rename;
-//return ScmList.toList(Quote.INSTANCE.getKeyword(),defVal.get());
-			}/* if(env.containsKey(temp)){
-//				return ScmList.toList(quote(Eval.INSTANCE),quote(temp),quote(defEnv));
-				return ScmList.toList(Quote.INSTANCE.getKeyword(),defVal.get());
-			}else
-				return temp;*/
+			}
 		}
 		private ScmObject transformVector(ScmVector temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,Environment env,MultiIndex index){
 			ArrayList<ScmObject> list=new ArrayList<>();

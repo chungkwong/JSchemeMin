@@ -50,6 +50,8 @@ public class ScmError extends ScmObject{
 		return true;
 	}
 	public static RuntimeException toRuntimeException(Throwable t){
+		if(t instanceof ScmException)
+			return (ScmException)t;
 		return new ScmException(toScmObject(t));
 	}
 	public static RuntimeException toException(ScmObject obj){
@@ -59,7 +61,7 @@ public class ScmError extends ScmObject{
 		obj.printStackTrace();
 		if(obj instanceof ScmException)
 			return ((ScmException)obj).getObject();
-		return new ScmError(new ScmString(obj.getMessage()==null?"":obj.getMessage()),ScmNil.NIL,ErrorType.OTHER);
+		return new ScmError(new ScmString(obj.toString()),ScmNil.NIL,ErrorType.OTHER);
 	}
 	private static class ScmException extends RuntimeException{
 		private final ScmObject obj;
