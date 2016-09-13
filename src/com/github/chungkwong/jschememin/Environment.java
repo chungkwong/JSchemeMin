@@ -42,14 +42,8 @@ public class Environment extends ScmObject{
 		this.repl=parent.repl;
 	}
 	public Optional<ScmObject> getOptional(ScmSymbol id){
-		Environment env=id instanceof ScmLabeledSymbol?((ScmLabeledSymbol)id).getEnvironment():this;
-		while(env!=null){
-			ScmObject obj=env.bindings.get(id);
-			if(obj!=null)
-				return Optional.of(obj);
-			env=env.parent;
-		}
-		return Optional.empty();
+		Environment env=getFirstEnvironmentContains(this,id);
+		return env!=null?Optional.of(env.bindings.get(id)):Optional.empty();
 	}
 	public ScmObject get(ScmSymbol id){
 		Optional<ScmObject> obj=getOptional(id);
@@ -62,16 +56,29 @@ public class Environment extends ScmObject{
 		return bindings;
 	}
 	public void set(ScmSymbol id,ScmObject obj){
-		Environment env=id instanceof ScmLabeledSymbol?((ScmLabeledSymbol)id).getEnvironment():this;
-		while(env!=null){
-			if(env.bindings.containsKey(id)){
-				env.bindings.put(id,obj);
-				return;
-			}
-			env=env.parent;
-		}
-		if(repl)
+		Environment env=getFirstEnvironmentContains(this,id);
+		if(env!=null){
+			env.bindings.put(id,obj);
+		}else if(repl)
 			add(id,obj);
+	}
+	private static Environment getFirstEnvironmentContains(Environment env,ScmSymbol id){
+		if(id instanceof ScmLabeledSymbol){
+			while(env!=null){
+				if(env==((ScmLabeledSymbol)id).getStopEnvironment())
+					env=((ScmLabeledSymbol)id).getAlternativeEnvironment();
+				if(env.bindings.containsKey(id))
+					break;
+				env=env.parent;
+			}
+		}else{
+			while(env!=null){
+				if(env.bindings.containsKey(id))
+					break;
+				env=env.parent;
+			}
+		}
+		return env;
 	}
 	public void add(ScmSymbol id,ScmObject obj){
 		bindings.put(id,obj);

@@ -209,7 +209,7 @@ public class ScmSyntaxRules extends ScmObject{
 				bind.put(temp,new Rename(rename));
 				return rename;
 			}else{
-				ScmLabeledSymbol rename=new ScmLabeledSymbol(temp.getValue(),defEnv);
+				ScmLabeledSymbol rename=new ScmLabeledSymbol(temp.getValue(),env,defEnv);
 				bind.put(temp,new Rename(rename));
 				return rename;
 			}

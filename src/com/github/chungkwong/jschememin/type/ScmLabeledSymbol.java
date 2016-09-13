@@ -21,12 +21,16 @@ import com.github.chungkwong.jschememin.*;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmLabeledSymbol extends ScmSymbol{
-	private final Environment env;
-	public ScmLabeledSymbol(String id,Environment env){
+	private final Environment stop,alternative;
+	public ScmLabeledSymbol(String id,Environment stop,Environment alternative){
 		super(id);
-		this.env=env;
+		this.stop=stop;
+		this.alternative=alternative;
 	}
-	public Environment getEnvironment(){
-		return env;
+	public Environment getStopEnvironment(){
+		return stop;
+	}
+	public Environment getAlternativeEnvironment(){
+		return alternative;
 	}
 }

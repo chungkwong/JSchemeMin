@@ -250,6 +250,7 @@ public class EvaluatorTest{
 		assertExpressionValue("(let-syntax ((v2l (syntax-rules () ((foo #(x ...)) '(x ...))))) (v2l #()))","'()");
 		assertExpressionValue("(let-syntax ((v2l (syntax-rules () ((foo #(x ...)) '(x ...))))) (v2l #(1 2 3)))","'(1 2 3)");
 		assertExpressionValue("(let-syntax ((v2l (syntax-rules () ((foo #(x y ... z w)) '(w x z y ...))))) (v2l #(1 2 3 4 5)))","'(5 1 4 2 3)");
+		assertExpressionValue("(let-syntax ((v2l (syntax-rules () ((foo #(x y ... z w)) '(w x z y ...))))) (v2l #(1 2 3 4 5)))","'(5 1 4 2 3)");
 	}
 	@Test
 	public void testRecord(){
