@@ -17,17 +17,36 @@
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.primitive.*;
+import java.util.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class HygieneTransformer{
 
-	public static ScmObject transform(ScmObject obj){
-		return stripTimeStamp(obj);
+	public static ScmObject transform(ScmObject obj,Environment env){
+		return stripTimeStamp(rename(expand(stamp(obj,0),env,1),env));
 	}
 	private static ScmSymbolWithTimeStamp S(ScmSymbol id,int n){
 		return new ScmSymbolWithTimeStamp(id.getValue(),n);
+	}
+	private static ScmObject expand(ScmObject tsstree,Environment env,int n){
+		if(tsstree instanceof ScmPair){
+			if(((ScmPair)tsstree).getCar()instanceof ScmSymbol){
+				Optional<ScmObject> optional=env.getOptional((ScmSymbol)((ScmPair)tsstree).getCar());
+				if(optional.isPresent()){
+					if(optional.get() instanceof Lambda){
+						return ScmList.toList(ScmList.first(tsstree),ScmList.second(tsstree),
+								expand(((ScmPair)tsstree).getCddr(),env,n));
+					}else if(optional.get() instanceof ScmSyntaxRules){
+						return expand(stamp(((ScmSyntaxRules)optional.get()).transform((ScmPairOrNil)((ScmPair)tsstree).getCdr(),env),n),env,n+1);
+					}
+				}
+			}
+			return new ScmPair(expand(((ScmPair)tsstree).getCar(),env,n),expand(((ScmPair)tsstree).getCdr(),env,n));
+		}else{
+			return tsstree;
+		}
 	}
 	private static ScmObject replace(ScmSymbolWithTimeStamp tsvar,ScmSymbol var,ScmObject tsstree){
 		if(tsstree instanceof ScmPair&&((ScmPair)tsstree).getCar()instanceof ScmSymbol){
@@ -49,16 +68,30 @@ public class HygieneTransformer{
 		}
 		return tsstree;
 	}
+	private static ScmObject stamp(ScmObject tsstree,int n){
+		if(tsstree instanceof ScmSymbol&&!(tsstree instanceof ScmSymbolWithTimeStamp)){
+			return S((ScmSymbol)tsstree,n);
+		}else if(tsstree instanceof ScmPair){
+			return new ScmPair(stamp(((ScmPair)tsstree).getCar(),n),stamp(((ScmPair)tsstree).getCdr(),n));
+		}else{
+			return tsstree;
+		}
+	}
 	private static ScmObject rename(ScmObject tsstree,Environment env){
 		if(tsstree instanceof ScmPair){
 			if(ScmList.first(tsstree).equals(Lambda.INSTANCE.getKeyword())){
+				ScmObject body=((ScmPair)tsstree).getCddr();
 				if(ScmList.second(tsstree)instanceof ScmSymbolWithTimeStamp){
 					return ScmList.toList(ScmList.first(tsstree),ScmList.second(tsstree),
-							rename(replace((ScmSymbolWithTimeStamp)ScmList.second(tsstree),env.getUnusedVariable(),((ScmPair)tsstree).getCddr()),env));
+							rename(replace((ScmSymbolWithTimeStamp)ScmList.second(tsstree),env.getUnusedVariable(),body),env));
 				}else if(ScmList.second(tsstree)instanceof ScmPair){
-					/*if(ScmList.asStream((ScmPairOrNil)ScmList.second(tsstree)).anyMatch((o)->tsvar.equals(o)))
-						return ScmList.toList(ScmList.first(tsstree),ScmList.second(tsstree),
-								replace(tsvar,var,((ScmPair)tsstree).getCddr()));*/
+					ScmObject args=(ScmPair)ScmList.second(tsstree);
+					while(args instanceof ScmPair){
+						ScmObject var=((ScmPair)args).getCar();
+						if(var instanceof ScmSymbolWithTimeStamp)
+							body=rename(replace((ScmSymbolWithTimeStamp)var,env.getUnusedVariable(),body),env);
+						args=((ScmPair)args).getCdr();
+					}
 				}
 			}
 			return new ScmPair(rename(((ScmPair)tsstree).getCar(),env),rename(((ScmPair)tsstree).getCdr(),env));
