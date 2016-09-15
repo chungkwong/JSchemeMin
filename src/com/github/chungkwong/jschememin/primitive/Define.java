@@ -34,7 +34,7 @@ public class Define extends BasicConstruct implements Primitive{
 			if(remain.getCar() instanceof ScmSymbol){
 				Optional<ScmObject> old=env.getOptional((ScmSymbol)remain.getCar());
 				if(!old.isPresent()||isSyntax(old.get()))
-					env.add((ScmSymbol)remain.getCar(),null);
+					env.add((ScmSymbol)remain.getCar(),ScmNil.NIL);
 				cont.replaceCurrent(this);
 				cont.call(ExpressionEvaluator.INSTANCE,(ScmSymbol)remain.getCar(),((ScmPair)remain.getCdr()).getCar(),env);
 			}else if(remain.getCar() instanceof ScmPair){

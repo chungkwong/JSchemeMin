@@ -17,7 +17,9 @@
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.primitive.*;
+import java.io.*;
 import java.util.*;
+import java.util.function.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -25,7 +27,7 @@ import java.util.*;
 public class HygieneTransformer{
 
 	public static ScmObject transform(ScmObject obj,Environment env){
-		return stripTimeStamp(rename(expand(stamp(obj,0),env,1),env));
+		return unStamp(rename(expand(stamp(obj,0),env,1),env));
 	}
 	private static ScmSymbolWithTimeStamp S(ScmSymbol id,int n){
 		return new ScmSymbolWithTimeStamp(id.getValue(),n);
@@ -38,6 +40,8 @@ public class HygieneTransformer{
 					if(optional.get() instanceof Lambda){
 						return ScmList.toList(ScmList.first(tsstree),ScmList.second(tsstree),
 								expand(((ScmPair)tsstree).getCddr(),env,n));
+					}else if(optional.get() instanceof Quote){
+						return tsstree;
 					}else if(optional.get() instanceof ScmSyntaxRules){
 						return expand(stamp(((ScmSyntaxRules)optional.get()).transform((ScmPairOrNil)((ScmPair)tsstree).getCdr(),env),n),env,n+1);
 					}
@@ -48,64 +52,93 @@ public class HygieneTransformer{
 			return tsstree;
 		}
 	}
-	private static ScmObject replace(ScmSymbolWithTimeStamp tsvar,ScmSymbol var,ScmObject tsstree){
-		if(tsstree instanceof ScmPair&&((ScmPair)tsstree).getCar()instanceof ScmSymbol){
-			String keyword=((ScmSymbol)((ScmPair)tsstree).getCar()).getValue();
-			if(keyword.equals("lambda")){
-				if(tsvar.equals(ScmList.second(tsstree))){
-					return ScmList.toList(Lambda.INSTANCE.getKeyword(),tsvar,replace(tsvar,var,((ScmPair)tsstree).getCddr()));
-				}else if(ScmList.second(tsstree)instanceof ScmPair){
-					if(ScmList.asStream((ScmPairOrNil)ScmList.second(tsstree)).anyMatch((o)->tsvar.equals(o)))
-						return ScmList.toList(ScmList.first(tsstree),ScmList.second(tsstree),
-								replace(tsvar,var,((ScmPair)tsstree).getCddr()));
+	private static ScmObject replace(ScmSymbolWithTimeStamp tsvar,ScmSymbol var,ScmObject tsstree,Environment env){
+		if(tsstree instanceof ScmPair){
+			if(((ScmPair)tsstree).getCar()instanceof ScmSymbol){
+				Optional<ScmObject> optional=env.getOptional((ScmSymbol)((ScmPair)tsstree).getCar());
+				if(optional.isPresent()){
+					if(optional.get() instanceof Lambda){
+						if(tsvar.equalsWithStamp(ScmList.second(tsstree))){
+							return ScmList.toList(Lambda.INSTANCE.getKeyword(),tsvar,replace(tsvar,var,((ScmPair)tsstree).getCddr(),env));
+						}else if(ScmList.second(tsstree)instanceof ScmPair){
+							if(ScmList.asStream((ScmPairOrNil)ScmList.second(tsstree)).anyMatch((o)->tsvar.equalsWithStamp(o)))
+								return ScmList.toList(ScmList.first(tsstree),ScmList.second(tsstree),
+										replace(tsvar,var,((ScmPair)tsstree).getCddr(),env));
+						}
+					}else if(optional.get() instanceof Quote){
+						return tsstree;
+					}
 				}
-			}else{
-				return new ScmPair(replace(tsvar,var,((ScmPair)tsstree).getCar()),
-						replace(tsvar,var,((ScmPair)tsstree).getCdr()));
 			}
-		}else if(tsvar.equals(tsstree)){
+			return new ScmPair(replace(tsvar,var,((ScmPair)tsstree).getCar(),env),
+					replace(tsvar,var,((ScmPair)tsstree).getCdr(),env));
+		}else if(tsvar.equalsWithStamp(tsstree)){
 			return var;
+		}else if(tsstree instanceof ScmVector){
+			ArrayList<ScmObject> vector=new ArrayList<>(((ScmVector)tsstree).getLength());
+			((ScmVector)tsstree).stream().forEach((o)->vector.add(replace(tsvar,var,o,env)));
+			return new ScmVector(vector);
 		}
 		return tsstree;
 	}
-	private static ScmObject stamp(ScmObject tsstree,int n){
-		if(tsstree instanceof ScmSymbol&&!(tsstree instanceof ScmSymbolWithTimeStamp)){
-			return S((ScmSymbol)tsstree,n);
-		}else if(tsstree instanceof ScmPair){
-			return new ScmPair(stamp(((ScmPair)tsstree).getCar(),n),stamp(((ScmPair)tsstree).getCdr(),n));
-		}else{
-			return tsstree;
-		}
-	}
 	private static ScmObject rename(ScmObject tsstree,Environment env){
 		if(tsstree instanceof ScmPair){
-			if(ScmList.first(tsstree).equals(Lambda.INSTANCE.getKeyword())){
-				ScmObject body=((ScmPair)tsstree).getCddr();
-				if(ScmList.second(tsstree)instanceof ScmSymbolWithTimeStamp){
-					return ScmList.toList(ScmList.first(tsstree),ScmList.second(tsstree),
-							rename(replace((ScmSymbolWithTimeStamp)ScmList.second(tsstree),env.getUnusedVariable(),body),env));
-				}else if(ScmList.second(tsstree)instanceof ScmPair){
-					ScmObject args=(ScmPair)ScmList.second(tsstree);
-					while(args instanceof ScmPair){
-						ScmObject var=((ScmPair)args).getCar();
-						if(var instanceof ScmSymbolWithTimeStamp)
-							body=rename(replace((ScmSymbolWithTimeStamp)var,env.getUnusedVariable(),body),env);
-						args=((ScmPair)args).getCdr();
+			if(((ScmPair)tsstree).getCar()instanceof ScmSymbol){
+				Optional<ScmObject> optional=env.getOptional((ScmSymbol)((ScmPair)tsstree).getCar());
+				if(optional.isPresent()){
+					if(optional.get() instanceof Lambda){
+						ScmObject body=((ScmPair)tsstree).getCddr();
+						if(ScmList.second(tsstree)instanceof ScmSymbolWithTimeStamp){
+							ScmSymbol v=env.getUnusedVariable();
+							return ScmList.toList(ScmList.first(tsstree),v,
+									rename(replace((ScmSymbolWithTimeStamp)ScmList.second(tsstree),v,body,env),env));
+						}else if(ScmList.second(tsstree)instanceof ScmPair){
+							ScmListBuilder buf=new ScmListBuilder();
+							ScmObject args=(ScmPair)ScmList.second(tsstree);
+							while(args instanceof ScmPair){
+								ScmObject var=((ScmPair)args).getCar();
+								if(var instanceof ScmSymbolWithTimeStamp){
+									ScmSymbol v=env.getUnusedVariable();
+									body=replace((ScmSymbolWithTimeStamp)var,v,body,env);
+									buf.add(v);
+								}else{
+									buf.add(var);
+								}
+								args=((ScmPair)args).getCdr();
+							}
+							return ScmList.toList(ScmList.first(tsstree),buf.toList(),rename(body,env));
+						}
+					}else if(optional.get() instanceof Quote){
+						return tsstree;
 					}
 				}
 			}
 			return new ScmPair(rename(((ScmPair)tsstree).getCar(),env),rename(((ScmPair)tsstree).getCdr(),env));
+		}else if(tsstree instanceof ScmVector){
+			ArrayList<ScmObject> vector=new ArrayList<>(((ScmVector)tsstree).getLength());
+			((ScmVector)tsstree).stream().forEach((o)->vector.add(rename(o,env)));
+			return new ScmVector(vector);
 		}else{
 			return tsstree;
 		}
 	}
-	private static ScmObject stripTimeStamp(ScmObject tsstree){
-		if(tsstree instanceof ScmSymbolWithTimeStamp){
-			return new ScmSymbol(((ScmSymbolWithTimeStamp)tsstree).getValue());
-		}else if(tsstree instanceof ScmPair){
-			return new ScmPair(stripTimeStamp(((ScmPair)tsstree).getCar()),stripTimeStamp(((ScmPair)tsstree).getCdr()));
+	private static ScmObject stamp(ScmObject tsstree,int n){
+		return walkTree(tsstree,(o)->o instanceof ScmSymbol&&!(o instanceof ScmSymbolWithTimeStamp)?
+				S((ScmSymbol)o,n):o);
+	}
+	private static ScmObject unStamp(ScmObject tsstree){
+		return walkTree(tsstree,(o)->o instanceof ScmSymbolWithTimeStamp?
+				new ScmSymbol(((ScmSymbolWithTimeStamp)o).getValue()):o);
+	}
+	private static ScmObject walkTree(ScmObject tree,Function<ScmObject,ScmObject> transform){
+		if(tree instanceof ScmPair){
+			return new ScmPair(walkTree(((ScmPair)tree).getCar(),transform),walkTree(((ScmPair)tree).getCdr(),transform));
+		}else if(tree instanceof ScmVector){
+			ArrayList<ScmObject> vector=new ArrayList<>(((ScmVector)tree).getLength());
+			((ScmVector)tree).stream().forEach((o)->vector.add(walkTree(o,transform)));
+			return new ScmVector(vector);
 		}else{
-			return tsstree;
+			return transform.apply(tree);
 		}
 	}
 	private static class ScmSymbolWithTimeStamp extends ScmSymbol{
@@ -117,21 +150,17 @@ public class HygieneTransformer{
 		public int getTimeStamp(){
 			return ts;
 		}
-		@Override
-		public boolean equals(Object obj){
+		public boolean equalsWithStamp(Object obj){
 			return obj instanceof ScmSymbolWithTimeStamp&&super.equals(obj)
 					&&ts==((ScmSymbolWithTimeStamp)obj).ts;
 		}
-		@Override
-		public int hashCode(){
-			int hash=3;
-			hash=19*hash+super.hashCode();
-			hash=19*hash+this.ts;
-			return hash;
-		}
 	}
-//	private static final SyntaxTransformFunction S=(o)->;
-	interface SyntaxTransformFunction{
-		ScmObject apply(ScmObject o);
+	public static void main(String[] args) throws IOException{
+		Environment env=new Environment(true);
+		BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
+		String s;
+		while((s=in.readLine())!=null){
+			System.out.println(transform(new Parser(s).nextDatum(),env));
+		}
 	}
 }
