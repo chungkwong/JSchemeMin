@@ -201,7 +201,7 @@ public class ScmSyntaxRules extends ScmObject{
 		private ScmObject transformSymbol(ScmSymbol temp,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
 			if(bind.containsKey(temp))
 				return bind.get(temp).get(index);
-			/*Optional<ScmObject> defVal=defEnv.getOptional(temp);
+			Optional<ScmObject> defVal=defEnv.getOptional(temp);
 			if(literals.contains(temp))
 				return temp;
 			if(!defVal.isPresent()){
@@ -212,8 +212,7 @@ public class ScmSyntaxRules extends ScmObject{
 				ScmLabeledSymbol rename=new ScmLabeledSymbol(temp.getValue(),env,defEnv);
 				bind.put(temp,new Rename(rename));
 				return rename;
-			}*/
-			return temp;
+			}
 		}
 		private ScmObject transformVector(ScmVector temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,Environment env,MultiIndex index){
 			ArrayList<ScmObject> list=new ArrayList<>();

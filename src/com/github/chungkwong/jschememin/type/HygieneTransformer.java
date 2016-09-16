@@ -38,8 +38,8 @@ public class HygieneTransformer{
 				Optional<ScmObject> optional=env.getOptional((ScmSymbol)((ScmPair)tsstree).getCar());
 				if(optional.isPresent()){
 					if(optional.get() instanceof Lambda){
-						return ScmList.toList(ScmList.first(tsstree),ScmList.second(tsstree),
-								expand(((ScmPair)tsstree).getCddr(),env,n));
+						return new ScmPair(ScmList.first(tsstree),new ScmPair(ScmList.second(tsstree),
+								expand(((ScmPair)tsstree).getCddr(),env,n)));
 					}else if(optional.get() instanceof Quote){
 						return tsstree;
 					}else if(optional.get() instanceof ScmSyntaxRules){
@@ -58,12 +58,16 @@ public class HygieneTransformer{
 				Optional<ScmObject> optional=env.getOptional((ScmSymbol)((ScmPair)tsstree).getCar());
 				if(optional.isPresent()){
 					if(optional.get() instanceof Lambda){
-						if(tsvar.equalsWithStamp(ScmList.second(tsstree))){
-							return ScmList.toList(Lambda.INSTANCE.getKeyword(),tsvar,replace(tsvar,var,((ScmPair)tsstree).getCddr(),env));
-						}else if(ScmList.second(tsstree)instanceof ScmPair){
-							if(ScmList.asStream((ScmPairOrNil)ScmList.second(tsstree)).anyMatch((o)->tsvar.equalsWithStamp(o)))
-								return ScmList.toList(ScmList.first(tsstree),ScmList.second(tsstree),
-										replace(tsvar,var,((ScmPair)tsstree).getCddr(),env));
+						ScmObject tmp=ScmList.second(tsstree);
+						while(tmp instanceof ScmPair){
+							if(tsvar.equalsWithStamp(((ScmPair)tmp).getCar()))
+								return new ScmPair(ScmList.first(tsstree),new ScmPair(ScmList.second(tsstree),
+										replace(tsvar,var,((ScmPair)tsstree).getCddr(),env)));
+							tmp=((ScmPair)tmp).getCdr();
+						}
+						if(tsvar.equalsWithStamp(tmp)){
+							return new ScmPair(ScmList.first(tsstree),new ScmPair(ScmList.second(tsstree),
+									replace(tsvar,var,((ScmPair)tsstree).getCddr(),env)));
 						}
 					}else if(optional.get() instanceof Quote){
 						return tsstree;
@@ -90,8 +94,8 @@ public class HygieneTransformer{
 						ScmObject body=((ScmPair)tsstree).getCddr();
 						if(ScmList.second(tsstree)instanceof ScmSymbolWithTimeStamp){
 							ScmSymbol v=env.getUnusedVariable();
-							return ScmList.toList(ScmList.first(tsstree),v,
-									rename(replace((ScmSymbolWithTimeStamp)ScmList.second(tsstree),v,body,env),env));
+							return new ScmPair(ScmList.first(tsstree),new ScmPair(v,
+									rename(replace((ScmSymbolWithTimeStamp)ScmList.second(tsstree),v,body,env),env)));
 						}else if(ScmList.second(tsstree)instanceof ScmPair){
 							ScmListBuilder buf=new ScmListBuilder();
 							ScmObject args=(ScmPair)ScmList.second(tsstree);
@@ -106,7 +110,7 @@ public class HygieneTransformer{
 								}
 								args=((ScmPair)args).getCdr();
 							}
-							return ScmList.toList(ScmList.first(tsstree),buf.toList(),rename(body,env));
+							return new ScmPair(ScmList.first(tsstree),new ScmPair(buf.toList(),rename(body,env)));
 						}
 					}else if(optional.get() instanceof Quote){
 						return tsstree;
@@ -158,9 +162,13 @@ public class HygieneTransformer{
 	public static void main(String[] args) throws IOException{
 		Environment env=new Environment(true);
 		BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
-		String s;
+		/*String s;
 		while((s=in.readLine())!=null){
 			System.out.println(transform(new Parser(s).nextDatum(),env));
-		}
+		}*/
+		System.out.println(transform(new Parser("(or)").nextDatum(),env));
+		System.out.println(transform(new Parser("(or 1)").nextDatum(),env));
+		System.out.println(transform(new Parser("(or 1 2)").nextDatum(),env));
+		System.out.println(transform(new Parser("(or 1 2 3)").nextDatum(),env));
 	}
 }
