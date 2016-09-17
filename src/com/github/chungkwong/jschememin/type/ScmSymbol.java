@@ -23,9 +23,12 @@ public class ScmSymbol extends ScmObject implements Token{
 	public String getValue(){
 		return id;
 	}
+	public static ScmSymbol createFresh(){
+		return new UniqueSymbol();
+	}
 	@Override
 	public boolean equals(Object obj){
-		return obj instanceof ScmSymbol&&((ScmSymbol)obj).id.equals(id);
+		return getClass().equals(obj.getClass())&&((ScmSymbol)obj).id.equals(id);
 	}
 	@Override
 	public int hashCode(){
@@ -48,5 +51,11 @@ public class ScmSymbol extends ScmObject implements Token{
 	@Override
 	public boolean isSelfevaluating(){
 		return false;
+	}
+	private static class UniqueSymbol extends ScmSymbol{
+		private static int seq=0;
+		public UniqueSymbol(){
+			super(Integer.toString(seq++));
+		}
 	}
 }

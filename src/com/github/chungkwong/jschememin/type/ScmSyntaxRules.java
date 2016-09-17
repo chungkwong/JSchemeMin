@@ -201,18 +201,16 @@ public class ScmSyntaxRules extends ScmObject{
 		private ScmObject transformSymbol(ScmSymbol temp,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
 			if(bind.containsKey(temp))
 				return bind.get(temp).get(index);
+			//return temp;
 			Optional<ScmObject> defVal=defEnv.getOptional(temp);
-			if(literals.contains(temp))
+			if(literals.contains(temp))//FIXME
 				return temp;
-			if(!defVal.isPresent()){
-				ScmSymbol rename=env.getUnusedVariable();
-				bind.put(temp,new Rename(rename));
-				return rename;
-			}else{
-				ScmLabeledSymbol rename=new ScmLabeledSymbol(temp.getValue(),env,defEnv);
-				bind.put(temp,new Rename(rename));
-				return rename;
+			ScmSymbol rename=ScmSymbol.createFresh();
+			bind.put(temp,new Rename(rename));
+			if(defVal.isPresent()){
+				env.add(rename,defVal.get());
 			}
+			return rename;
 		}
 		private ScmObject transformVector(ScmVector temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,Environment env,MultiIndex index){
 			ArrayList<ScmObject> list=new ArrayList<>();
@@ -257,7 +255,18 @@ public class ScmSyntaxRules extends ScmObject{
 			if(!(temp instanceof ScmNil)){
 				buf.setLast(transform(temp,bind,ellipsed,env,index));
 			}
-			return buf.toList();
+			ScmObject transformed=buf.toList();
+			/*if(transformed instanceof ScmPair&&((ScmPair)transformed).getCar() instanceof ScmSymbol){
+				Optional<ScmObject> optional=defEnv.getOptional((ScmSymbol)((ScmPair)transformed).getCar());
+				if(optional.isPresent()){
+					if(optional.get()instanceof Lambda){
+
+					}else if(optional.get()instanceof ScmSyntaxRules){
+
+					}
+				}
+			}*/
+			return transformed;
 		}
 		private ScmObject apply(ScmPairOrNil argument,Environment env){
 			HashMap<ScmSymbol,CapturedObjects> bind=new HashMap<>();

@@ -49,6 +49,10 @@ public final class ScmVector extends ScmObject{
 		return obj==this||ObjectPair.equals(this,obj,new HashSet<>());
 	}
 	@Override
+	public boolean equalsValue(ScmObject obj){
+		return this==obj;
+	}
+	@Override
 	public int hashCode(){
 		int hash=7;
 		hash=97*hash+Objects.hashCode(this.vector);
