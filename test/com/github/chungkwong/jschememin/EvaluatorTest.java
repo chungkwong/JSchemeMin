@@ -21,7 +21,6 @@ import static com.github.chungkwong.jschememin.SchemeAssert.assertStandardOutput
 import static com.github.chungkwong.jschememin.SchemeAssert.expectException;
 import com.github.chungkwong.jschememin.type.*;
 import org.junit.*;
-
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -234,6 +233,7 @@ public class EvaluatorTest{
 		assertExpressionValue("(cond-expand ((and r7rs jvm) 5 #f) (else #t))","#f");
 		assertExpressionValue("(cond-expand ((and r7rs r2rs) 5 #f) (else #t))","#t");
 		assertExpressionValue("(cond-expand ((and r2rs r7rs) 5 #f) (else #t))","#t");
+		assertExpressionValue("(cond-expand ((and r2rs rrs) 5 #f) (else #t))","#t");
 		assertExpressionValue("(cond-expand ((or) 5 #f) (else #t))","#t");
 		assertExpressionValue("(cond-expand ((or r7rs) 5 #f) (else #t))","#f");
 		assertExpressionValue("(cond-expand ((or r2rs) 5 #f) (else #t))","#t");
@@ -241,6 +241,12 @@ public class EvaluatorTest{
 		assertExpressionValue("(cond-expand ((or r7rs r2rs) 5 #f) (else #t))","#f");
 		assertExpressionValue("(cond-expand ((or r2rs r7rs) 5 #f) (else #t))","#f");
 		assertExpressionValue("(cond-expand ((or r2rs r4rs) 5 #f) (else #t))","#t");
+		assertExpressionValue("(cond-expand ((not (and)) 5 #f) (else #t))","#t");
+		assertExpressionValue("(cond-expand ((not (and r7rs jvm)) 5 #f) (else #t))","#t");
+		assertExpressionValue("(cond-expand ((not (and r2rs)) 5 #f) (else #t))","#f");
+		assertExpressionValue("(cond-expand ((not (or)) 5 #f) (else #t))","#f");
+		assertExpressionValue("(cond-expand ((not (or r2rs)) 5 #f) (else #t))","#f");
+		assertExpressionValue("(cond-expand ((not (or r7rs jvm)) 5 #f) (else #t))","#t");
 	}
 	@Test
 	public void testMacro(){

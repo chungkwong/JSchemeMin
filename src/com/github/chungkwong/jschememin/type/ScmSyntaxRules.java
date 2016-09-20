@@ -64,6 +64,7 @@ public class ScmSyntaxRules extends ScmObject{
 		for(SyntaxRule rule:rules){
 			ScmObject transformed=rule.apply(argument,env);
 			if(transformed!=null){
+				System.err.println(transformed);
 				return transformed;
 			}
 		}
@@ -104,6 +105,8 @@ public class ScmSyntaxRules extends ScmObject{
 		}
 		private boolean matchIdentifier(ScmObject expr,ScmSymbol patt,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
 			if(literals.contains(patt)){
+				//if(expr instanceof ScmSymbol&&expr.getClass()!=ScmSymbol.class)
+				//	expr=env.get((ScmSymbol)expr);
 				return expr instanceof ScmSymbol&&((expr.equals(patt)&&!defEnv.containsKey(patt)&&!env.containsKey((ScmSymbol)expr))
 						||(defEnv.containsKey(patt)&&env.containsKey((ScmSymbol)expr)&&defEnv.get((ScmSymbol)patt).equals(env.get((ScmSymbol)expr))));
 			}else if(patt.equals(WILDCARD))
@@ -201,7 +204,6 @@ public class ScmSyntaxRules extends ScmObject{
 		private ScmObject transformSymbol(ScmSymbol temp,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
 			if(bind.containsKey(temp))
 				return bind.get(temp).get(index);
-			//return temp;
 			Optional<ScmObject> defVal=defEnv.getOptional(temp);
 			if(literals.contains(temp))//FIXME
 				return temp;
@@ -209,6 +211,8 @@ public class ScmSyntaxRules extends ScmObject{
 			bind.put(temp,new Rename(rename));
 			if(defVal.isPresent()){
 				env.add(rename,defVal.get());
+			}else{
+				env.add(rename,temp);
 			}
 			return rename;
 		}
@@ -255,18 +259,7 @@ public class ScmSyntaxRules extends ScmObject{
 			if(!(temp instanceof ScmNil)){
 				buf.setLast(transform(temp,bind,ellipsed,env,index));
 			}
-			ScmObject transformed=buf.toList();
-			/*if(transformed instanceof ScmPair&&((ScmPair)transformed).getCar() instanceof ScmSymbol){
-				Optional<ScmObject> optional=defEnv.getOptional((ScmSymbol)((ScmPair)transformed).getCar());
-				if(optional.isPresent()){
-					if(optional.get()instanceof Lambda){
-
-					}else if(optional.get()instanceof ScmSyntaxRules){
-
-					}
-				}
-			}*/
-			return transformed;
+			return buf.toList();
 		}
 		private ScmObject apply(ScmPairOrNil argument,Environment env){
 			HashMap<ScmSymbol,CapturedObjects> bind=new HashMap<>();
