@@ -102,9 +102,8 @@ public final class Parser{
 	}
 	public ArrayList<ScmObject> getRemainingDatums(){
 		ArrayList<ScmObject> datums=new ArrayList<>();
-		ScmObject datum;//=nextDatum();
+		ScmObject datum;
 		while((datum=nextDatum())!=null){
-		//for(int i=0;i<10;i++){
 			datums.add(datum);
 		}
 		return datums;

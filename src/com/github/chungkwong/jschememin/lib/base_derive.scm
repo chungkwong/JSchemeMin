@@ -489,12 +489,6 @@
        more-clauses ...))
     ((cond-expand ((or) body ...) more-clauses ...)
      (cond-expand more-clauses ...))
-    ((cond-expand ((or req1) body ...)
-                  more-clauses ...)
-     (cond-expand
-       (req1
-        (begin body ...))
-        more-clauses ...))
     ((cond-expand ((or req1 req2 ...) body ...)
                   more-clauses ...)
      (cond-expand

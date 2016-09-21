@@ -16,12 +16,14 @@
  */
 package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
+import java.io.*;
 import java.util.*;
+import javax.script.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Evaluator{
+public class Evaluator extends AbstractScriptEngine{
 	private final Environment env;
 	private final Continuation cont=new Continuation();
 	public Evaluator(boolean repl){
@@ -48,5 +50,27 @@ public class Evaluator{
 			}catch(RuntimeException ex){
 				ex.printStackTrace();
 			}
+	}
+	@Override
+	public Object eval(String script,ScriptContext context) throws ScriptException{
+		return eval(new StringReader(script),context);
+	}
+	@Override
+	public Object eval(Reader reader,ScriptContext context) throws ScriptException{
+		Parser parser=new Parser(new Lex(reader));
+		ScmObject datum,ret=null;
+		while((datum=parser.nextDatum())!=null){
+			ret=eval(datum);
+		}
+		return ret;
+	}
+	@Override
+	public Bindings createBindings(){
+		Bindings bindings=new SimpleBindings();
+		return bindings;
+	}
+	@Override
+	public ScriptEngineFactory getFactory(){
+		return EvaluatorFactory.INSTANCE;
 	}
 }

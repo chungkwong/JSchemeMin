@@ -64,7 +64,7 @@ public class ScmSyntaxRules extends ScmObject{
 		for(SyntaxRule rule:rules){
 			ScmObject transformed=rule.apply(argument,env);
 			if(transformed!=null){
-				System.err.println(transformed);
+				//System.err.println(transformed);
 				return transformed;
 			}
 		}
@@ -105,8 +105,9 @@ public class ScmSyntaxRules extends ScmObject{
 		}
 		private boolean matchIdentifier(ScmObject expr,ScmSymbol patt,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
 			if(literals.contains(patt)){
-				//if(expr instanceof ScmSymbol&&expr.getClass()!=ScmSymbol.class)
-				//	expr=env.get((ScmSymbol)expr);
+				if(expr instanceof ScmSymbol&&expr.getClass()!=ScmSymbol.class){
+					expr=env.get((ScmSymbol)expr);
+				}
 				return expr instanceof ScmSymbol&&((expr.equals(patt)&&!defEnv.containsKey(patt)&&!env.containsKey((ScmSymbol)expr))
 						||(defEnv.containsKey(patt)&&env.containsKey((ScmSymbol)expr)&&defEnv.get((ScmSymbol)patt).equals(env.get((ScmSymbol)expr))));
 			}else if(patt.equals(WILDCARD))
@@ -205,8 +206,8 @@ public class ScmSyntaxRules extends ScmObject{
 			if(bind.containsKey(temp))
 				return bind.get(temp).get(index);
 			Optional<ScmObject> defVal=defEnv.getOptional(temp);
-			if(literals.contains(temp))//FIXME
-				return temp;
+			//if(literals.contains(temp))//FIXME
+			//	return temp;
 			ScmSymbol rename=ScmSymbol.createFresh();
 			bind.put(temp,new Rename(rename));
 			if(defVal.isPresent()){
