@@ -105,8 +105,8 @@ public class ScmSyntaxRules extends ScmObject{
 		}
 		private boolean matchIdentifier(ScmObject expr,ScmSymbol patt,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
 			if(literals.contains(patt)){
-				if(expr instanceof ScmSymbol&&expr.getClass()!=ScmSymbol.class){
-					expr=env.get((ScmSymbol)expr);
+				if(expr instanceof ScmUniqueSymbol){
+					expr=((ScmUniqueSymbol)expr).getOrigin();
 				}
 				return expr instanceof ScmSymbol&&((expr.equals(patt)&&!defEnv.containsKey(patt)&&!env.containsKey((ScmSymbol)expr))
 						||(defEnv.containsKey(patt)&&env.containsKey((ScmSymbol)expr)&&defEnv.get((ScmSymbol)patt).equals(env.get((ScmSymbol)expr))));
@@ -208,12 +208,10 @@ public class ScmSyntaxRules extends ScmObject{
 			Optional<ScmObject> defVal=defEnv.getOptional(temp);
 			//if(literals.contains(temp))//FIXME
 			//	return temp;
-			ScmSymbol rename=ScmSymbol.createFresh();
+			ScmSymbol rename=new ScmUniqueSymbol(temp);
 			bind.put(temp,new Rename(rename));
 			if(defVal.isPresent()){
 				env.add(rename,defVal.get());
-			}else{
-				env.add(rename,temp);
 			}
 			return rename;
 		}

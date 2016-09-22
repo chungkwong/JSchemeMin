@@ -822,9 +822,9 @@ public class StandardProcedureTest{
 	@Test
 	public void testSystem(){
 		assertStandardOutput("(begin (import (scheme load)) (load \"test/com/github/chungkwong/jschememin/lib-example.scm\"))",
-				"   ** \n     *\n  *  *\n **  *\n    * \n" +
-				" *    \n*  *  \n ** * \n **** \n      \n" +
-				"      \n   *  \n    * \n *  * \n      \n");
+				"      \n      \n* *   \n **   \n *    \n" +
+				"      \n      \n  *   \n* *   \n **   \n" +
+				"      \n      \n *    \n  **  \n **   \n");
 		assertExpressionValue("(let () (import (scheme file)) (file-exists? \"test/com/github/chungkwong/jschememin/to_include.scm\"))","#t");
 		assertExpressionValue("(let () (import (scheme file)) (file-exists? \"test/com/github/chungkwong/jschememin/nothing.scm\"))","#f");
 		assertStandardOutput("(with-exception-handler "
