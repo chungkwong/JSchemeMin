@@ -29,9 +29,7 @@ public class SimpleLibrary implements LibraryLoader{
 	private final String path;
 	private Library lib=null;
 	public SimpleLibrary(String path,String... part){
-		ScmListBuilder buf=new ScmListBuilder();
-		Arrays.stream(part).map((n)->new ScmSymbol(n)).forEach((o)->buf.add(o));
-		this.name=(ScmPair)buf.toList();
+		this.name=(ScmPair)Arrays.stream(part).map((n)->new ScmSymbol(n)).collect(ScmList.COLLECTOR);
 		this.path=path;
 	}
 	@Override

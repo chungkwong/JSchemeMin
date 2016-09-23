@@ -28,9 +28,7 @@ public abstract class NativeLibrary implements LibraryLoader{
 	private Library lib=null;
 	private final ScmPair name;
 	public NativeLibrary(String... part){
-		ScmListBuilder buf=new ScmListBuilder();
-		Arrays.stream(part).map((n)->new ScmSymbol(n)).forEach((o)->buf.add(o));
-		this.name=(ScmPair)buf.toList();
+		this.name=(ScmPair)Arrays.stream(part).map((n)->new ScmSymbol(n)).collect(ScmList.COLLECTOR);
 	}
 	@Override
 	public ScmPair getName(){

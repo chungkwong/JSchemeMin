@@ -38,6 +38,15 @@ public class ScmListBuilder{
 	public void addAll(ScmPairOrNil list){
 		ScmList.forEach(list,(item)->add(item));
 	}
+	public void addAll(ScmListBuilder buf){
+		if(end==null){
+			start=buf.start;
+			end=buf.end;
+		}else if(buf.end!=null){
+			end.setCdr(buf.start);
+			end=buf.end;
+		}
+	}
 	public void setLast(ScmObject obj){
 		if(end==null)
 			start=obj;

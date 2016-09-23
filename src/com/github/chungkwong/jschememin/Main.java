@@ -25,9 +25,19 @@ public class Main {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-		ScmListBuilder buf=new ScmListBuilder();
-		Arrays.stream(args).map((arg)->new ScmString(arg)).forEach((arg)->buf.add(arg));
-		COMMAND_LINE=(ScmPairOrNil)buf.toList();
+		COMMAND_LINE=(ScmPairOrNil)Arrays.stream(args).map((arg)->new ScmString(arg)).collect(ScmList.COLLECTOR);
+		Scanner in=new Scanner(System.in);
+		Evaluator eval=new Evaluator(true);
+		System.out.print("> ");
+		System.out.flush();
+		while(in.hasNextLine()){
+			try{
+				new Parser(in.nextLine()).getRemainingDatums().forEach((d)->System.out.println("=> "+eval.eval(d)));
+			}catch(RuntimeException ex){
+				ex.printStackTrace();
+			}
+			System.out.print("> ");
+			System.out.flush();
+		}
 	}
-
 }

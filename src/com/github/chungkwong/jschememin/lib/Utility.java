@@ -113,9 +113,7 @@ public class Utility{
 			if(ScmList.asStream((ScmPairOrNil)list).allMatch((o)->((ScmComplex)o).isExact()))
 				return result;
 			else{
-				ScmListBuilder buf=new ScmListBuilder();
-				ScmList.forEach(result,(o)->buf.add(((ScmComplex)o).toInExact()));
-				return buf.toList();
+				return ScmList.asStream(result).map((o)->((ScmComplex)o).toInExact()).collect(ScmList.COLLECTOR);
 			}
 		};
 	}

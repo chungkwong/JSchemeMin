@@ -18,6 +18,7 @@ package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
+import java.lang.management.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -30,6 +31,8 @@ public class JSchemeMin extends NativeLibrary{
 	@Override
 	protected void init(Library lib){
 		addNativeProcedure("library-exists?",(o)->ScmBoolean.valueOf(LibraryManager.hasLibrary((ScmPair)car(o))));
+		addNativeProcedure("thread-clock",(o)->ScmInteger.valueOf(ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime()));
+		addDeriveFile("/com/github/chungkwong/jschememin/lib/base_derive.scm","duration");
 	}
 
 }

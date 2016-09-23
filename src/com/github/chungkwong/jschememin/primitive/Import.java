@@ -83,7 +83,7 @@ public class Import extends BasicConstruct implements Primitive{
 		final Library lib;
 		final HashMap<ScmSymbol,ScmSymbol> ex2im=new HashMap<>();
 		public ImportSet(ScmPair libName){
-			this.lib=LibraryManager.getLibrary(libName);
+			lib=LibraryManager.getLibrary(libName);
 			lib.getExportSet().stream().forEach((exportName)->{
 				ex2im.put(exportName,exportName);
 			});

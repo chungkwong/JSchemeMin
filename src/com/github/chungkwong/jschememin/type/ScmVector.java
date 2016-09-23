@@ -99,10 +99,7 @@ public final class ScmVector extends ScmObject{
 				.collect(ArrayList<ScmObject>::new,ArrayList<ScmObject>::addAll,ArrayList<ScmObject>::addAll));
 	}
 	public ScmPairOrNil toList(int start,int end){
-		ScmListBuilder buf=new ScmListBuilder();
-		for(int i=start;i<end;i++)
-			buf.add(vector.get(i));
-		return (ScmPairOrNil)buf.toList();
+		return (ScmPairOrNil)vector.subList(start,end).stream().collect(ScmList.COLLECTOR);
 	}
 	public static ScmVector fill(ScmObject o,int count){
 		return new ScmVector(new ArrayList(Collections.nCopies(count,o)));

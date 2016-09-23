@@ -17,7 +17,6 @@
 package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
 import java.io.*;
-import java.util.*;
 import javax.script.*;
 /**
  *
@@ -40,16 +39,6 @@ public class Evaluator extends AbstractScriptEngine{
 	}
 	public Environment getEnvironment(){
 		return env;
-	}
-	public static void main(String[] args) throws Exception{
-		Scanner in=new Scanner(System.in);
-		Evaluator eval=new Evaluator(true);
-		while(in.hasNextLine())
-			try{
-				new Parser(in.nextLine()).getRemainingDatums().forEach((d)->System.out.println(eval.eval(d)));
-			}catch(RuntimeException ex){
-				ex.printStackTrace();
-			}
 	}
 	@Override
 	public Object eval(String script,ScriptContext context) throws ScriptException{
