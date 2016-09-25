@@ -20,7 +20,6 @@ import static com.github.chungkwong.jschememin.lib.Utility.caddr;
 import static com.github.chungkwong.jschememin.lib.Utility.cadr;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
-import java.lang.management.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -33,6 +32,9 @@ public class HashTable extends NativeLibrary{
 	}
 	@Override
 	protected void init(Library lib){
+		addNativeProcedure("make-hashtable",new NativeProcedureDefault(
+				(o)->new ScmHashTable((Evaluable)car(o),(Evaluable)cadr(o),((ScmComplex)caddr(o)).intValueExact()),
+				(o)->car(o),(o)->cadr(o),(o)->new ScmInteger(16)));
 		addNativeProcedure("hashtable-mutable?",(o)->ScmBoolean.valueOf(((ScmHashTable)car(o)).isMutable()));
 		addNativeProcedure("hashtable-equivalence-function",(o)->((ScmHashTable)car(o)).getEquivalenceFunction());
 		addNativeProcedure("hashtable-hash-function",(o)->((ScmHashTable)car(o)).getHashFunction());
@@ -42,7 +44,14 @@ public class HashTable extends NativeLibrary{
 		addNativeProcedure("hashtable-ref",(o)->((ScmHashTable)car(o)).get(cadr(o),caddr(o)));
 		addNativeProcedure("hashtable-set!",(o)->{((ScmHashTable)car(o)).put(cadr(o),caddr(o));return OK;});
 		addNativeProcedure("hashtable-delete!",(o)->{((ScmHashTable)car(o)).remove(cadr(o));return OK;});
-		addNativeProcedure("thread-clock",(o)->ScmInteger.valueOf(ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime()));
-		addDeriveFile("/com/github/chungkwong/jschememin/lib/hashtables_derive.scm","hashtable-update!");
+		addNativeProcedure("hashtable-clear!",(o)->{((ScmHashTable)car(o)).clear();return OK;});
+		addNativeProcedure("hashtable-keys",(o)->((ScmHashTable)car(o)).keys());
+		addNativeProcedureMulti("hashtable-entries",(o)->ScmList.toList(((ScmHashTable)car(o)).keys(),((ScmHashTable)car(o)).values()));
+		addNativeProcedure("equal-hash",(o)->new ScmInteger(((ScmObject)car(o)).hashCode()));
+		addNativeProcedure("string-hash",(o)->new ScmInteger(((ScmString)car(o)).hashCode()));
+		addNativeProcedure("string-ci-hash",(o)->new ScmInteger(((ScmString)car(o)).toFoldingCase().hashCode()));
+		addNativeProcedure("symbol-hash",(o)->new ScmInteger(((ScmSymbol)car(o)).hashCode()));
+		addDeriveFile("/com/github/chungkwong/jschememin/lib/hashtables_derive.scm",
+				"make-eq-hashtable","make-eqv-hashtable","hashtable-update!");
 	}
 }

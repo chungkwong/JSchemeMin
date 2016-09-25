@@ -17,6 +17,7 @@
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
 import java.util.*;
+import java.util.stream.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -35,7 +36,7 @@ public class ScmHashTable extends ScmObject{
 	public ScmHashTable(Evaluable hash,Evaluable equiv){
 		this(new HashMap<>(),hash,equiv,true);
 	}
-	public ScmHashTable(int k,Evaluable hash,Evaluable equiv){
+	public ScmHashTable(Evaluable hash,Evaluable equiv,int k){
 		this(new HashMap<>(k),hash,equiv,true);
 	}
 	public int size(){
@@ -84,7 +85,8 @@ public class ScmHashTable extends ScmObject{
 	}
 	@Override
 	public String toExternalRepresentation(){
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return table.entrySet().stream().map((entry)->"("+entry.getKey()+" . "+entry.getValue()+")")
+			.collect(Collectors.joining(" ","(",")"));
 	}
 	@Override
 	public boolean isSelfevaluating(){
@@ -103,11 +105,16 @@ public class ScmHashTable extends ScmObject{
 		}
 		@Override
 		public int hashCode(){
-			return object.hashCode();
+			return ((ScmComplex)hash.call(new ScmPair(object,ScmNil.NIL))).toScmInteger().getValue().intValue();
 		}
 		@Override
 		public boolean equals(Object obj){
-			return super.equals(obj); //To change body of generated methods, choose Tools | Templates.
+			return obj instanceof ObjectWithHash&&
+					((ScmBoolean)equiv.call((ScmPairOrNil)ScmList.toList(object,((ObjectWithHash)obj).object))).isTrue();
+		}
+		@Override
+		public String toString(){
+			return object.toString();
 		}
 	}
 }

@@ -169,7 +169,7 @@ public class ScmList{
 		};
 		return StreamSupport.stream(iter.spliterator(),false);
 	}
-	public static final Collector<ScmObject,ScmListBuilder,ScmObject> COLLECTOR=new Collector<ScmObject,ScmListBuilder,ScmObject>() {
+	public static final Collector<ScmObject,ScmListBuilder,ScmPairOrNil> COLLECTOR=new Collector<ScmObject,ScmListBuilder,ScmPairOrNil>() {
 		@Override
 		public Supplier<ScmListBuilder> supplier(){
 			return ()->new ScmListBuilder();
@@ -183,8 +183,8 @@ public class ScmList{
 			return (buf,buf2)->{buf.addAll(buf);return buf;};
 		}
 		@Override
-		public Function<ScmListBuilder,ScmObject> finisher(){
-			return (buf)->buf.toList();
+		public Function<ScmListBuilder,ScmPairOrNil> finisher(){
+			return (buf)->(ScmPairOrNil)buf.toList();
 		}
 		@Override
 		public Set<Collector.Characteristics> characteristics(){

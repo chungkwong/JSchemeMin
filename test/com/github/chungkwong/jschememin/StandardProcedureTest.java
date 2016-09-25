@@ -594,6 +594,14 @@ public class StandardProcedureTest{
 		assertExpressionValue("(utf8->string #u8(#x41) 0 0)","\"\"");
 	}
 	@Test
+	public void testHashtable(){
+		assertExpressionValue("(begin (import (scheme hashtables)) (hashtable? '()))","#f");
+		assertExpressionValue("(begin (import (scheme hashtables)) (hashtable? #(1 2 3)))","#f");
+		assertExpressionValue("(begin (import (scheme hashtables)) (hashtable? (make-eq-hashtable)))","#t");
+		assertExpressionValue("(begin (import (scheme hashtables)) (hashtable? (make-eqv-hashtable)))","#t");
+		assertExpressionValue("(begin (import (scheme hashtables)) (hashtable? (make-hashtable equal-hash equal?)))","#t");
+	}
+	@Test
 	public void testControl(){
 		assertExpressionValue("(procedure? car)","#t");
 		assertExpressionValue("(procedure? (lambda (x) (+ x x)))","#t");

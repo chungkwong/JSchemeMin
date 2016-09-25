@@ -31,6 +31,7 @@ public class LibraryManager{
 		addNativeLibrary(Complex.INSTANCE);
 		addNativeLibrary(Eval.INSTANCE);
 		addNativeLibrary(File.INSTANCE);
+		addNativeLibrary(HashTable.INSTANCE);
 		addNativeLibrary(Inexact.INSTANCE);
 		addNativeLibrary(Java.INSTANCE);
 		addNativeLibrary(JSchemeMin.INSTANCE);

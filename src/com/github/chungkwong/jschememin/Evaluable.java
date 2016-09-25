@@ -26,4 +26,11 @@ public abstract class Evaluable extends ScmObject{
 		return false;
 	}
 	public abstract void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param);
+	public ScmObject call(ScmPairOrNil param){
+		Continuation cont=new Continuation();
+		cont.callInit(this,param,null);
+		while(cont.hasNext())
+			cont.evalNext();
+		return cont.getCurrentValue();
+	}
 }
