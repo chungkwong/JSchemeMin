@@ -35,6 +35,9 @@ public class HashTable extends NativeLibrary{
 		addNativeProcedure("make-hashtable",new NativeProcedureDefault(
 				(o)->new ScmHashTable((Evaluable)car(o),(Evaluable)cadr(o),((ScmComplex)caddr(o)).intValueExact()),
 				(o)->car(o),(o)->cadr(o),(o)->new ScmInteger(16)));
+		addNativeProcedure("hashtable-copy",new NativeProcedureDefault(
+				(o)->((ScmHashTable)car(o)).copy(((ScmBoolean)cadr(o)).isTrue()),
+				(o)->car(o),(o)->ScmBoolean.FALSE));
 		addNativeProcedure("hashtable-mutable?",(o)->ScmBoolean.valueOf(((ScmHashTable)car(o)).isMutable()));
 		addNativeProcedure("hashtable-equivalence-function",(o)->((ScmHashTable)car(o)).getEquivalenceFunction());
 		addNativeProcedure("hashtable-hash-function",(o)->((ScmHashTable)car(o)).getHashFunction());

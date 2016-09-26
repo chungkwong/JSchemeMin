@@ -32,7 +32,8 @@ public class JSchemeMin extends NativeLibrary{
 	protected void init(Library lib){
 		addNativeProcedure("library-exists?",(o)->ScmBoolean.valueOf(LibraryManager.hasLibrary((ScmPair)car(o))));
 		addNativeProcedure("thread-clock",(o)->ScmInteger.valueOf(ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime()));
-		//addDeriveFile("/com/github/chungkwong/jschememin/lib/jschememin_derive.scm","duration");
+		//addDeriveFile("/com/github/chungkwong/jschememin/lib/jschememin_derive.scm",
+		//"duration","count","total-time","profile-lambda","profile-record");
 	}
 
 }

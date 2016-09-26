@@ -138,9 +138,11 @@ public abstract class ScmComplex extends ScmNumber{
 	}
 	@Override
 	public int hashCode(){
+		if(isReal())
+			return toScmReal().hashCode();
 		int hash=5;
-		hash=37*hash+Double.hashCode(getReal().toDouble());
-		hash=37*hash+Double.hashCode(getImag().toDouble());
+		hash=37*hash+getReal().hashCode();
+		hash=37*hash+getImag().hashCode();
 		return hash;
 	}
 }

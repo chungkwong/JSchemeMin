@@ -63,7 +63,8 @@ public final class ScmRational extends ScmNormalReal{
 	}
 	@Override
 	public int hashCode(){
-		simplify();
+		if(isInteger())
+			return numerator.hashCode();
 		int hash=5;
 		hash=97*hash+Objects.hashCode(this.numerator);
 		hash=97*hash+Objects.hashCode(this.denominator);
