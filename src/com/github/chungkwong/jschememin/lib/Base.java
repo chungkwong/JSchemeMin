@@ -51,6 +51,7 @@ public class Base extends NativeLibrary{
 		initEval();
 		initIO();
 		initSystem();
+		addNative(new ScmSymbol("library-exists?"),new NativeEvaluable(JSchemeMin.LIBRARY_EXISTS),false);
 		addDeriveFile("/com/github/chungkwong/jschememin/lib/base_derive.scm",
 				"define-syntax","let","let*","letrec","letrec*","let-values","let*-values","define-values","let-syntax",
 				"letrec-syntax","cond","case","and","or","when","unless","begin","do","make-parameter","parameterize",

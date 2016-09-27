@@ -7,13 +7,15 @@
 (define profile-lambda
   (syntax-rules ()
     ((_ args body ...)
-     (let-rec ((proc (lambda args
+     (letrec ((proc (lambda args
                              (let* ((t (thread-clock)) (ret (begin body ... )))
                                    (hashtable-update! statistics
                                                       proc
-                                                      (lambda (e) (set-total-time! (+ (total-time e) (- (thread-clock) t)))
-                                                                  (set-count! (+ (count e) 1)))
-                                                      (make-call-record))
+                                                      (lambda (e) (set-total-time! e (+ (total-time e) (- (thread-clock) t)))
+                                                                  (set-count! e (+ (count e) 1))
+                                                                  e)
+                                                      (make-call-record 0 0))
                                    ret))))
               proc))))
-(define (profile-record proc) (hashtable-ref statistics proc (make-call-record)))
+(define (profile-record proc) (hashtable-ref statistics proc (make-call-record 0 0)))
+(define (profile-records) (hashtable-copy statistics #f))

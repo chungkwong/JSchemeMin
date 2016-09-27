@@ -42,9 +42,10 @@ public abstract class NativeLibrary implements LibraryLoader{
 		}
 		return lib;
 	}
-	protected void addNative(ScmSymbol name,ScmObject obj){
+	protected void addNative(ScmSymbol name,ScmObject obj,boolean export){
 		lib.getInternalEnvironment().add(name,obj);
-		lib.getExportMap().put(name,name);
+		if(export)
+			lib.getExportMap().put(name,name);
 	}
 	protected void addPrimitiveType(BasicConstruct type){
 		lib.getInternalEnvironment().addPrimitiveType(type);

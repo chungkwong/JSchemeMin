@@ -40,8 +40,9 @@ public class ScmRecord extends ScmObject{
 	public String toExternalRepresentation(){
 		StringBuilder buf=new StringBuilder();
 		buf.append('(').append(type.getName().getValue()).append(' ');
-		for(Map.Entry<ScmSymbol,Integer> entry:type.indices.entrySet())
-			buf.append('(').append(entry.getKey().getValue()).append(' ').append(fields[entry.getValue()]).append(')');
+		type.indices.forEach((key,value)->{
+			buf.append('(').append(key.getValue()).append(' ').append(fields[value]).append(')').append(' ');
+		});
 		buf.append(')');
 		return buf.toString();
 	}

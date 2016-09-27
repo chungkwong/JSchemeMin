@@ -25,15 +25,18 @@ import java.lang.management.*;
  */
 public class JSchemeMin extends NativeLibrary{
 	public static final JSchemeMin INSTANCE=new JSchemeMin();
+	static final NativeProcedure LIBRARY_EXISTS=(o)->ScmBoolean.valueOf(LibraryManager.hasLibrary((ScmPair)car(o)));
 	private JSchemeMin(){
 		super("jschememin");
 	}
 	@Override
 	protected void init(Library lib){
-		addNativeProcedure("library-exists?",(o)->ScmBoolean.valueOf(LibraryManager.hasLibrary((ScmPair)car(o))));
+		addNativeProcedure("library-exists?",LIBRARY_EXISTS);
 		addNativeProcedure("thread-clock",(o)->ScmInteger.valueOf(ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime()));
-		//addDeriveFile("/com/github/chungkwong/jschememin/lib/jschememin_derive.scm",
-		//"duration","count","total-time","profile-lambda","profile-record");
+		addNativeProcedure("memory-total",(o)->ScmInteger.valueOf(Runtime.getRuntime().totalMemory()));
+		addNativeProcedure("memory-free",(o)->ScmInteger.valueOf(Runtime.getRuntime().freeMemory()));
+		addDeriveFile("/com/github/chungkwong/jschememin/lib/jschememin_derive.scm",
+				"duration","count","total-time","profile-lambda","profile-record","profile-records");
 	}
 
 }

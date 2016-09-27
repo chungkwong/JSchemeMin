@@ -468,8 +468,6 @@
         (string-for-each-range lists 0 (apply min (map string-length lists)))))
 (define call/cc call-with-current-continuation)
 
-(import (only (jschememin) library-exists?))
-
 (define-syntax cond-expand
   ;; Extend this to mention all feature ids and libraries
   (syntax-rules (and or not else library)
