@@ -63,6 +63,7 @@ public class EvaluatorTest{
 	@Test
 	public void testInclude(){
 		check("(include \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/to_include.scm\")",new ScmInteger(12));
+		expectException("(include \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/non_exists.scm\")");
 	}
 	@Test
 	public void testSet(){
@@ -77,6 +78,7 @@ public class EvaluatorTest{
 		checkLast("(import (prefix (scheme cxr) kk)) (kkcaddr '(1 2 3 4 5))",new ScmInteger(3));
 		checkLast("(import (rename (scheme cxr) (caddr third))) (third '(1 2 3 4 5))",new ScmInteger(3));
 		checkLast("(import (rename (scheme cxr) (cadddr fourth) (caddr third))) (third '(1 2 3 4 5))",new ScmInteger(3));
+		expectException("(begin (import (scheme noexist)))");
 		expectException("(begin (import (rename (scheme cxr) (caddr third))) (caddr '(1 2 3 4 5)))");
 		expectException("(begin (import (prefix (scheme cxr) kk)) (caddr '(1 2 3 4 5)))");
 		expectException("(begin (import (except (scheme cxr) cadddr)) (cadddr '(1 2 3 4 5)))");

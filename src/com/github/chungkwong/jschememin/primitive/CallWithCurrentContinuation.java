@@ -39,7 +39,7 @@ public class CallWithCurrentContinuation extends BasicConstruct{
 			}
 			@Override
 			public String toExternalRepresentation(){
-				throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+				return "roll-back-procedure";
 			}
 		};
 	}

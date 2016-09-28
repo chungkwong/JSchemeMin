@@ -648,6 +648,7 @@ public class StandardProcedureTest{
 	@Test
 	public void testException(){
 		expectException("(raise 'bad)");
+		expectException("(raise-continuable 'bad)");
 		assertExpressionValue("(with-exception-handler (lambda (e) 12) (lambda () (+ (raise-continuable #t) 2)))","14");
 		assertStandardOutput("(with-exception-handler "
 				+ "(lambda (x) (import (scheme write)) (display \"something went wrong\\n\") (flush-output-port)) "
