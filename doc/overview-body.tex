@@ -14,169 +14,94 @@
 
 \vest Scheme是第一种过程作为公民对象的语言之一支持程序的一种对象在自己的权利。程序可以动态创建，存储在数据结构中，作为返回值等等。有这性能的其他语言包括Common Lisp，Haskell，ML，Ruby，和Smalltalk。
 
-\vest One distinguishing feature of Scheme is that continuations, which
-in most other languages only operate behind the scenes, also have
-``first-class'' status.  First-class continuations are useful for implementing a
-wide variety of advanced control constructs, including non-local exits,
-backtracking, and coroutines.
+\vest Scheme的一个标志性特性为继续，它在大多数语言只在背后工作, 而在这里有``头等''地位。头等继续对实现广泛的高级控制结构有用，包括非本地退出、回溯和协程。
 
-In Scheme, the argument expressions of a procedure call are evaluated
-before the procedure gains control, whether the procedure needs the
-result of the evaluation or not.  C, C\#, Common Lisp, Python,
-Ruby, and Smalltalk are other languages that always evaluate argument
-expressions before invoking a procedure.  This is distinct from the
-lazy-evaluation semantics of Haskell, or the call-by-name semantics of
-Algol 60, where an argument expression is not evaluated unless its
-value is needed by the procedure.
+在Scheme，参数在过程取得控制前求值，不管过程是否需要它们的值。 C、 C\#、 Common Lisp、 Python、Ruby和Smalltalk亦然。这与Haskell的惰性求值或Algol 60的按名调用语义不同，它们在过程需要时才求值参数表达式。
 
-Scheme's model of arithmetic provides a rich set of numerical types
-and operations on them.  Furthermore, it distinguishes \textit{exact}
-and \textit{inexact} numbers: Essentially, an exact number
-object corresponds to a number exactly, and an inexact number
-is the result of a computation that involved rounding or other approximations.
+Scheme的算术模型提供丰富的数值类型和操作。进一步它区分\textit{精确}和\textit{非精确数}：实际上一个精确数精确对应于一个数，而非精确数为涉及舍入或其它近似的数。
 
-\chapter{Basic types}
+\chapter{基本类型}
 
-Scheme programs manipulate \textit{objects}, which are also referred
-to as \textit{values}.
-Scheme objects are organized into sets of values called \textit{types}.
-This chapter gives an overview of the fundamentally important types of the
-Scheme language.  
+Scheme处理\textit{对象}，也称为值\textit{值}。Scheme对象组织为称为\textit{类型}的值集合。本章给出Scheme语言重要基本类型的概述。
 
 \begin{note}
-  As Scheme is latently typed, the use of the term \textit{type} in
-  the Scheme context differs from the use of the term in the context of other
-  languages, particularly those with manifest typing.
+  因为Scheme为隐式类型的，Scheme语景下 \textit{类型} 一词使用与其它语言特别是显式类型语言语景下不同。
 \end{note}
 
-\paragraph{Numbers}
+\paragraph{数}
 
-Scheme supports a rich variety of numerical data types, including
-integers of arbitrary precision, rational numbers, complex numbers, and
-inexact numbers of various kinds.  
+Scheme支持广泛的数值类型，包括任意精度整数、有理数、复数和多种非精确数。
 
-\paragraph{Booleans}
+\paragraph{布尔值}
 
-A boolean is a truth value, and can be either
-true or false.  In Scheme, the object for ``false'' is written
-\schfalse{}.  The object for ``true'' is written \schtrue{}.  In
-most places where a truth value is expected, however, any object different from
-\schfalse{} counts as true.
+布尔值即直值，可以是真或假。在Scheme, ``假''对象记为 \schfalse{}，``真''对象记为 \schtrue{}。但在大多数要求真值的场合，非假的对象都被当作真。
 
-\paragraph{Pairs and lists}
+\paragraph{序偶和列表}
 
-A pair is a data structure with two components.  The most common use
-of pairs is to represent (singly linked) lists, where the first
-component (the ``car'') represents the first element of the list, and
-the second component (the ``cdr'') the rest of the list.  Scheme also
-has a distinguished empty list, which is the last cdr in a chain of
-pairs that form a list.
+序偶为有两个分量的数据结构。最常用于表示（单向链）列表，其中首分量(``car'')表示列表首个元素，次分量(``car'')表示余下的列表。Scheme 也有独特的空列表，用于列表中最后一个序偶的cdr。
 
-\paragraph{Symbols}
+\paragraph{符号}
 
-A symbol is an object representing a string,
-the symbol's \textit{name}.
-Unlike strings, two symbols whose names are spelled the same
-way are never distinguishable.  Symbols are useful for many applications;
-for instance, they can be used the way enumerated values are used in
-other languages.
+符号是表示一个字符串（它的\textit{名字}）的对象。与字符串不同，两个名字相同的符号不可区分。符号有很多应用，例如可用来模仿其它语言的枚举。
 
-In \rsevenrs, unlike \rfivers, symbols and identifiers are case-sensitive.
+在 \rsevenrs，不同于 \rfivers，符号和标识符区分大小写。
 
-\paragraph{Characters}
+\paragraph{字符}
 
-Scheme characters mostly correspond to textual characters.
-More precisely, they are isomorphic to a subset of the \textit{scalar values} of
-the Unicode standard, with possible implementation-dependent extensions.
+Scheme字符大致对应于文本字符。更准确地，它同构于Unicode标准中\textit{标量值}的子集，可能有与实现有关的扩展。
 
-\paragraph{Strings}
+\paragraph{字符串}
 
-Strings are finite sequences of characters with fixed length and thus
-represent arbitrary Unicode texts.
+字符串为字符的定长序列，从而表示Unicode文本。
 
-\paragraph{Vectors}
+\paragraph{向量}
 
-Vectors, like lists, are linear data structures
-representing finite sequences of arbitrary objects.
-Whereas the elements of a list are accessed
-sequentially through the chain of pairs representing it,
-the elements of a vector are addressed by integer indices.
-Thus, vectors are more appropriate than
-lists for random access to elements.
+向量和列表同为表示任意对象的有限序列的的线性数据结构。列表的元素通过遍历序偶链来存取，而向量的元素由整数下标存取。因此，向量比列表更适合随机访问。
 
-\paragraph{Bytevectors}
+\paragraph{位向量}
 
-Bytevectors are similar to vectors, except that their contents
-are \textit{bytes}, exact integers in the range 0 to 255 inclusive.
+位向量类似于向量，除了它的内容为\textit{字节}, 即从0到255的精确整数。
 
-\paragraph{Procedures}
+\paragraph{过程}
 
-Procedures are values in Scheme.
+过程在Scheme为值。
 
-\paragraph{Records}
+\paragraph{记录}
 
-Records are structured values, and are
-aggregations of zero or more \textit{fields}, each of which holds a single location.
-Records are organized into \textit{record types}.
-A predicate, a constructor, and field accessors and
-mutators can be defined for each record type.
+记录为结构化的值，是零个或更多个域\textit{域}的聚合，每一个存放单个位置。记录组织为\textit{记录类型}。一个记录类型可定义一个谓词、构造器、域访问器、域修改器。
 
-\paragraph{Ports}
+\paragraph{端口}
 
-Ports represent input and output devices.  To Scheme, an input port is
-a Scheme object that can deliver data upon command, while an output
-port is a Scheme object that can accept data.
+端口表示输入输出装置。对于Scheme，输入端口是一个可通过命令提供数据的Scheme对象，而输出端口是一个可接受数据的Scheme对象.
 
-\chapter{Expressions}
+\chapter{表达式}
 
-The most important elements of Scheme code are
-\textit{expressions}.  Expressions can be
-\textit{evaluated}, producing a \textit{value} (actually, any number
-of values.)  The most
-fundamental expressions are literal expressions:
+Scheme代码大部分主要元素为\textit{表达式}。表达式可被\textit{求值}, 提供 \textit{值} (实际上任意多个值)。最基本的表达式为字面值表达式:
 
 \begin{scheme}
 \schtrue{} \ev \schtrue
 23 \ev 23%
 \end{scheme}
 
-This notation means that the expression \schtrue{} evaluates to
-\schtrue{}, that is, the value for ``true'',  and that the expression
-{\cf 23} evaluates to a number representing the number 23.
+这记号指 \schtrue{} 求值为\schtrue{}，即``真''的值，而{\cf 23} 求值为表示23的数。
 
-Compound expressions are formed by placing parentheses around their
-subexpressions.  The first subexpression identifies an operation; the
-remaining subexpressions are operands to the operation:
+复合表达式由括号和子表达式组成。第一个子表达式确定操作; 其余子表达式为操作数:
 %
 \begin{scheme}
 (+ 23 42) \ev 65
 (+ 14 (* 23 42)) \ev 980%
 \end{scheme}
 %
-In the first of these examples, {\cf +} is the name of
-the built-in operation for addition, and {\cf 23} and {\cf 42} are the
-operands.  The expression {\cf (+ 23 42)} reads as ``the sum of 23 and
-42''.  Compound expressions can be nested---the second example reads
-as ``the sum of 14 and the product of 23 and 42''.
+在第一个例子，{\cf +} 是一个内置加法操作的名字，{\cf 23} 和 {\cf 42} 为操作数。表达式 {\cf (+ 23 42)} 读作 ``23 和
+42的和''。复合表达式可嵌套---第二个表达式读作 ``14 和 23 与 42 的积的和''。
 
-As these examples indicate, compound expressions in Scheme are always
-written using the same prefix notation.  As
-a consequence, the parentheses are needed to indicate structure.
-Consequently, ``superfluous'' parentheses, which are often permissible in
-mathematical notation and also in many programming languages, are not
-allowed in Scheme.
+如这些例子指出的，Scheme的复合表达式都用前缀记法。结果，需要括号指示结构。于是, 在数学和其它编程语言中常见的``省略'' 括号在Scheme是不容许的。
 
-As in many other languages, whitespace (including line endings) is not
-significant when it separates subexpressions of an expression, and
-can be used to indicate structure.
+和很多其它语言一样，空白(包括行结束符)在分隔子表达式时不重要，可用于显示结构。
 
-\chapter{Variables and binding}
+\chapter{变量和绑定}
 
-Scheme
-allows identifiers to stand for locations containing values.
-These identifiers are called variables.  In many cases, specifically
-when the location's value is never modified after its creation, it is
-useful to think of the variable as standing for the value directly.
+Scheme容许标识符表示包含值的位置。这些标识符称为变量。在很多情况，特别是位置在创建后没有修改过时，把变量直接想成其值是有用的。
 
 \begin{scheme}
 (let ((x 23)
@@ -184,20 +109,11 @@ useful to think of the variable as standing for the value directly.
   (+ x y)) \ev 65%
 \end{scheme}
 
-In this case, the expression starting with {\cf let} is a binding
-construct.  The parenthesized structure following the {\cf let} lists
-variables alongside expressions: the variable {\cf x} alongside {\cf
-  23}, and the variable {\cf y} alongside {\cf 42}.  The {\cf let}
-expression binds {\cf x} to 23, and {\cf y} to 42.  These bindings are
-available in the \textit{body} of the {\cf let} expression, {\cf (+ x
-  y)}, and only there.
+在本例，{\cf let} 开始的表达式为一个绑定构造。 {\cf let}表达式把{\cf x} 绑定到 23，把{\cf y} 绑定到 42。这些绑定在且仅在{\cf let}的\textit{体}可见。
 
-\chapter{Definitions}
+\chapter{定义}
 
-The variables bound by a {\cf let} expression
-are \textit{local}, because their bindings are visible only in the
-{\cf let}'s body.  Scheme also allows creating top-level bindings for
-identifiers as follows:
+用 {\cf let} 表达式绑定的变量是\textit{本地}的，因为绑定仅在{\cf let}的体可见。Scheme也容许创建顶层绑定如下：
 
 \begin{scheme}
 (define x 23)
@@ -230,7 +146,7 @@ local binding can be found along the way:
     (+ x y))) \ev 67%
 \end{scheme}
 
-\chapter{Procedures}
+\chapter{过程}
 
 Definitions can also be used to define
 procedures:
@@ -320,7 +236,7 @@ The set of syntactic keywords of Scheme is
 fairly small, which usually makes this task fairly simple.
 It is possible, however, to create new bindings for syntactic keywords.
 
-\chapter{Assignment}
+\chapter{赋值}
 
 Scheme variables bound by definitions or {\cf let} or {\cf lambda}
 expressions are not actually bound directly to the objects specified in the
@@ -341,7 +257,7 @@ expression.  The expression {\cf (set! x 42)} is an assignment, saying
 ``replace the object in the location referenced by {\cf x} with 42''.
 Thus, the previous value of {\cf x}, 23, is replaced by 42.
 
-\chapter{Derived syntax and macros}
+\chapter{派生语法和宏}
 
 Many of the expression types specified 
 as part of the \rsevenrs{} small language
@@ -403,7 +319,7 @@ flexible and expressive, allowing many of the features
 built into other languages to be implemented directly in Scheme:
 any Scheme programmer can add new expression types.
 
-\chapter{Syntactic data and datum values}
+\chapter{语法数据和数据值Syntactic data and datum values}
 
 \textit{Datum values} constitute a subset of Scheme objects.
 These include booleans, numbers, characters, symbols,
@@ -447,7 +363,7 @@ particular, symbols can be used to represent identifiers.
 This facilitates writing programs that operate on Scheme source code,
 in particular interpreters and program transformers.
 
-\chapter{Continuations}
+\chapter{继续}
 
 Whenever a Scheme expression is evaluated there is a
 \textit{continuation} wanting the result of the
@@ -491,18 +407,11 @@ multiple times.  This makes {\cf call-with-current-continuation}
 significantly more powerful than typical non-local control constructs
 such as exceptions in other languages.
 
-\chapter{Libraries}
+\chapter{库}
 
-Scheme code can be organized in components called
-\textit{libraries}.  Each library contains 
-definitions and expressions.  It can import definitions
-from other libraries and export definitions to other libraries.
+Scheme 代码可组织为称为\textit{libraries}的组件。每个库包含定义和表达式。它可从其它库导入定义和导出定义到其它库。
 
-The following library called {\cf (hello)} exports a definition called
-{\cf hello-world},  and imports the base library
-and the display library.
-The {\cf hello-world} export is a procedure that displays {\cf Hello World}
-on a separate line:
+以下叫 {\cf (hello)} 的库导出{\cf hello-world}定义和导入base库和display库。{\cf hello-world}是在输出一行{\cf Hello World}的过程:
 %
 \begin{scheme}
 (define-library (hello)
@@ -515,23 +424,11 @@ on a separate line:
       (newline))))%
 \end{scheme}
 
-\chapter{Programs}
+\chapter{程序}
 
-Libraries are invoked by other libraries, but ultimately by a Scheme
-\textit{program}.  Like a library, a
-program contains imports, definitions and expressions, and specifies
-an entry point for execution.  Thus a program defines, via
-the transitive closure of the libraries it imports, a Scheme program.
+库由其它库，最终 Scheme \textit{程序}调用。类似于库，程序包含导入、定义和表达式，还有特定的运行起点。从而一个程序通过它导入的库的传递闭包定义一个Scheme程序。
 
-The following program obtains the first argument from the command line
-via the {\cf command-line} procedure from the process-context
-library.
-It then opens the file using {\cf with-input-from-file},
-which causes the file to be the current input port, and
-arranges for it to be closed at the end.
-Next, it calls the {\cf read-line} procedure to read a line of text
-from the file, and then {\cf write-string} and {\cf newline} to
-output the line, then looping until the end of file:
+以下程序通过process-context库的{\cf command-line}过程取得首个命令行参数。然后它用{\cf with-input-from-file}打开文件并使之成为当前输入端口，最后自动关闭。然后，它调用{\cf read-line}过程读入一行文本，再用{\cf write-string}和{\cf newline}输出该行，接着循环至文件结束:
 %
 \begin{scheme}
 (import (scheme base)
@@ -547,20 +444,11 @@ output the line, then looping until the end of file:
         (loop (read-line))))))%
 \end{scheme}
 
-\chapter{The REPL}
+\chapter{REPL}
 
-Implementations may provide an interactive session called a
-\defining{REPL} (Read-Eval-Print Loop), where import declarations,
-expressions and definitions can be
-entered and evaluated one at a time.  The REPL starts out
-with the base library imported, and possibly other libraries.
-An implementation may provide a mode of operation in which the REPL
-reads its input from a file.  Such a file is not, in general, the same
-as a program, because it can contain import declarations in places other than
-the beginning.
+实现可以提供称为交互会话\defining{REPL}(Read-Eval-Print Loop), 其中可一个一个地输入和处理导入、表达式和定义。REPL 开始时导入base库和其它可能的库。实现可提供REPL从文件读输入的操作模式，这文件一般不是程序，因为可以在非起始处导入。
 
-Here is a short REPL session.  The {\cf >} character represents the REPL's
-prompt for input:
+以下是一个短的REPL会话.  {\cf >} 为输入提示符:
 
 \begin{scheme}
 > ; A few simple things
