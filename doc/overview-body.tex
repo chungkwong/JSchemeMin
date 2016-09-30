@@ -121,19 +121,11 @@ Scheme容许标识符表示包含值的位置。这些标识符称为变量。�
 (+ x y) \ev 65%
 \end{scheme}
 
-(These are actually ``top-level'' in the body of a top-level program or library.)
+(它们实际上在顶层程序或库``项层''。)
 
-The first two parenthesized structures are \textit{definitions}; they
-create top-level bindings, binding {\cf x} to 23 and {\cf y} to 42.
-Definitions are not expressions, and cannot appear in all places
-where an expression can occur.  Moreover, a definition has no value.
+前两个括住的结构为\textit{定义}; 它们创建顶层绑定，绑定{\cf x} 到 23 和 {\cf y} 到 42。定义不是表达式，不能在所有容许表达式的地方出现。并且定义没有值。
 
-Bindings follow the lexical structure of the program:  When several
-bindings with the same name exist, a variable refers to the binding
-that is closest to it, starting with its occurrence in the program
-and going from inside to outside, and referring to an outermost
-binding if no
-local binding can be found along the way:
+绑定服从程序的词法结构：当多个绑定同名，变量指向最近的绑定，由内而外:
 
 \begin{scheme}
 (define x 23)
@@ -148,8 +140,7 @@ local binding can be found along the way:
 
 \chapter{过程}
 
-Definitions can also be used to define
-procedures:
+定义也可以用于定义过程：
 
 \begin{scheme}
 (define (f x)
@@ -158,16 +149,10 @@ procedures:
 (f 23) \ev 65%
 \end{scheme}
 
-A procedure is, slightly simplified, an abstraction of an
-expression over objects.  In the example, the first definition defines a procedure
-called {\cf f}.  (Note the parentheses around {\cf f x}, which
-indicate that this is a procedure definition.)  The expression {\cf (f
-  23)} is a procedure call meaning,
-roughly, ``evaluate {\cf (+ x 42)} (the body of the procedure) with
-{\cf x} bound to 23''.
+简单地说，过程是表达式抽象成的对象。在例子中，第一个定义定义了一个叫{\cf f}的过程。 (包围{\cf f x}的括号表示这是过程定义。) 表达式 {\cf (f
+  23)} 为一个过程调用，大致``求值 {\cf (+ x 42)} (过程体) ，其中{\cf x} 绑定到 23''.
 
-As procedures are objects, they can be passed to other
-procedures:
+过程为对象，可传给其它过程：
 %
 \begin{scheme}
 (define (f x)
@@ -179,16 +164,9 @@ procedures:
 (g f 23) \ev 65%
 \end{scheme}
 
-In this example, the body of {\cf g} is evaluated with {\cf p}
-bound to {\cf f} and {\cf x} bound to 23, which is equivalent
-to {\cf (f 23)}, which evaluates to 65.
+在例子中，{\cf g}的体中 {\cf p}绑定到{\cf f} 而 {\cf x} 绑定到 23来求值，相当于{\cf (f 23)}，求值为 65.
 
-In fact, many predefined operations of Scheme are provided not by
-syntax, but by variables whose values are procedures.
-The {\cf +} operation, for example, which receives
-special syntactic treatment in many other languages, is just a regular
-identifier in Scheme, bound to a procedure that adds numbers.  The
-same holds for {\cf *} and many others:
+事实上，Scheme许多内置操作通过值为过程的变量而非语法提供。例如{\cf +}操作在很多其它语言作特殊语法提供，在Scheme中只是绑定到一个求和过程的常规标识符。{\cf *}等亦然:
 
 \begin{scheme}
 (define (h op x y)
@@ -198,51 +176,26 @@ same holds for {\cf *} and many others:
 (h * 23 42) \ev 966%
 \end{scheme}
 
-Procedure definitions are not the only way to create procedures.  A
-{\cf lambda} expression creates a new procedure as an object, with no
-need to specify a name:
+过程定义并非创建过程的惟一方法。{\cf lambda} 表达式创建一个新的过程对象，不用给名字：
 
 \begin{scheme}
 ((lambda (x) (+ x 42)) 23) \ev 65%
 \end{scheme}
 
-The entire expression in this example is a procedure call; {\cf
-  (lambda (x) (+ x 42))}, evaluates to a procedure that takes a single
-number and adds 42 to it.
+整个表达式为函数调用；{\cf
+  (lambda (x) (+ x 42))}求值为一个单参过程，把42加到上面。
 
-\chapter{Procedure calls and syntactic keywords}
+\chapter{过程调用和语法关键字}
 
-Whereas {\cf (+ 23 42)}, {\cf (f 23)}, and {\cf ((lambda (x) (+ x 42))
-  23)} are all examples of procedure calls, {\cf lambda} and {\cf
-  let} expressions are not.  This is because {\cf let}, even though
-it is an identifier, is not a variable, but is instead a \textit{syntactic
-  keyword}.  A list that has a
-syntactic keyword as its first subexpression obeys special rules determined by
-the keyword.  The {\cf define} identifier in a definition is also a
-syntactic keyword.  Hence, definitions are also not procedure calls.
+{\cf (+ 23 42)}, {\cf (f 23)}和 {\cf ((lambda (x) (+ x 42))  23)} 都是过程调用的例子，{\cf lambda} 和 {\cf let} 表达式不是。因为 {\cf let}虽是标识符符但不是变量，而是\textit{语法关键字}。首个子表达式为语法关键字的列表式服从该关键字指定的特殊规则。定义中的{\cf define}标识符也是语法关键字。 所以，定义也不是过程调用。
 
-The rules for the {\cf lambda} keyword specify that the first
-sublist is a list of parameters, and the remaining sublists are the body of
-the procedure.  In {\cf let} expressions, the first sublist is a list
-of binding specifications, and the remaining sublists constitute a body of
-expressions.
+{\cf lambda} 关键字指定首个子列表为一个参数列表，余下子列表为过程体。在 {\cf let} 表达式，首个子列表为绑定规范，余下子列表构成表达式体。
 
-Procedure calls can be distinguished from these
-\textit{expression types} by
-looking for a syntactic keyword in the first position of a list:
-if the first position does not contain a syntactic keyword, the expression
-is a procedure call.  
-The set of syntactic keywords of Scheme is
-fairly small, which usually makes this task fairly simple.
-It is possible, however, to create new bindings for syntactic keywords.
+过程调用和这些\textit{表达式类型}区别在于列表的首个位置：它不是语法关键字的话表达式就是过程调用。Scheme的语法关键字集较少，这使此工作容易。但可以新建语法关键字绑定。
 
 \chapter{赋值}
 
-Scheme variables bound by definitions or {\cf let} or {\cf lambda}
-expressions are not actually bound directly to the objects specified in the
-respective bindings, but to locations containing these objects.  The
-contents of these locations can subsequently be modified destructively
-via \textit{assignment}:
+由定义、{\cf let} 或 {\cf lambda}表达式绑定的Scheme变量不是直接绑定到指定对象，而是绑定到含该对象的位置。这些位置的内容以后可用\textit{赋值}破坏性地修改：
 %
 \begin{scheme}
 (let ((x 23))
@@ -250,21 +203,11 @@ via \textit{assignment}:
   x) \ev 42%
 \end{scheme}
 
-In this case, the body of the {\cf let} expression consists of two
-expressions which are evaluated sequentially, with the value of the
-final expression becoming the value of the entire {\cf let}
-expression.  The expression {\cf (set! x 42)} is an assignment, saying
-``replace the object in the location referenced by {\cf x} with 42''.
-Thus, the previous value of {\cf x}, 23, is replaced by 42.
+在此情况，{\cf let} 表达式体有两个表达式，它们顺序求值，最后一个表达式的值为整个 {\cf let}表达式的值。{\cf (set! x 42)} 是一个赋值，它说``把{\cf x} 指向对象42的位置''。从而上一表达式中{\cf x}值从 23 被改成 42.
 
 \chapter{派生语法和宏}
 
-Many of the expression types specified 
-as part of the \rsevenrs{} small language
-can be translated into more basic expression types.
-For example, a {\cf let} expression can be translated
-into a procedure call and a {\cf lambda} expression.  The following two
-expressions are equivalent:
+很多\rsevenrs{}小语言的表达式可重写为更基本的表达式类型。例如{\cf let} 表达式可改写为一个过程调用和一个{\cf lambda}表达式。以下两个表达式等价：
 %
 \begin{scheme}
 (let ((x 23)
@@ -274,11 +217,7 @@ expressions are equivalent:
 ((lambda (x y) (+ x y)) 23 42) \lev 65%
 \end{scheme}
 
-Syntax expressions like {\cf let} expressions are called \textit{derived}
-because their semantics can be
-derived from that of other kinds of expressions by a syntactic
-transformation.  Some procedure definitions are also derived expressions.  The
-following two definitions are equivalent:
+语法表达式如{\cf let}表达式称为\textit{派生的}，因为它们的语义可以通过语法变换从其它表达式得到。一些过程定义也是派生表达式。以下两个定义等价：
 
 \begin{scheme}
 (define (f x)
@@ -289,8 +228,7 @@ following two definitions are equivalent:
     (+ x 42)))%
 \end{scheme}
 
-In Scheme, it is possible for a program to create its own derived
-expressions by binding syntactic keywords to macros:
+Scheme程序可以绑定语法关键字到宏来创建自己的派生表达式：
 
 \begin{scheme}
 (define-syntax def
@@ -303,34 +241,18 @@ expressions by binding syntactic keywords to macros:
   (+ x 42))%
 \end{scheme}
 
-The {\cf define-syntax} construct specifies that a parenthesized
-structure matching the pattern {\cf (def f (p ...) body)}, where {\cf
-  f}, {\cf p}, and {\cf body} are pattern variables, is translated to
-{\cf (define (f p ...) body)}.  Thus, the {\cf def} expression appearing in
-the example gets translated to:
+{\cf define-syntax} 构造指出括住的结构匹配{\cf (def f (p ...) body)}，其中{\cf f}, {\cf p}和 {\cf body} 为模板变量，会被转换为{\cf (define (f p ...) body)}。从而，例子中{\cf def} 表达式被重写为：
 
 \begin{scheme}
 (define (f x)
   (+ x 42))%
 \end{scheme}
 
-The ability to create new syntactic keywords makes Scheme extremely
-flexible and expressive, allowing many of the features
-built into other languages to be implemented directly in Scheme:
-any Scheme programmer can add new expression types.
+新建语法关键字的能力使Scheme极富灵活性和表达力，使其它语言中很多特性可直接在Scheme中实现：任何Scheme程序员可新增表达式类型。
 
-\chapter{语法数据和数据值Syntactic data and datum values}
+\chapter{语法数据和数据值}
 
-\textit{Datum values} constitute a subset of Scheme objects.
-These include booleans, numbers, characters, symbols,
-and strings as well as lists, vectors, and bytevectors whose elements are datum values.  Each
-datum value can be represented textually as a
-\textit{syntactic datum}, which can be written out
-and read back in without loss of information.
-There is in general more than one syntactic datum corresponding to each datum value.
-Moreover, each datum value
-can be trivially translated to a literal expression in a program by
-prepending a {\cf\singlequote} to a corresponding syntactic datum:
+\textit{数据值} 为Scheme对象的子集。包括布尔值、整数、字符、符号、字符串、列表、向量、位向量均为数据值的元素。数据值可以用文本表示为\textit{语法数据}，可读写而不丢信息。一般地多个语法数据对应一个数据值。进一步，每个数据值在程序中可平凡地写成字面值表达式，只用在前面加{\cf\singlequote} :
 
 \begin{scheme}
 '23 \ev 23
@@ -340,60 +262,28 @@ prepending a {\cf\singlequote} to a corresponding syntactic datum:
 '\#(1 2 3) \ev \#(1 2 3)%
 \end{scheme}
 
-The {\cf\singlequote} shown in the previous examples
-is not needed for representations of literal constants other than
-symbols and lists.
-The syntactic datum {\cf foo} represents a
-symbol with name ``foo'', and {\cf 'foo} is a literal expression with
-that symbol as its value.  {\cf (1 2 3)} is a syntactic datum that 
-represents a list with elements 1, 2, and 3, and {\cf '(1 2 3)} is a literal
-expression with this list as its value.  Likewise, {\cf \#(1 2 3)}
-is a syntactic datum that represents a vector with elements 1, 2 and 3, and
-{\cf '\#(1 2 3)} is the corresponding literal.
+上例中{\cf\singlequote} 对于符号和列表外字面常量不需要。语法值{\cf foo}表示名为``foo''的符号，{\cf 'foo}为以该符号为值的字面表达式。语法值{\cf (1 2 3)}表示一个有元素1、2、3的列表，{\cf '(1 2 3)} 为以该列表为值的字面表达式。类似地, 语法值{\cf \#(1 2 3)}表示一个有元素1、2、3的列表{\cf \#(1 2 3)}，而{\cf '\#(1 2 3)}为对应字面表达式。
 
-Syntactic datums are a superset of Scheme expressions.  Thus, data
-can be used to represent Scheme expressions as data objects.  In
-particular, symbols can be used to represent identifiers.
+语法数据为 Scheme表达式的超集。故数据可用于把Scheme表达式表为数据对象。特别是，符号可用于表示标识符。
 
 \begin{scheme}
 '(+ 23 42) \ev (+ 23 42)
 '(define (f x) (+ x 42)) \lev (define (f x) (+ x 42))%
 \end{scheme}
 
-This facilitates writing programs that operate on Scheme source code,
-in particular interpreters and program transformers.
+这方便写操作Scheme代码的程序，特别是解释器和变换器。
 
 \chapter{继续}
 
-Whenever a Scheme expression is evaluated there is a
-\textit{continuation} wanting the result of the
-expression.  The continuation represents an entire (default) future
-for the computation.  For example, informally the continuation of {\cf 3}
-in the expression
+Scheme表达式求值时有一个\textit{继续}想要其值。继续表示整个（默认）的未来计算。例如，非正式地 {\cf 3}的继续为表达式
 %
 \begin{scheme}
 (+ 1 3)%
 \end{scheme}
 %
-adds 1 to it.  Normally these ubiquitous continuations are hidden
-behind the scenes and programmers do not think much about them.  On
-rare occasions, however, a programmer needs to deal with
-continuations explicitly.  The {\cf call-with-current-continuation}
-procedure allows
-Scheme programmers to do that by creating a procedure that reinstates
-the current continuation.  The {\cf call-with-current-continuation}
-procedure accepts a procedure, calls it immediately with an argument
-that is an \textit{escape procedure}.  This
-escape procedure can then be called with an argument that becomes the
-result of the call to {\cf call-with-current-continuation}.  That is,
-the escape procedure abandons its own continuation, and reinstates the
-continuation of the call to {\cf call-with-current-continuation}.
+。正常情况下这些继续被隐藏，程序员不怎么管它们。在少数情况下，程序员需要显式与继续打交道。{\cf call-with-current-continuation}过程让程序员创建重置当前继续的过程。{\cf call-with-current-continuation}过程接受一个过程，立即以\textit{退出过程}为参数调用它。退出过程被调用时参数就成为{\cf call-with-current-continuation}调用的值。即退出过程放弃自己的继续，重置为{\cf call-with-current-continuation}调用的继续。
 
-In the following example, an escape procedure representing the
-continuation that adds 1 to its argument is bound to {\cf escape}, and
-then called with 3 as an argument.  The continuation of the call to
-{\cf escape} is abandoned, and instead the 3 is passed to the
-continuation that adds 1:
+下例中，表示加1的继续的退出过程绑定{\cf escape}，然后用3调用它。{\cf escape}调用的退出过程被放弃，于是3被传给加1的继续：
 %
 \begin{scheme}
 (+ 1 (call-with-current-continuation
@@ -401,11 +291,7 @@ continuation that adds 1:
          (+ 2 (escape 3))))) \lev 4%
 \end{scheme}
 %
-An escape procedure has unlimited extent: It can be called after the
-continuation it captured has been invoked, and it can be called
-multiple times.  This makes {\cf call-with-current-continuation}
-significantly more powerful than typical non-local control constructs
-such as exceptions in other languages.
+退出过程有无限的生存期：它可以在继续后调用且可多次调用。这使{\cf call-with-current-continuation}明显比其它语言典型的非本地控制构造如异常强大。
 
 \chapter{库}
 
