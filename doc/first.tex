@@ -4,14 +4,12 @@
 
 
 \topnewpage[{
-\begin{center}   {\huge\bf
-	Revised{\Huge$^{\mathbf{7}}$} Report on the Algorithmic Language \\
-			      \vskip 3pt
-				Scheme}
+\begin{center}   {\huge\bf JSchemeMin User Manual}
 
 \vskip 1ex
 $$
 \begin{tabular}{l@{\extracolsep{.5in}}l@{\extracolsep{.5in}}l}
+\multicolumn{3}{c}{陈颂光 (\textit{Revisor})} \\
 \multicolumn{3}{c}{A\authorsc{LEX} S\authorsc{HINN},
 J\authorsc{OHN} C\authorsc{OWAN}, \authorsc{AND}
 A\authorsc{RTHUR} A. G\authorsc{LECKLER} (\textit{Editors})} \\
@@ -29,18 +27,18 @@ D\authorsc{AVID} R\authorsc{USH} &
 G\authorsc{ERALD} J. S\authorsc{USSMAN} \\
 
 E\authorsc{MMANUEL} M\authorsc{EDERNACH} &
-B\authorsc{ENJAMIN} L. R\authorsc{USSEL} &
-\\
-\\
-\multicolumn{3}{c}{R\authorsc{ICHARD} K\authorsc{ELSEY},
-W\authorsc{ILLIAM} C\authorsc{LINGER},
-\authorsc{AND} J\authorsc{ONATHAN} R\authorsc{EES}} \\
-\multicolumn{3}{c}{\textit{(Editors, Revised$^{\mathit{5}}$ Report on the Algorithmic Language Scheme)}} \\
+B\authorsc{ENJAMIN} L. R\authorsc{USSEL} \\
+\multicolumn{3}{c}{\textit{(Authors, Revised$^{\mathit{7}}$ Report on the Algorithmic Language Scheme)}} \\
 \\
 \multicolumn{3}{c}{M\authorsc{ICHAEL} S\authorsc{PERBER},
 R. K\authorsc{ENT} D\authorsc{YBVIG}, M\authorsc{ATTHEW} F\authorsc{LATT},
 \authorsc{AND} A\authorsc{NTON} \authorsc{VAN} S\authorsc{TRAATEN}} \\
 \multicolumn{3}{c}{\textit{(Editors, Revised$^{\mathit{6}}$ Report on the Algorithmic Language Scheme)}} \\
+\\
+\multicolumn{3}{c}{R\authorsc{ICHARD} K\authorsc{ELSEY},
+W\authorsc{ILLIAM} C\authorsc{LINGER},
+\authorsc{AND} J\authorsc{ONATHAN} R\authorsc{EES}} \\
+\multicolumn{3}{c}{\textit{(Editors, Revised$^{\mathit{5}}$ Report on the Algorithmic Language Scheme)}} \\
 \end{tabular}
 $$
 \vskip 2ex
@@ -55,13 +53,18 @@ $$
 \chapter*{Summary}
 
 The report gives a defining description of the programming language
-Scheme.  Scheme is a statically scoped and properly tail recursive
+Scheme as well as JSchemeMin's specific extensions.  
+
+Scheme is a statically scoped and properly tail recursive
 dialect of the Lisp programming language~\cite{McCarthy} invented by Guy Lewis
 Steele~Jr.\ and Gerald Jay~Sussman.  It was designed to have
 exceptionally clear and simple semantics and few different ways to
 form expressions.  A wide variety of programming paradigms, including
 imperative, functional, and object-oriented styles, find convenient
 expression in Scheme.
+
+JSchemeMin is an extension to Scheme that enable interaction between 
+Scheme and Java. 
 
 \vest The introduction offers a brief history of the language and of
 the report.
@@ -76,6 +79,8 @@ the syntax and semantics of expressions, definitions, programs, and libraries.
 \vest Chapter~\ref{builtinchapter} describes Scheme's built-in
 procedures, which include all of the language's data manipulation and
 input/output primitives.
+
+\vest Chapter~\ref{jschememinchapter} describes JSchemeMin specific extensions.
 
 \vest Chapter~\ref{formalchapter} provides a formal syntax for Scheme
 written in extended BNF, along with a formal denotational semantics.

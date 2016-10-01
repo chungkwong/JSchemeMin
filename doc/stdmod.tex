@@ -446,3 +446,54 @@ library either.
 {\cf with-output-to-file}     {\cf write}
 {\cf write-char}              {\cf zero?}
 \end{scheme}
+
+\textbf{Java Library}
+
+The \texttt{(java)} library provides access to Java API.
+
+\begin{scheme}
+{\cf null}	{\cf boolean->Boolean}
+{\cf Boolean->boolean}	{\cf symbol->String}
+{\cf string->String}	{\cf String->symbol}
+{\cf String->string}	{\cf integer->Integer}
+{\cf Integer->integer}	{\cf integer->BigInteger}
+{\cf BigInteger->integer}	{\cf real->Double}
+{\cf Double->real}	{\cf real->BigDecimal}
+{\cf BigDecimal->real}	{\cf bytevector->ByteArray}
+{\cf ByteArray->bytevector}	{\cf instanceof}
+{\cf construct}	{\cf invoke}
+{\cf invoke-static}	{\cf get}
+{\cf get-static}	{\cf set!}
+{\cf set-static!}	{\cf cast-to}
+\end{scheme}
+
+
+\textbf{Misc Library}
+
+The \texttt{(jschememin)} library provides  some tools which are useful for profiling and debug.
+
+\begin{scheme}
+{\cf library-exists?}	{\cf thread-clock}
+{\cf duration}	{\cf memory-total}
+{\cf memory-free}	{\cf profile-lambda}
+{\cf profile-record}	{\cf profile-records}
+{\cf count}	{\cf total-time}
+\end{scheme}
+
+\textbf{Hashtables Library}
+
+The \texttt{(scheme hashtables)} library provides the procedures for dealing with hashtable.
+
+\begin{scheme}
+{\cf make-hashtable}	{\cf hashtable-copy}
+{\cf hashtable-mutable?}	{\cf hashtable-equivalence-function}
+{\cf hashtable-hash-function}	{\cf hashtable?}
+{\cf hashtable-contains?}	{\cf hashtable-size}
+{\cf hashtable-ref}	{\cf hashtable-set!}
+{\cf hashtable-delete!}	{\cf hashtable-clear!}
+{\cf hashtable-keys}	{\cf hashtable-entries}
+{\cf equal-hash}	{\cf string-hash}
+{\cf string-ci-hash}	{\cf symbol-hash}
+{\cf make-eq-hashtable}	{\cf make-eqv-hashtable}
+{\cf hashtable-update!}
+\end{scheme}
