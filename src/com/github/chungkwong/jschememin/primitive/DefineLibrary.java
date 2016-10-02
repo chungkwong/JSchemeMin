@@ -29,8 +29,12 @@ public class DefineLibrary extends BasicConstruct implements Primitive{
 	private static final ScmSymbol BEGIN=new ScmSymbol("begin");
 	private static final ScmSymbol INCLUDE=new ScmSymbol("include");
 	private static final ScmSymbol INCLUDE_CI=new ScmSymbol("include-ci");
-	private static final ScmSymbol INCLUDE_LIBRARY=new ScmSymbol("include-library-declaration");
+	private static final ScmSymbol INCLUDE_LIBRARY=new ScmSymbol("include-library-declarations");
 	private static final ScmSymbol COND_EXPAND=new ScmSymbol("cond-expand");
+	private static final ScmSymbol AND=new ScmSymbol("and");
+	private static final ScmSymbol OR=new ScmSymbol("or");
+	private static final ScmSymbol NOT=new ScmSymbol("not");
+	private static final ScmSymbol LIBRARY=new ScmSymbol("library");
 	private DefineLibrary(){
 		super(new ScmSymbol("define-library"));
 	}
@@ -46,14 +50,25 @@ public class DefineLibrary extends BasicConstruct implements Primitive{
 				Import.INSTANCE.importLibraries(lib.getInternalEnvironment(),declaration.getCdr());
 			}else if(dir.equals(EXPORT)){
 				addExportSet(lib,declaration.getCdr());
+			}else if(dir.equals(INCLUDE)){
+				ScmPair content=(ScmPair)Include.INSTANCE.getFileContent((ScmPair)declaration.getCdr());
+				if(content.getCdr()instanceof ScmPair){
+					expr=new ScmPair(content,((ScmPair)expr).getCdr());
+					continue;
+				}
+			}else if(dir.equals(INCLUDE_CI)){
+				ScmPair content=(ScmPair)Include.INSTANCE_CI.getFileContent((ScmPair)declaration.getCdr());
+				if(content.getCdr()instanceof ScmPair){
+					expr=new ScmPair(content,((ScmPair)expr).getCdr());
+					continue;
+				}
 			}else if(dir.equals(INCLUDE_LIBRARY)){
 				ScmPair content=(ScmPair)Include.INSTANCE.getFileContent((ScmPair)declaration.getCdr());
 				if(content.getCdr()instanceof ScmPair){
 					ScmList.getLastListNode(content).setCdr(((ScmPair)expr).getCdr());
 					expr=content;
-					continue;
 				}
-			}else if(dir.equals(COND_EXPAND)){//FIXME
+			}else if(dir.equals(COND_EXPAND)){ //FIXME
 				ScmPair content=(ScmPair)((ScmSyntaxRules)env.get(COND_EXPAND)).transform((ScmPairOrNil)declaration.getCdr(),env);
 
 				if(content.getCdr() instanceof ScmPair){
@@ -78,6 +93,26 @@ public class DefineLibrary extends BasicConstruct implements Primitive{
 				lib.getExportMap().put((ScmSymbol)((ScmPair)spec).getCaddr(),(ScmSymbol)((ScmPair)spec).getCadr());
 			}
 			list=((ScmPair)list).getCdr();
+		}
+	}
+	ScmObject condExpand(ScmPair clauses){
+		ScmPair firstClause=(ScmPair)clauses.getCar();
+		ScmPair then=(ScmPair)clauses.getCdar();
+		ScmPair remainingClauses=(ScmPair)clauses.getCdr();
+		ScmObject requirement=firstClause.getCar();
+		if(requirement instanceof ScmPair){
+			ScmSymbol key=(ScmSymbol)((ScmPair)requirement).getCar();
+			if(key.equals(AND)){
+				return condExpand(clauses);
+			}else if(key.equals(OR)){
+
+			}else if(key.equals(NOT)){
+				return condExpand(new ScmPair(((ScmPair)requirement).getCadr(),requirement));
+			}else{
+				return LibraryManager.hasLibrary((ScmPair)((ScmPair)requirement).getCadr())?then:condExpand(remainingClauses);
+			}
+		}else{
+			return Feature.contains(((ScmSymbol)requirement).getValue())?then:condExpand(remainingClauses);
 		}
 	}
 }

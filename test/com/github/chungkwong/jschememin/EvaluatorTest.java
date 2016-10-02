@@ -89,6 +89,27 @@ public class EvaluatorTest{
 		assertExpressionValue("(begin (import (jschememin)) (library-exists? '(java nonexist)))","#f");
 	}
 	@Test
+	public void testDefineLibrary(){
+		checkLast("(define-library (example bad) "
+				+ "(include-library-declarations \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/lib-dec.scm\") "
+				+ "(begin (define x 1) (define y 2) (define z 3))) (import (example bad)) x",new ScmInteger(1));
+		checkLast("(define-library (example bad) "
+				+ "(include-library-declarations \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/lib-dec.scm\") "
+				+ "(begin (define x 1) (define y 2) (define z 3))) (import (example bad)) y",new ScmInteger(2));
+		checkLast("(define z 7) (define-library (example bad) "
+				+ "(include-library-declarations \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/lib-dec.scm\") "
+				+ "(begin (define x 1) (define y 2) (define z 3))) (import (example bad)) z",new ScmInteger(7));
+		checkLast("(define-library (example bad) (export x y)"
+				+ "(include \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/lib-content.scm\")) "
+				+ "(import (example bad)) x",new ScmInteger(4));
+		checkLast("(define-library (example bad) (export x y)"
+				+ "(include-ci \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/lib-content.scm\")) "
+				+ "(import (example bad)) y",new ScmInteger(3));
+		checkLast("(define-library (example worse) (cond-expand (r7rs (export x)))"
+				+ "(begin (define x 1))) "
+				+ "(import (example worse)) x",new ScmInteger(1));
+	}
+	@Test
 	public void testQuote(){
 		checkLast("(quote a)",new ScmSymbol("a"));
 		checkLast("(quote #(a b c))",ScmVector.toVector(new ScmSymbol("a"),new ScmSymbol("b"),new ScmSymbol("c")));

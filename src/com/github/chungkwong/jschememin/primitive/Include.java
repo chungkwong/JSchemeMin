@@ -35,16 +35,17 @@ public class Include extends BasicConstruct implements Primitive{
 		cont.callTail(ExpressionEvaluator.INSTANCE,getFileContent((ScmPair)expr),env);
 	}
 	ScmObject getFileContent(ScmPair files){
-		ScmPair content=new ScmPair(new ScmSymbol("begin"),ScmNil.NIL);
-		ScmList.forEach(files,(file)->{
-			ScmList.getLastListNode(content).setCdr(getFileContent(((ScmString)file).getValue()));
-		});//Low performance
-		return content;
+		ScmListBuilder buf=new ScmListBuilder();
+		buf.add(new ScmSymbol("begin"));
+		ScmList.forEach(files,(file)->appendContent(((ScmString)file).getValue(),buf));
+		return buf.toList();
 	}
-	ScmObject getFileContent(String file){
+	private void appendContent(String file,ScmListBuilder buf){
 		try{
 			Parser parser=new Parser(new Lex(new InputStreamReader(new FileInputStream(file),"UTF-8"),foldingCase));
-			return ScmList.toList(parser.getRemainingDatums());
+			ScmObject datum;
+			while((datum=parser.nextDatum())!=null)
+				buf.add(datum);
 		}catch(FileNotFoundException|UnsupportedEncodingException ex){
 			throw new RuntimeException();
 		}
