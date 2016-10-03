@@ -33,4 +33,9 @@ public class ScmUniqueSymbol extends ScmSymbol{
 	public static ScmSymbol toLiteral(ScmSymbol id){
 		return id instanceof ScmUniqueSymbol?((ScmUniqueSymbol)id).getOrigin():id;
 	}
+	@Override
+	public String toString(){
+		return org.toString(); //To change body of generated methods, choose Tools | Templates.
+	}
+
 }

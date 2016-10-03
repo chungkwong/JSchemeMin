@@ -505,7 +505,7 @@
     ((cond-expand ((library (name ...))
                    body ...)
                   more-clauses ...)
-       (if (begin (library-exists? '(name ...)))
+       (if (library-exists? '(name ...))
            (begin body ...)
            (cond-expand more-clauses ...)))
     ((cond-expand (feature-id body ...)

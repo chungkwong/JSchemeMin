@@ -147,6 +147,9 @@ public class Continuation extends ScmObject{
 	public Environment getCurrentEnvironment(){
 		return environments.peek();
 	}
+	public int getLevel(){
+		return actives.size();
+	}
 	public Continuation getCopy(){
 		return new Continuation((Stack)actives.clone(),(Stack)pointers.clone(),(Stack)environments.clone());
 	}

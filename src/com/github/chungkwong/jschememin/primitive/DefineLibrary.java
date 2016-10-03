@@ -34,6 +34,7 @@ public class DefineLibrary extends BasicConstruct implements Primitive{
 	private static final ScmSymbol AND=new ScmSymbol("and");
 	private static final ScmSymbol OR=new ScmSymbol("or");
 	private static final ScmSymbol NOT=new ScmSymbol("not");
+	private static final ScmSymbol ELSE=new ScmSymbol("else");
 	private static final ScmSymbol LIBRARY=new ScmSymbol("library");
 	private DefineLibrary(){
 		super(new ScmSymbol("define-library"));
@@ -69,11 +70,11 @@ public class DefineLibrary extends BasicConstruct implements Primitive{
 					expr=content;
 				}
 			}else if(dir.equals(COND_EXPAND)){ //FIXME
-				ScmPair content=(ScmPair)((ScmSyntaxRules)env.get(COND_EXPAND)).transform((ScmPairOrNil)declaration.getCdr(),env);
-
-				if(content.getCdr() instanceof ScmPair){
-					ScmList.getLastListNode(content).setCdr(((ScmPair)expr).getCdr());
-					expr=content;
+				ScmObject content=condExpand((ScmPair)declaration.getCdr());
+				if(content instanceof ScmPair){
+					ScmList.getLastListNode((ScmPair)content).setCdr(((ScmPair)expr).getCdr());
+					expr=(ScmPairOrNil)content;
+					continue;
 				}
 			}else if(dir.equals(BEGIN)){
 				ScmList.forEach(declaration.getCdr(),(e)->new Evaluator(lib.getInternalEnvironment()).eval(e));
@@ -95,22 +96,35 @@ public class DefineLibrary extends BasicConstruct implements Primitive{
 			list=((ScmPair)list).getCdr();
 		}
 	}
-	ScmObject condExpand(ScmPair clauses){
-		ScmPair firstClause=(ScmPair)clauses.getCar();
-		ScmPair then=(ScmPair)clauses.getCdar();
-		ScmPair remainingClauses=(ScmPair)clauses.getCdr();
+	ScmObject condExpand(ScmObject clauses){
+		if(!(clauses instanceof ScmPair))
+			return ScmNil.NIL;
+		ScmPair firstClause=(ScmPair)((ScmPair)clauses).getCar();
+		ScmObject remainingClauses=((ScmPair)clauses).getCdr();
+		ScmPair then=(ScmPair)firstClause.getCdr();
 		ScmObject requirement=firstClause.getCar();
 		if(requirement instanceof ScmPair){
 			ScmSymbol key=(ScmSymbol)((ScmPair)requirement).getCar();
 			if(key.equals(AND)){
-				return condExpand(clauses);
+				if(((ScmPair)requirement).getCdr()instanceof ScmNil)
+					return then;
+				return condExpand(new ScmPair(
+						ScmList.toList(((ScmPair)requirement).getCadr(),condExpand(new ScmPair(
+								new ScmPair(new ScmPair(AND,((ScmPair)requirement).getCddr()),then),remainingClauses))),
+						remainingClauses));
 			}else if(key.equals(OR)){
-
+				if(((ScmPair)requirement).getCdr()instanceof ScmNil)
+					return condExpand(remainingClauses);
+				return condExpand(ScmList.toList(new ScmPair(((ScmPair)requirement).getCadr(),then),
+						new ScmPair(ELSE,condExpand(new ScmPair(new ScmPair(new ScmPair(OR,((ScmPair)requirement).getCddr()),then),remainingClauses)))));
 			}else if(key.equals(NOT)){
-				return condExpand(new ScmPair(((ScmPair)requirement).getCadr(),requirement));
+				return condExpand(ScmList.toList(new ScmPair(((ScmPair)requirement).getCadr(),condExpand((ScmPair)remainingClauses)),
+						new ScmPair(ELSE,then)));
 			}else{
 				return LibraryManager.hasLibrary((ScmPair)((ScmPair)requirement).getCadr())?then:condExpand(remainingClauses);
 			}
+		}else if(requirement.equals(ELSE)){
+			return then;
 		}else{
 			return Feature.contains(((ScmSymbol)requirement).getValue())?then:condExpand(remainingClauses);
 		}

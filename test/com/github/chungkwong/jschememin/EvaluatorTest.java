@@ -105,9 +105,50 @@ public class EvaluatorTest{
 		checkLast("(define-library (example bad) (export x y)"
 				+ "(include-ci \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/lib-content.scm\")) "
 				+ "(import (example bad)) y",new ScmInteger(3));
-		checkLast("(define-library (example worse) (cond-expand (r7rs (export x)))"
-				+ "(begin (define x 1))) "
-				+ "(import (example worse)) x",new ScmInteger(1));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand (r7rs (export x)))"
+				+ "(begin (define x 5) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(15));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand (r2rs (export x)))"
+				+ "(begin (define x 1) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(6));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand ((library (scheme base)) (export x)))"
+				+ "(begin (define x 5) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(15));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand ((library (nono)) (export x)))"
+				+ "(begin (define x 1) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(6));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand (r7rs (export x) (export y)))"
+				+ "(begin (define x 5) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(35));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand (r2rs (export x)) (else (export y)))"
+				+ "(begin (define x 5) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(14));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand ((not r2rs) (export x)) (else (export y)))"
+				+ "(begin (define x 5) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(15));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand ((not r7rs) (export x)) (else (export y)))"
+				+ "(begin (define x 5) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(14));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand ((or r2rs r7rs) (export x)) (else (export y)))"
+				+ "(begin (define x 5) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(15));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand ((or r7rs r2rs) (export x)) (else (export y)))"
+				+ "(begin (define x 5) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(15));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand ((or r2rs r4rs) (export x)) (else (export y)))"
+				+ "(begin (define x 5) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(14));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand ((and r7rs r2rs) (export x)) (else (export y)))"
+				+ "(begin (define x 5) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(14));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand ((and r2rs r7rs) (export x)) (else (export y)))"
+				+ "(begin (define x 5) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(14));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand ((and jvm r7rs) (export x)) (else (export y)))"
+				+ "(begin (define x 5) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(15));
+
+
 	}
 	@Test
 	public void testQuote(){
