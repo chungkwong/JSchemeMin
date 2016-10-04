@@ -15,11 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin;
-
+import com.github.chungkwong.jschememin.type.*;
+import java.util.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Debugger{
+	private final HashSet<ScmPair> breakPoints=new HashSet<>();
+	public ScmObject getCurrentExpression(){
+		return null;
+	}
+	public void stepOver(){
 
+	}
+	public void stepIn(){
+
+	}
+	public void run(){
+
+	}
+	public void addBreakPoint(ScmPair expr){
+		breakPoints.add(expr);
+	}
+	public void removeBreakPoint(ScmPair expr){
+		breakPoints.remove(expr);
+	}
 }

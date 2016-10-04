@@ -757,6 +757,10 @@ public class StandardProcedureTest{
 		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
 				+ "(write #\\a port) (get-output-string port))","\"#\\\\a\"");
 		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(write '#998=(1 . #998#) port) (get-output-string port))","\"#999=(1 . #999#)\"");
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
+				+ "(write '#(#120=(1 . 2) #120#) port) (get-output-string port))","\"#((1 . 2) (1 . 2))\"");
+		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
 				+ "(write-shared 'hello port) (get-output-string port))","\"|hello|\"");
 		assertExpressionValue("(let ((port (open-output-string))) (import (scheme write)) "
 				+ "(write-shared \"hello\\\"world\\\\\" port) (get-output-string port))","\"\\\"hello\\\\\\\"world\\\\\\\\\\\"\"");

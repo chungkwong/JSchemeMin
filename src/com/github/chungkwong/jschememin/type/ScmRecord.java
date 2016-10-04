@@ -38,13 +38,10 @@ public class ScmRecord extends ScmObject{
 	}
 	@Override
 	public String toExternalRepresentation(){
-		StringBuilder buf=new StringBuilder();
-		buf.append('(').append(type.getName().getValue()).append(' ');
-		type.indices.forEach((key,value)->{
-			buf.append('(').append(key.getValue()).append(' ').append(fields[value]).append(')').append(' ');
-		});
-		buf.append(')');
-		return buf.toString();
+		ScmListBuilder buf=new ScmListBuilder();
+		buf.add(type.getName());
+		type.indices.forEach((key,value)->buf.add(new ScmPair(key,fields[value])));
+		return buf.toList().toString();
 	}
 	@Override
 	public boolean isSelfevaluating(){

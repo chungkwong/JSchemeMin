@@ -206,8 +206,6 @@ public class ScmSyntaxRules extends ScmObject{
 			if(bind.containsKey(temp))
 				return bind.get(temp).get(index);
 			Optional<ScmObject> defVal=defEnv.getOptional(temp);
-			//if(literals.contains(temp))//FIXME
-			//	return temp;
 			ScmSymbol rename=new ScmUniqueSymbol(temp);
 			bind.put(temp,new Rename(rename));
 			if(defVal.isPresent()){

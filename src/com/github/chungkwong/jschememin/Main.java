@@ -14,6 +14,7 @@
  */
 package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
+import java.io.*;
 import java.util.*;
 /**
  *
@@ -30,9 +31,13 @@ public class Main {
 		Evaluator eval=new Evaluator(true);
 		System.out.print("> ");
 		System.out.flush();
-		while(in.hasNextLine()){
+		Parser parser=new Parser(new Lex(new InputStreamReader(System.in)));
+		while(true){
 			try{
-				new Parser(in.nextLine()).getRemainingDatums().forEach((d)->System.out.println("=> "+eval.eval(d)));
+				ScmObject d=parser.nextDatum();
+				if(d==null)
+					return;
+				System.out.println("=> "+eval.eval(d));
 			}catch(RuntimeException ex){
 				ex.printStackTrace();
 			}

@@ -30,8 +30,12 @@ public class ScmBinaryInputPort extends ScmPort{
 	public ScmBinaryInputPort(InputStream in){
 		this(new PushbackInputStream(in));
 	}
-	public ScmBinaryInputPort(String file) throws FileNotFoundException, UnsupportedEncodingException{
-		this(new FileInputStream(file));
+	public ScmBinaryInputPort(String file){
+		try{
+			this.in=new PushbackInputStream(new FileInputStream(file));
+		}catch(FileNotFoundException ex){
+			throw ScmError.toException(new ScmError(new ScmString(ex.getLocalizedMessage()),ScmNil.NIL,ScmError.ErrorType.FILE));
+		}
 	}
 	public ScmObject readByte() throws IOException{
 		int b=in.read();

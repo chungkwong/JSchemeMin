@@ -25,8 +25,12 @@ public class ScmBinaryOutputPort extends ScmPort{
 	public ScmBinaryOutputPort(OutputStream out){
 		this.out=out;
 	}
-	public ScmBinaryOutputPort(String file) throws FileNotFoundException, UnsupportedEncodingException{
-		this.out=new FileOutputStream(file);
+	public ScmBinaryOutputPort(String file){
+		try{
+			this.out=new FileOutputStream(file);
+		}catch(FileNotFoundException ex){
+			throw ScmError.toException(new ScmError(new ScmString(ex.getLocalizedMessage()),ScmNil.NIL,ScmError.ErrorType.FILE));
+		}
 	}
 	public ScmBinaryOutputPort writeByte(ScmInteger obj) throws IOException{
 		int b=obj.getValue().intValueExact();

@@ -147,8 +147,12 @@ public class EvaluatorTest{
 		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand ((and jvm r7rs) (export x)) (else (export y)))"
 				+ "(begin (define x 5) (define y 7))) "
 				+ "(import (example worse)) (* x y)",new ScmInteger(15));
-
-
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand ((and jvm (or r2rs r7rs)) (export x)) (else (export y)))"
+				+ "(begin (define x 5) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(15));
+		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand ((and jvm (not (or r2rs r7rs))) (export x)) (else (export y)))"
+				+ "(begin (define x 5) (define y 7))) "
+				+ "(import (example worse)) (* x y)",new ScmInteger(14));
 	}
 	@Test
 	public void testQuote(){

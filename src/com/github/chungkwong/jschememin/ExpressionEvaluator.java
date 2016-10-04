@@ -38,10 +38,7 @@ public class ExpressionEvaluator extends Evaluable implements Primitive{
 			cont.ret(expr);
 		}else if(expr instanceof ScmPair){
 			ScmPair list=(ScmPair)expr;
-			//if(list.getCar()instanceof ScmSymbol&&env.get((ScmSymbol)list.getCar())instanceof ScmSyntaxRules)
-			//	cont.callTail(this,HygieneTransformer.transform(expr,env),env);
-			//else
-				cont.call(this,new BackTrace(null,null,list.getCdr()),list.getCar(),env);
+			cont.call(this,new BackTrace(null,null,list.getCdr()),list.getCar(),env);
 		}else if(expr instanceof ScmSymbol){
 			ScmObject val=env.get((ScmSymbol)expr);
 			if(val!=null){
@@ -57,7 +54,6 @@ public class ExpressionEvaluator extends Evaluable implements Primitive{
 			if(expr instanceof Primitive){
 				((Evaluable)expr).call(env,cont,null,(ScmPairOrNil)b.getAfter());
 			}else if(expr instanceof ScmSyntaxRules){
-				//cont.callTail(this,HygieneTransformer.transform(new ScmPair(expr,b.getAfter()),env),env);
 				cont.callTail(this,((ScmSyntaxRules)expr).transform((ScmPairOrNil)b.getAfter(),env),env);
 			}else if(b.getAfter()==ScmNil.NIL){
 				if(!(expr instanceof Evaluable))

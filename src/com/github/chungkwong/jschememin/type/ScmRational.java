@@ -19,13 +19,15 @@ public final class ScmRational extends ScmNormalReal{
 	private ScmInteger numerator,denominator;
 	private boolean simplified=false;
 	public ScmRational(ScmInteger numerator,ScmInteger denominator){
-		if(denominator.signum()==-1){
+		int sign=denominator.signum();
+		if(sign<0){
 			this.numerator=numerator.negate();
 			this.denominator=denominator.negate();
-		}else{
+		}else if(sign>0){
 			this.numerator=numerator;
 			this.denominator=denominator;
-		}
+		}else
+			throw new ArithmeticException("divided by zero");
 	}
 	public ScmInteger getDenominator(){
 		simplify();

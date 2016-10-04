@@ -28,8 +28,12 @@ public class ScmTextualOutputPort extends ScmPort{
 	public ScmTextualOutputPort(Writer out){
 		this.out=out;
 	}
-	public ScmTextualOutputPort(String file) throws FileNotFoundException, UnsupportedEncodingException{
-		this.out=new OutputStreamWriter(new FileOutputStream(file),"UTF-8");
+	public ScmTextualOutputPort(String file){
+		try{
+			this.out=new OutputStreamWriter(new FileOutputStream(file),"UTF-8");
+		}catch(UnsupportedEncodingException|FileNotFoundException ex){
+			throw ScmError.toException(new ScmError(new ScmString(ex.getLocalizedMessage()),ScmNil.NIL,ScmError.ErrorType.FILE));
+		}
 	}
 	public ScmTextualOutputPort writeShared(ScmObject obj) throws IOException{
 		out.write(obj.toExternalRepresentation());
@@ -40,7 +44,7 @@ public class ScmTextualOutputPort extends ScmPort{
 		return this;
 	}
 	public ScmTextualOutputPort write(ScmObject obj) throws IOException{
-		out.write(hasCycle(obj,new HashSet<>())?obj.toExternalRepresentation():toSimpleRepresentation(obj));
+		out.write(hasCycle(obj,new IdentityHashMap<>())?obj.toExternalRepresentation():toSimpleRepresentation(obj));
 		return this;
 	}
 	public ScmTextualOutputPort writeCharacter(ScmCharacter obj) throws IOException{
@@ -96,7 +100,16 @@ public class ScmTextualOutputPort extends ScmPort{
 		}else
 			return obj.toExternalRepresentation();
 	}
-	private static boolean hasCycle(ScmObject obj,HashSet<ScmObject> found){
-		return true;//TODO
+	private static boolean hasCycle(ScmObject obj,IdentityHashMap<ScmObject,Object> found){
+		if(found.containsKey(obj))
+			return true;
+		if(obj instanceof ScmPair){
+			found.put(obj,null);
+			return (hasCycle(((ScmPair)obj).getCar(),found)||hasCycle(((ScmPair)obj).getCdr(),found))&found.remove(obj)==null;
+		}else if(obj instanceof ScmVector){
+			found.put(obj,null);
+			return ((ScmVector)obj).stream().anyMatch((o)->hasCycle(o,found))&found.remove(obj)==null;
+		}else
+			return false;
 	}
 }

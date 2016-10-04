@@ -58,7 +58,7 @@ public class ScmError extends ScmObject{
 		return new ScmException(obj);
 	}
 	public static ScmObject toScmObject(Throwable obj){
-		obj.printStackTrace();
+		//obj.printStackTrace();
 		if(obj instanceof ScmException)
 			return ((ScmException)obj).getObject();
 		return new ScmError(new ScmString(obj.toString()),ScmNil.NIL,ErrorType.OTHER);

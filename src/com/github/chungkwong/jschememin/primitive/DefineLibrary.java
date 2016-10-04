@@ -69,7 +69,7 @@ public class DefineLibrary extends BasicConstruct implements Primitive{
 					ScmList.getLastListNode(content).setCdr(((ScmPair)expr).getCdr());
 					expr=content;
 				}
-			}else if(dir.equals(COND_EXPAND)){ //FIXME
+			}else if(dir.equals(COND_EXPAND)){
 				ScmObject content=condExpand((ScmPair)declaration.getCdr());
 				if(content instanceof ScmPair){
 					ScmList.getLastListNode((ScmPair)content).setCdr(((ScmPair)expr).getCdr());
@@ -109,7 +109,7 @@ public class DefineLibrary extends BasicConstruct implements Primitive{
 				if(((ScmPair)requirement).getCdr()instanceof ScmNil)
 					return then;
 				return condExpand(new ScmPair(
-						ScmList.toList(((ScmPair)requirement).getCadr(),condExpand(new ScmPair(
+						new ScmPair(((ScmPair)requirement).getCadr(),condExpand(new ScmPair(
 								new ScmPair(new ScmPair(AND,((ScmPair)requirement).getCddr()),then),remainingClauses))),
 						remainingClauses));
 			}else if(key.equals(OR)){
