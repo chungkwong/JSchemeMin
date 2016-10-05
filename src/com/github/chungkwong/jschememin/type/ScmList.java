@@ -61,9 +61,6 @@ public class ScmList{
 		}
 		return list==ScmNil.NIL;
 	}
-	public static ScmPair singleton(ScmObject obj){
-		return new ScmPair(obj,ScmNil.NIL);
-	}
 	public static ScmPairOrNil toList(List<? extends ScmObject> list){
 		if(list.isEmpty()){
 			return ScmNil.NIL;
@@ -76,6 +73,12 @@ public class ScmList{
 			end=newend;
 		}
 		return start;
+	}
+	public static ScmPair toList(ScmObject obj){
+		return new ScmPair(obj,ScmNil.NIL);
+	}
+	public static ScmPair toList(ScmObject first,ScmObject second){
+		return new ScmPair(first,new ScmPair(second,ScmNil.NIL));
 	}
 	public static ScmPairOrNil toList(ScmObject... list){
 		if(list.length==0){

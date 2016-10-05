@@ -60,11 +60,11 @@ public class ExpressionEvaluator extends Evaluable implements Primitive{
 					throw new RuntimeException("Expect Evaluable:"+expr);
 				cont.callTail((Evaluable)expr,ScmNil.NIL,env);
 			}else{
-				ScmPair before=new ScmPair(expr,ScmNil.NIL);
+				ScmPair before=ScmList.toList(expr);
 				cont.call(this,new BackTrace(before,before,(ScmPairOrNil)((ScmPair)b.getAfter()).getCdr()),((ScmPair)b.getAfter()).getCar(),env);
 			}
 		}else{
-			ScmPair newBeforeLast=new ScmPair(expr,ScmNil.NIL);
+			ScmPair newBeforeLast=ScmList.toList(expr);
 			b.getBeforeLast().setCdr(newBeforeLast);
 			if(b.getAfter()==ScmNil.NIL){
 				if(!(b.getBefore().getCar() instanceof Evaluable))

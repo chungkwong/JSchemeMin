@@ -27,7 +27,6 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		COMMAND_LINE=(ScmPairOrNil)Arrays.stream(args).map((arg)->new ScmString(arg)).collect(ScmList.COLLECTOR);
-		Scanner in=new Scanner(System.in);
 		Evaluator eval=new Evaluator(true);
 		System.out.print("> ");
 		System.out.flush();

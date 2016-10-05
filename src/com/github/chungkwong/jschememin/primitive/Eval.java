@@ -28,6 +28,6 @@ public class Eval extends BasicConstruct{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
-		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.singleton(ScmList.first(param)),(Environment)ScmList.second(param));
+		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(ScmList.first(param)),(Environment)ScmList.second(param));
 	}
 }

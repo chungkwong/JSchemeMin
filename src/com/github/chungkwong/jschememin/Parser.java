@@ -127,7 +127,7 @@ public final class Parser{
 			//pop=last=true;
 			pop=true;
 			last=false;
-			end=first=new ScmPair(car,ScmNil.NIL);
+			end=first=ScmList.toList(car);
 		}
 		public ListLevel(){
 			pop=last=false;
@@ -140,7 +140,7 @@ public final class Parser{
 				if(obj instanceof DatumLabelRef)
 					datumBacktrack.get((DatumLabelRef)obj).add((o)->((ScmPair)end).setCdr(o));
 			}else{
-				ScmPair pair=new ScmPair(obj,ScmNil.NIL);
+				ScmPair pair=ScmList.toList(obj);
 				if(first==ScmNil.NIL){
 					end=first=pair;
 				}else{

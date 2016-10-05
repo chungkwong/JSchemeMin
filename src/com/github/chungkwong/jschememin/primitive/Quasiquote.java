@@ -34,7 +34,7 @@ public class Quasiquote extends BasicConstruct implements Primitive{
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
 		ScmObject val=ScmList.toList(QUOTE,quasiquote(ScmList.first(param),1,env));
-		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.singleton(val),env);
+		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(val),env);
 	}
 	private static ScmObject quasiquote(ScmObject obj,int depth,Environment env){
 		if(depth==0){

@@ -28,7 +28,7 @@ public class CallWithCurrentContinuation extends BasicConstruct{
 	}
 	@Override
 	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
-		cont.callTail((Evaluable)ScmList.first(param),ScmList.singleton(getRollbackProcedure(cont.getCopy())),env);
+		cont.callTail((Evaluable)ScmList.first(param),ScmList.toList(getRollbackProcedure(cont.getCopy())),env);
 	}
 	static final ScmObject getRollbackProcedure(Continuation checkpoint){
 		return new Evaluable(){

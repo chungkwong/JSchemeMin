@@ -44,7 +44,7 @@ public class Continuation extends ScmObject{
 		this.arguments=arguments;
 	}
 	public void callInit(Evaluable proc,ScmObject arguments,Environment env){
-		callInit(proc,ScmList.singleton(arguments),env);
+		callInit(proc,ScmList.toList(arguments),env);
 	}
 	public void call(Evaluable proc,Object pointer,ScmPairOrNil arguments,Environment env){
 		actives.push(proc);
@@ -55,7 +55,7 @@ public class Continuation extends ScmObject{
 		this.arguments=arguments;
 	}
 	public void call(Evaluable proc,Object pointer,ScmObject arguments,Environment env){
-		call(proc,pointer,ScmList.singleton(arguments),env);
+		call(proc,pointer,ScmList.toList(arguments),env);
 	}
 	public void callTail(Evaluable proc,ScmPairOrNil arguments,Environment env){
 		actives.pop();
@@ -67,7 +67,7 @@ public class Continuation extends ScmObject{
 		this.arguments=arguments;
 	}
 	public void callTail(Evaluable proc,ScmObject arguments,Environment env){
-		callTail(proc,ScmList.singleton(arguments),env);
+		callTail(proc,ScmList.toList(arguments),env);
 	}
 	public void replaceCurrent(Evaluable proc){
 		actives.pop();
@@ -80,7 +80,7 @@ public class Continuation extends ScmObject{
 		this.arguments=retValue;
 	}
 	public void ret(ScmObject retValue){
-		ret(ScmList.singleton(retValue));
+		ret(ScmList.toList(retValue));
 	}
 	public void reset(Continuation cont){
 		ArrayList<Evaluable> actives2=new ArrayList<>();

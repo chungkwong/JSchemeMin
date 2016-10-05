@@ -105,7 +105,7 @@ public class ScmHashTable extends ScmObject{
 		}
 		@Override
 		public int hashCode(){
-			return ((ScmComplex)hash.call(new ScmPair(object,ScmNil.NIL))).toScmInteger().getValue().intValue();
+			return ((ScmComplex)hash.call(ScmList.toList(object))).toScmInteger().getValue().intValue();
 		}
 		@Override
 		public boolean equals(Object obj){
