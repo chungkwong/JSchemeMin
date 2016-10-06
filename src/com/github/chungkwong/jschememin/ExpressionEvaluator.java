@@ -96,5 +96,9 @@ public class ExpressionEvaluator extends Evaluable implements Primitive{
 		public ScmObject getAfter(){
 			return after;
 		}
+		@Override
+		public String toString(){
+			return "evaluated="+before+";left="+after;
+		}
 	}
 }

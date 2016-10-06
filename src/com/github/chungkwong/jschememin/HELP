@@ -1,0 +1,23 @@
+Available commands:
+step
+	Move to the next execution state
+step in
+	If a expression is going to be executed, move to the execution state just before a subexpression is evaluated
+step over
+	If a expression is going to be executed, move to the execution state just after the expression is evaluated
+run
+	Move to the first execution state that a breakpoint expression is going to be evaluated
+eval EXPR
+	Evaluate a Scheme expression EXPR in the current environment
+stack
+	Show the execution stack of the current state
+list
+	Show the indices corresponding to each expression as well as the expression is evaluated or not
+break add INDEX
+	Set the expression with index INDEX as a breakpoint
+break remove INDEX
+	Unset the expression with index INDEX as a breakpoint
+help
+	Show this help
+quit
+	Exit this debugger

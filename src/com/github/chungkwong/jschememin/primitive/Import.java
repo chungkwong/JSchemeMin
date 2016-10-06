@@ -40,11 +40,11 @@ public class Import extends BasicConstruct implements Primitive{
 		ScmList.forEach(list,(o)->importLibrary(env,(ScmPair)o));
 		return env;
 	}
-	public void importLibrary(Environment env,ScmPair spec){
+	private void importLibrary(Environment env,ScmPair spec){
 		ImportSet set=getImportSet(spec);
 		set.lib.exportTo(env,set.ex2im);
 	}
-	public ImportSet getImportSet(ScmPair list){
+	private ImportSet getImportSet(ScmPair list){
 		if(list.getCdr() instanceof ScmPair&&((ScmPair)list.getCdr()).getCar() instanceof ScmPair){
 			ScmObject car=list.getCar();
 			ImportSet set=getImportSet((ScmPair)list.getCadr());

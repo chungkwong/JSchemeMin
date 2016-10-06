@@ -155,8 +155,7 @@ public class Java extends NativeLibrary{
 		if(m.isVarArgs()){
 			Object[] arguments=new Object[m.getParameterCount()];
 			int len=arguments.length-1;
-			for(int i=0;i<len;i++)
-				arguments[i]=args[i];
+			System.arraycopy(args,0,arguments,0,len);
 			arguments[len]=Arrays.copyOfRange(args,len,args.length,(Class)m.getParameterTypes()[len]);
 			return arguments;
 		}else{

@@ -52,24 +52,24 @@ public class NonStandardProcedureTest{
 		assertExpressionValue("(begin (import (java)) (instanceof (string->String \"hello\") 'java.lang.Integer))","#f");
 		assertExpressionValue("(begin (import (java)) (Integer->integer (invoke (construct 'java.util.ArrayList (integer->Integer 5)) 'size)))","0");
 		assertExpressionValue("(begin (import (java)) "
-				+ "(set-static! 'com.github.chungkwong.jschememin.JavaInteractionTest 'sf (string->String \"world\")) "
-				+ "(String->string (get-static 'com.github.chungkwong.jschememin.JavaInteractionTest 'sf)))","\"world\"");
-		assertExpressionValue("(begin (import (java)) (let ((obj (construct 'com.github.chungkwong.jschememin.JavaInteractionTest)))"
+				+ "(set-static! 'com.github.chungkwong.jschememin.NonStandardProcedureTest 'sf (string->String \"world\")) "
+				+ "(String->string (get-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest 'sf)))","\"world\"");
+		assertExpressionValue("(begin (import (java)) (let ((obj (construct 'com.github.chungkwong.jschememin.NonStandardProcedureTest)))"
 				+ "(set! obj 'f (string->String \"world\")) "
 				+ "(String->string (get obj 'f))))","\"world\"");
 		assertExpressionValue("(begin (import (java)) (Boolean->boolean (invoke-static 'java.util.Objects 'isNull (null))))","#t");
-		assertExpressionValue("(begin (import (java)) (String->string (invoke-static 'com.github.chungkwong.jschememin.JavaInteractionTest "
+		assertExpressionValue("(begin (import (java)) (String->string (invoke-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest "
 				+ "'overloaded (string->String \"q\") (integer->Integer -5))))","\"0\"");
-		assertExpressionValue("(begin (import (java)) (String->string (invoke-static 'com.github.chungkwong.jschememin.JavaInteractionTest "
+		assertExpressionValue("(begin (import (java)) (String->string (invoke-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest "
 				+ "'overloaded (integer->Integer -5) (string->String \"q\"))))","\"1\"");
 		assertExpressionValue("(begin (import (java)) (Integer->integer (invoke-static 'java.lang.Math 'abs (integer->Integer -5))))","5");
 		expectException("(begin (import (java)) (invoke-static 'java.lang.math 'abs (integer->Integer -5)))");
 		expectException("(begin (import (java)) (invoke-static 'java.lang.Math 'abs (string->String \"hello\")))");
 		expectException("(begin (import (java)) (invoke 'java.lang.Math 'abs))");
 		expectException("(begin (import (java)) (construct 'java.lang.Math (integer->Integer -5)))");
-		expectException("(begin (import (java)) (invoke-static 'com.github.chungkwong.jschememin.JavaInteractionTest "
+		expectException("(begin (import (java)) (invoke-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest "
 				+ "'overloaded (integer->Integer -5) (integer->Integer -5)))");
-		expectException("(begin (import (java)) (invoke-static 'com.github.chungkwong.jschememin.JavaInteractionTest "
+		expectException("(begin (import (java)) (invoke-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest "
 				+ "'overloaded (string->String \"q\") (string->String \"w\")))");
 	}
 	@Test

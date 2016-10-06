@@ -8,13 +8,13 @@ continuations, user-defined records, libraries, exceptions, and
 hygienic macro expansion.
 
 As a JVM based implementation, JSchemeMin enables Scheme programs
-to use the full power of Java's API. JSchemeMin also enables Java 
-programs to evaluate Scheme's code, so Scheme can be used as an 
+to use the full power of Java's API. JSchemeMin also enables Java
+programs to evaluate Scheme's code, so Scheme can be used as an
 extensions language by Java's programs.
 
 Currently, JSchemeMin only provides a interpreter, not compiler.
-A basic mechanism for profiling is provided. 
-Debugger and coverage tool is planed to be added in the future.
+A basic mechanism for profiling is provided.
+Debugger and coverage tool is included as well.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ JSchemeMin 是又一个JVM平台上的Scheme语言实现。
 
 作为基于JVM的实现，JSchemeMin 让Scheme程序可以调用Java平台的API，也让Java程序运行Scheme代码，这使Scheme可作为Java（以至别的JVM语言）程序的一种扩展语言，类似Nashorn之于JavaScript。
 
-目前，JSchemeMin 只提供解释器而非编译器。基本的性能监视机制已经存在。调试器和覆盖率工具也将提供。
+目前，JSchemeMin 只提供解释器而非编译器。基本的性能监视机制已经存在。调试器和覆盖率工具也已经提供。
 
 性能并非JSchemeMin的主要设计目标，大部公情况下用明显的实现方式，不为性能牺牲实现的简单性，但相信足以满足预期的需要。
 

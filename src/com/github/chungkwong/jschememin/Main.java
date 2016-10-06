@@ -27,6 +27,11 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		COMMAND_LINE=(ScmPairOrNil)Arrays.stream(args).map((arg)->new ScmString(arg)).collect(ScmList.COLLECTOR);
+		if(args.length>=1&&args[0].equals("-d")){
+			Debugger.main(args);
+			return;
+		}
+		System.out.println("JSchemeMin REPL");
 		Evaluator eval=new Evaluator(true);
 		System.out.print("> ");
 		System.out.flush();

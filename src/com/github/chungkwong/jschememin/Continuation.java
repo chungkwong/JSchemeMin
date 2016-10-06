@@ -138,6 +138,9 @@ public class Continuation extends ScmObject{
 	public ScmObject getCurrentValue(){
 		return ScmList.first(arguments);
 	}
+	public ScmPairOrNil getCurrentValueRaw(){
+		return arguments;
+	}
 	public Evaluable getCurrentEvaluable(){
 		return actives.peek();
 	}
@@ -174,5 +177,13 @@ public class Continuation extends ScmObject{
 			pointers.pop();
 			environments.pop();
 		}
+	}
+	@Override
+	public String toString(){
+		StringBuilder buf=new StringBuilder();
+		for(int i=0;i<actives.size();i++)
+			buf.append(actives.get(i).getClass().getSimpleName()).append(':').append(pointers.get(i)).append('\n');
+		buf.append(arguments);
+		return buf.toString();
 	}
 }
