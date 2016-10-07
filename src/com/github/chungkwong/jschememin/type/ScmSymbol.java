@@ -25,7 +25,7 @@ public class ScmSymbol extends ScmObject implements Token{
 	}
 	@Override
 	public boolean equals(Object obj){
-		return getClass().equals(obj.getClass())&&((ScmSymbol)obj).id.equals(id);
+		return obj!=null&&getClass().equals(obj.getClass())&&((ScmSymbol)obj).id.equals(id);
 	}
 	@Override
 	public int hashCode(){

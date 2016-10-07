@@ -85,9 +85,6 @@ public class Debugger{
 		return cont.hasNext()&&cont.getCurrentEvaluable()instanceof ExpressionEvaluator&&
 				caredExpressions.containsKey(cont.getCurrentValue());
 	}
-	private boolean isFinished(){
-		return cont.hasNext();
-	}
 	public ScmObject eval(ScmObject obj){
 		return new Evaluator(cont.getCurrentEnvironment()).eval(obj);
 	}

@@ -169,7 +169,7 @@ public class LexTest{
 		check("1.e-10)",new ScmFloatingPointNumber(new BigDecimal("1e-10")),SimpleToken.getToken(")"));
 		Assert.assertSame(new Lex("+nan.0)").nextToken(),ScmSpecialReal.POSITIVE_NAN);
 		try{
-			Assert.assertSame(new Lex("+nan.0)").getRemainingTokens().size(),2);
+			Assert.assertEquals(new Lex("+nan.0)").getRemainingTokens().size(),2);
 			Assert.assertEquals(new Lex("+nan.0)").getRemainingTokens().get(1),SimpleToken.getToken(")"));
 		}catch(IOException ex){
 			Assert.assertTrue(false);

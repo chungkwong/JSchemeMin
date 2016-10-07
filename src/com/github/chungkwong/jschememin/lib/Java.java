@@ -21,11 +21,9 @@ import static com.github.chungkwong.jschememin.lib.Utility.cadr;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
 import static com.github.chungkwong.jschememin.lib.Utility.cdr;
 import com.github.chungkwong.jschememin.type.*;
-import java.lang.invoke.*;
 import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
-import java.util.stream.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -118,7 +116,6 @@ public class Java extends NativeLibrary{
 		Object[] arguments=toArray(((ScmPair)param).getCddr());
 		Class[] paraType=toClassArray(arguments);
 		Method m=(Method)selectMethod(cls.getMethods(),method,paraType);
-		MethodHandle handle=MethodHandles.lookup().unreflect(m);
 		if(m!=null)
 			try{
 				return new ScmJavaObject(m.invoke(obj,adjustForVarargs(arguments,m)));
@@ -164,9 +161,6 @@ public class Java extends NativeLibrary{
 	}
 	private static ScmObject cast(ScmObject param) throws ClassNotFoundException{
 		return new ScmJavaObject(Class.forName(((ScmSymbol)cadr(param)).getValue()).cast(((ScmJavaObject)car(param)).getJavaObject()));
-	}
-	private static Set<Class> getPossibleReturnType(Class cls,String method){
-		return Arrays.stream(cls.getMethods()).filter((m)->m.getName().equals(method)).map((m)->m.getReturnType()).collect(Collectors.toSet());
 	}
 	private static Executable selectMethod(Executable[] choices,String name,Class[] argsType){
 		Executable best=null;
