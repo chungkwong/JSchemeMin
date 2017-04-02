@@ -47,7 +47,7 @@ public class EvaluatorTest{
 	}
 	@Test
 	public void testLambda(){
-		checkLast("(set! f (lambda () (set! x '()))) x",Environment.UNBOUNDED);
+		checkLast("(set! f (lambda () (set! x '()))) x",SchemeEnvironment.UNBOUNDED);
 		checkLast("(set! x 3) (set! f (lambda () (set! x '()))) (f) x",ScmNil.NIL);
 		checkLast("((lambda (x) (cons x x)) 'a)",new ScmPair(new ScmSymbol("a"),new ScmSymbol("a")));
 		checkLast("((lambda x x) 3 4 5 6)",ScmList.toList(new ScmInteger(3),new ScmInteger(4),new ScmInteger(5),new ScmInteger(6)));

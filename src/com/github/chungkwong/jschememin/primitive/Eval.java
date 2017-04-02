@@ -27,7 +27,7 @@ public class Eval extends BasicConstruct{
 		super(new ScmSymbol("eval"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
-		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(ScmList.first(param)),(Environment)ScmList.second(param));
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil param){
+		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(ScmList.first(param)),(SchemeEnvironment)ScmList.second(param));
 	}
 }

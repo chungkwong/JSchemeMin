@@ -27,10 +27,10 @@ public class RaiseContinuable extends BasicConstruct{
 		super(new ScmSymbol("raise-continuable"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil param){
 		ScmPair handler=cont.getErrorHandler();
 		if(handler==null)
 			throw new UncaughtExceptionError(ScmError.toException(param));
-		cont.callTail((Evaluable)handler.getCar(),param,(Environment)handler.getCdr());
+		cont.callTail((Evaluable)handler.getCar(),param,(SchemeEnvironment)handler.getCdr());
 	}
 }

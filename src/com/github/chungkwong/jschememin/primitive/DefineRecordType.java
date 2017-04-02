@@ -27,7 +27,7 @@ public class DefineRecordType extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("define-record-type"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil param){
 		ScmSymbol name=(ScmSymbol)ScmList.first(param);
 		param=(ScmPairOrNil)((ScmPair)param).getCdr();
 		ScmPair constructor=(ScmPair)ScmList.first(param);

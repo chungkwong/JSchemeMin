@@ -29,7 +29,7 @@ public class Eval extends NativeLibrary{
 	}
 	@Override
 	protected void init(Library lib){
-		addNativeProcedure("environment",(o)->Import.INSTANCE.importLibraries(new Environment(false),o));
+		addNativeProcedure("environment",(o)->Import.INSTANCE.importLibraries(new SchemeEnvironment(false),o));
 		addPrimitiveType(com.github.chungkwong.jschememin.primitive.Eval.INSTANCE);
 		//addNativeProcedure("eval",(o)->new Evaluator((Environment)cadr(o)).eval(car(o)));
 	}

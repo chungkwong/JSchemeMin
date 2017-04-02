@@ -27,7 +27,7 @@ public class If extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("if"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil expr){
 		if(pointer==null){
 			ScmPair list=(ScmPair)expr;
 			cont.replaceCurrent(this);

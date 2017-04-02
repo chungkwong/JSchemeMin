@@ -33,10 +33,10 @@ public class Load extends NativeLibrary{
 	}
 	@Override
 	protected void init(Library lib){
-		addNativeProcedure("load",new NativeProcedureDefault((o)->load(((ScmString)car(o)).getValue(),(Environment)cadr(o)),
+		addNativeProcedure("load",new NativeProcedureDefault((o)->load(((ScmString)car(o)).getValue(),(SchemeEnvironment)cadr(o)),
 			(o)->car(o),(o)->getInteractiveEnvironment()));
 	}
-	private static ScmObject load(String filename,Environment env){
+	private static ScmObject load(String filename,SchemeEnvironment env){
 		ScmPair content;
 		try{
 			Parser parser=new Parser(new Lex(new InputStreamReader(new FileInputStream(filename),"UTF-8"),false));

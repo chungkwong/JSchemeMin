@@ -134,8 +134,8 @@ public class Utility{
 	static final void exit(ScmObject obj){
 		emergencyExit(obj);//TODO add after wind
 	}
-	static final Environment getInteractiveEnvironment(){
-		return new Environment(true);
+	static final SchemeEnvironment getInteractiveEnvironment(){
+		return new SchemeEnvironment(true);
 	}
 	static final String toRadixPrefix(int radix){
 		switch(radix){

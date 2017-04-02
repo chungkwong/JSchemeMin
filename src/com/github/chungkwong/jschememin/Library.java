@@ -24,8 +24,8 @@ import java.util.*;
 public class Library extends ScmObject{
 	private final ScmPair name;
 	private final HashMap<ScmSymbol,ScmSymbol> export;
-	private final Environment internal;
-	public Library(ScmPair name,HashMap<ScmSymbol,ScmSymbol> export,Environment internal){
+	private final SchemeEnvironment internal;
+	public Library(ScmPair name,HashMap<ScmSymbol,ScmSymbol> export,SchemeEnvironment internal){
 		this.name=name;
 		this.export=export;
 		this.internal=internal;
@@ -46,7 +46,7 @@ public class Library extends ScmObject{
 	public void exportTo(Environment env,HashMap<ScmSymbol,ScmSymbol> importset){
 		importset.forEach((ex,im)->env.add(im,internal.get(export.get(ex))));
 	}
-	public Environment getInternalEnvironment(){
+	public SchemeEnvironment getInternalEnvironment(){
 		return internal;
 	}
 	@Override

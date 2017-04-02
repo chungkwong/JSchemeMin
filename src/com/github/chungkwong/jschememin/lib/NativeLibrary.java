@@ -37,7 +37,7 @@ public abstract class NativeLibrary implements LibraryLoader{
 	@Override
 	public Library getLibrary(){
 		if(lib==null){
-			lib=new Library(name,new HashMap<>(),new Environment(false));
+			lib=new Library(name,new HashMap<>(),new SchemeEnvironment(false));
 			init(lib);
 		}
 		return lib;
@@ -54,7 +54,7 @@ public abstract class NativeLibrary implements LibraryLoader{
 	protected void addDeriveFile(String file,String... export){
 		try{
 			Parser parser=new Parser(new Lex(new InputStreamReader(NativeLibrary.class.getResourceAsStream(file),"UTF-8")));
-			Environment internal=lib.getInternalEnvironment();
+			SchemeEnvironment internal=lib.getInternalEnvironment();
 			Evaluator evaluator=new Evaluator(internal);
 			parser.getRemainingDatums().forEach((d)->evaluator.eval(d));
 			for(String name:export){

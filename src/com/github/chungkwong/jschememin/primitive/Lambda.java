@@ -27,7 +27,7 @@ public class Lambda extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("lambda"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil expr){
 		ScmPair list=(ScmPair)expr;
 		cont.ret(new ScmProcedure(list.getCar(),(ScmPair)list.getCdr(),env));
 	}

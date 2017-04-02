@@ -25,28 +25,28 @@ import java.util.*;
 public class Continuation extends ScmObject{
 	private final Stack<Evaluable> actives;
 	private final Stack<Object> pointers;
-	private final Stack<Environment> environments;
+	private final Stack<SchemeEnvironment> environments;
 	private ScmPairOrNil arguments;
 	public Continuation(){
 		this.pointers=new Stack<>();
 		this.actives=new Stack<>();
 		this.environments=new Stack<>();
 	}
-	public Continuation(Stack<Evaluable> actives,Stack<Object> pointers,Stack<Environment> environments){
+	public Continuation(Stack<Evaluable> actives,Stack<Object> pointers,Stack<SchemeEnvironment> environments){
 		this.pointers=pointers;
 		this.actives=actives;
 		this.environments=environments;
 	}
-	public void callInit(Evaluable proc,ScmPairOrNil arguments,Environment env){
+	public void callInit(Evaluable proc,ScmPairOrNil arguments,SchemeEnvironment env){
 		actives.push(proc);
 		pointers.push(null);
 		environments.push(env);
 		this.arguments=arguments;
 	}
-	public void callInit(Evaluable proc,ScmObject arguments,Environment env){
+	public void callInit(Evaluable proc,ScmObject arguments,SchemeEnvironment env){
 		callInit(proc,ScmList.toList(arguments),env);
 	}
-	public void call(Evaluable proc,Object pointer,ScmPairOrNil arguments,Environment env){
+	public void call(Evaluable proc,Object pointer,ScmPairOrNil arguments,SchemeEnvironment env){
 		actives.push(proc);
 		pointers.pop();
 		pointers.push(pointer);
@@ -54,10 +54,10 @@ public class Continuation extends ScmObject{
 		environments.push(env);
 		this.arguments=arguments;
 	}
-	public void call(Evaluable proc,Object pointer,ScmObject arguments,Environment env){
+	public void call(Evaluable proc,Object pointer,ScmObject arguments,SchemeEnvironment env){
 		call(proc,pointer,ScmList.toList(arguments),env);
 	}
-	public void callTail(Evaluable proc,ScmPairOrNil arguments,Environment env){
+	public void callTail(Evaluable proc,ScmPairOrNil arguments,SchemeEnvironment env){
 		actives.pop();
 		pointers.pop();
 		environments.pop();
@@ -66,7 +66,7 @@ public class Continuation extends ScmObject{
 		environments.push(env);
 		this.arguments=arguments;
 	}
-	public void callTail(Evaluable proc,ScmObject arguments,Environment env){
+	public void callTail(Evaluable proc,ScmObject arguments,SchemeEnvironment env){
 		callTail(proc,ScmList.toList(arguments),env);
 	}
 	public void replaceCurrent(Evaluable proc){
@@ -85,7 +85,7 @@ public class Continuation extends ScmObject{
 	public void reset(Continuation cont){
 		ArrayList<Evaluable> actives2=new ArrayList<>();
 		ArrayList<Object> pointers2=new ArrayList<>();
-		ArrayList<Environment> environments2=new ArrayList<>();
+		ArrayList<SchemeEnvironment> environments2=new ArrayList<>();
 		for(int i=cont.actives.size()-1;i>=0;i--){
 			if(cont.actives.get(i)instanceof DynamicWind&&cont.pointers.get(i)instanceof DynamicWind.Backtrack){
 				DynamicWind.Backtrack track=(DynamicWind.Backtrack)cont.pointers.get(i);
@@ -147,7 +147,7 @@ public class Continuation extends ScmObject{
 	public Object getCurrentPointer(){
 		return pointers.peek();
 	}
-	public Environment getCurrentEnvironment(){
+	public SchemeEnvironment getCurrentEnvironment(){
 		return environments.peek();
 	}
 	public int getLevel(){

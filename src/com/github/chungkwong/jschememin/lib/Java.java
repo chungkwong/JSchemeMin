@@ -61,6 +61,7 @@ public class Java extends NativeLibrary{
 		addNativeProcedure("set!",(o)->setField(o));
 		addNativeProcedure("set-static!",(o)->setStaticField(o));
 		addNativeProcedure("cast-to",(o)->cast(o));
+		addDeriveFile("/com/github/chungkwong/jschememin/lib/java_derive.scm","scheme->java","java->scheme");
 	}
 	private static Object[] toArray(ScmObject obj){
 		int length=ScmList.getLength(obj);

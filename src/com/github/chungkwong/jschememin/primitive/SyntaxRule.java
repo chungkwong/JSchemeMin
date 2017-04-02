@@ -27,7 +27,7 @@ public class SyntaxRule extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("syntax-rules"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil param){
 		cont.ret(new ScmSyntaxRules((ScmPair)param,env));
 	}
 }

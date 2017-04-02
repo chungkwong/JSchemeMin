@@ -28,7 +28,7 @@ public class Define extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("define"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil expr){
 		if(pointer==null){
 			ScmPair remain=(ScmPair)expr;
 			if(remain.getCar() instanceof ScmSymbol){

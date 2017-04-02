@@ -25,7 +25,7 @@ public class ExpressionEvaluator extends Evaluable implements Primitive{
 	private ExpressionEvaluator(){
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil expr){
 		//System.out.println(expr);
 		if(pointer==null){
 			evaluateFirst(ScmList.first(expr),cont,env);
@@ -33,7 +33,7 @@ public class ExpressionEvaluator extends Evaluable implements Primitive{
 			evaluateRemaining((BackTrace)pointer,ScmList.first(expr),env,cont);
 		}
 	}
-	private void evaluateFirst(ScmObject expr,Continuation cont,Environment env){
+	private void evaluateFirst(ScmObject expr,Continuation cont,SchemeEnvironment env){
 		if(expr.isSelfevaluating()){
 			cont.ret(expr);
 		}else if(expr instanceof ScmPair){
@@ -49,7 +49,7 @@ public class ExpressionEvaluator extends Evaluable implements Primitive{
 			throw new SyntaxException(expr.toExternalRepresentation());
 		}
 	}
-	private void evaluateRemaining(BackTrace b,ScmObject expr,Environment env,Continuation cont){
+	private void evaluateRemaining(BackTrace b,ScmObject expr,SchemeEnvironment env,Continuation cont){
 		if(b.getBefore()==null){
 			if(expr instanceof Primitive){
 				((Evaluable)expr).call(env,cont,null,(ScmPairOrNil)b.getAfter());

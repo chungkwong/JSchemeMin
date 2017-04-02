@@ -30,12 +30,12 @@ public class Debugger{
 	private final IdentityHashMap<ScmPair,Object> coveredExpressions=new IdentityHashMap<>();
 	private final ArrayList<ScmPair> caredExpressionsList=new ArrayList<>();
 	private final ScmObject expr;
-	private final Environment env;
+	private final SchemeEnvironment env;
 	private final Continuation cont=new Continuation();
 	public Debugger(ScmObject expr,boolean repl){
-		this(expr,new Environment(repl));
+		this(expr,new SchemeEnvironment(repl));
 	}
-	public Debugger(ScmObject expr,Environment env){
+	public Debugger(ScmObject expr,SchemeEnvironment env){
 		this.env=env;
 		this.expr=expr;
 		cont.callInit(ExpressionEvaluator.INSTANCE,expr,env);

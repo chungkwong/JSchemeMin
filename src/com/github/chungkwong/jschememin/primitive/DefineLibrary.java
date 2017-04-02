@@ -40,10 +40,10 @@ public class DefineLibrary extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("define-library"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil expr){
 		ScmPair name=(ScmPair)((ScmPair)expr).getCar();
 		expr=(ScmPairOrNil)((ScmPair)expr).getCdr();
-		Library lib=new Library(name,new HashMap<>(),new Environment(env));
+		Library lib=new Library(name,new HashMap<>(),new SchemeEnvironment(env));
 		while(expr instanceof ScmPair){
 			ScmPair declaration=(ScmPair)((ScmPair)expr).getCar();
 			ScmObject dir=declaration.getCar();

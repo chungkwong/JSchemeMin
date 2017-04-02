@@ -27,7 +27,7 @@ public class DynamicWind extends BasicConstruct{
 		super(new ScmSymbol("dynamic-wind"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil param){
 		if(pointer==null){
 			Backtrack track=new Backtrack((Evaluable)ScmList.first(param),
 					(Evaluable)ScmList.second(param),(Evaluable)ScmList.third(param),false);

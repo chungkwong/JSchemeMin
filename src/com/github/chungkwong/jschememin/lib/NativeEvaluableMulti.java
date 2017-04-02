@@ -35,7 +35,7 @@ public class NativeEvaluableMulti extends Evaluable{
 		return false;
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil param){
 		try{
 			cont.ret((ScmPairOrNil)proc.call(param));
 		}catch(Exception ex){

@@ -27,7 +27,7 @@ public class Assignment extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("set!"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil expr){
 		if(pointer==null){
 			cont.replaceCurrent(this);
 			cont.call(ExpressionEvaluator.INSTANCE,(ScmSymbol)ScmList.first(expr),ScmList.second(expr),env);

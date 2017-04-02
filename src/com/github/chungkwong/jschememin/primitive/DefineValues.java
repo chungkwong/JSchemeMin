@@ -27,7 +27,7 @@ public class DefineValues extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("define-values"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil expr){
 		if(pointer==null){
 			cont.replaceCurrent(this);
 			cont.call(ExpressionEvaluator.INSTANCE,ScmList.first(expr),(ScmPairOrNil)((ScmPair)expr).getCdr(),env);

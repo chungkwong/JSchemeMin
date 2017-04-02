@@ -32,15 +32,15 @@ public class Import extends BasicConstruct implements Primitive{
 		super(new ScmSymbol("import"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil list){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil list){
 		importLibraries(env,list);
 		cont.ret(new ScmSymbol("ok"));
 	}
-	public Environment importLibraries(Environment env,ScmObject list){
+	public SchemeEnvironment importLibraries(SchemeEnvironment env,ScmObject list){
 		ScmList.forEach(list,(o)->importLibrary(env,(ScmPair)o));
 		return env;
 	}
-	private void importLibrary(Environment env,ScmPair spec){
+	private void importLibrary(SchemeEnvironment env,ScmPair spec){
 		ImportSet set=getImportSet(spec);
 		set.lib.exportTo(env,set.ex2im);
 	}

@@ -23,12 +23,12 @@ import javax.script.*;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Evaluator extends AbstractScriptEngine{
-	private final Environment env;
+	private final SchemeEnvironment env;
 	private final Continuation cont=new Continuation();
 	public Evaluator(boolean repl){
-		this(new Environment(repl));
+		this(new SchemeEnvironment(repl));
 	}
-	public Evaluator(Environment env){
+	public Evaluator(SchemeEnvironment env){
 		this.env=env;
 	}
 	public ScmObject eval(ScmObject expr){
@@ -37,7 +37,7 @@ public class Evaluator extends AbstractScriptEngine{
 			cont.evalNext();
 		return cont.getCurrentValue();
 	}
-	public Environment getEnvironment(){
+	public SchemeEnvironment getEnvironment(){
 		return env;
 	}
 	@Override

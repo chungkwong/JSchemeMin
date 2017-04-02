@@ -27,7 +27,7 @@ public class WithExceptionHandler extends BasicConstruct{
 		super(new ScmSymbol("with-exception-handler"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil param){
 		if(pointer==null){
 			cont.replaceCurrent(this);
 			cont.call((Evaluable)ScmList.second(param),ScmList.first(param),ScmNil.NIL,env);

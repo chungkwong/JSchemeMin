@@ -1,10 +1,10 @@
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
 public final class ScmProcedure extends Evaluable{
-	private final Environment parent;
+	private final SchemeEnvironment parent;
 	private final ScmObject formal;
 	private final ScmPair body;
-	public ScmProcedure(ScmObject formal,ScmPair body,Environment parent){
+	public ScmProcedure(ScmObject formal,ScmPair body,SchemeEnvironment parent){
 		this.formal=formal;
 		this.body=body;
 		this.parent=parent;
@@ -26,7 +26,7 @@ public final class ScmProcedure extends Evaluable{
 		return false;
 	}
 	@Override
-	public void call(Environment dynamicEnv,Continuation cont,Object pointer,ScmPairOrNil param){
+	public void call(SchemeEnvironment dynamicEnv,Continuation cont,Object pointer,ScmPairOrNil param){
 		if(pointer==null){
 			call(dynamicEnv,cont,new Backtrack(extendEnvironment((ScmPairOrNil)param),body),null);
 		}else{
@@ -45,8 +45,8 @@ public final class ScmProcedure extends Evaluable{
 	public boolean equalsValue(ScmObject obj){
 		return this==obj;
 	}
-	private Environment extendEnvironment(ScmPairOrNil param){
-		Environment env=new Environment(parent);
+	private SchemeEnvironment extendEnvironment(ScmPairOrNil param){
+		SchemeEnvironment env=new SchemeEnvironment(parent);
 		if(formal instanceof ScmSymbol){
 			env.add((ScmSymbol)formal,param);
 		}else if(formal instanceof ScmPair){
@@ -72,13 +72,13 @@ public final class ScmProcedure extends Evaluable{
 		return env;
 	}
 	static class Backtrack{
-		private final Environment env;
+		private final SchemeEnvironment env;
 		private final ScmPair remaining;
-		public Backtrack(Environment env,ScmPair remaining){
+		public Backtrack(SchemeEnvironment env,ScmPair remaining){
 			this.env=env;
 			this.remaining=remaining;
 		}
-		public Environment getEnvironment(){
+		public SchemeEnvironment getEnvironment(){
 			return env;
 		}
 		public ScmPair getRemaining(){

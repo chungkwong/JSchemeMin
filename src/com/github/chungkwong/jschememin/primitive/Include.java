@@ -31,7 +31,7 @@ public class Include extends BasicConstruct implements Primitive{
 		this.foldingCase=foldingCase;
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil expr){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil expr){
 		cont.callTail(ExpressionEvaluator.INSTANCE,getFileContent((ScmPair)expr),env);
 	}
 	ScmObject getFileContent(ScmPair files){

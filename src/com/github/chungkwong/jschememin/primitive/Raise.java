@@ -27,14 +27,14 @@ public class Raise extends BasicConstruct{
 		super(new ScmSymbol("raise"));
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil param){
 		cont.removeUntilErrorHandler();
 		if(cont.hasNext()){
 			if(pointer!=null){
 				param=(ScmPairOrNil)pointer;
 			}
 			ScmObject handler=(ScmObject)cont.getCurrentPointer();
-			Environment e=cont.getCurrentEnvironment();
+			SchemeEnvironment e=cont.getCurrentEnvironment();
 			cont.callTail(this,param,env);
 			cont.call((Evaluable)handler,param,param,e);
 		}else{

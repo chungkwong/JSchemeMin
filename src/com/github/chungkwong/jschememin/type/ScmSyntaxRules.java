@@ -30,8 +30,8 @@ public class ScmSyntaxRules extends ScmObject{
 	private final List<SyntaxRule> rules=new ArrayList<>();
 	private final ScmSymbol ellipsis;
 	private final HashSet<ScmSymbol> literals=new HashSet<>();
-	private final Environment defEnv;
-	public ScmSyntaxRules(ScmPair spec,Environment defEnv){
+	private final SchemeEnvironment defEnv;
+	public ScmSyntaxRules(ScmPair spec,SchemeEnvironment defEnv){
 		if(spec.getCar() instanceof ScmSymbol){
 			ellipsis=(ScmSymbol)spec.getCar();
 			spec=(ScmPair)spec.getCdr();
@@ -60,7 +60,7 @@ public class ScmSyntaxRules extends ScmObject{
 	public boolean isSelfevaluating(){
 		return false;
 	}
-	public ScmObject transform(ScmPairOrNil argument,Environment env){
+	public ScmObject transform(ScmPairOrNil argument,SchemeEnvironment env){
 		for(SyntaxRule rule:rules){
 			ScmObject transformed=rule.apply(argument,env);
 			if(transformed!=null){
@@ -73,7 +73,7 @@ public class ScmSyntaxRules extends ScmObject{
 	public static void main(String[] args) throws IOException{
 		BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
 		String s;
-		Environment env=new Environment(false);
+		SchemeEnvironment env=new SchemeEnvironment(false);
 		while((s=in.readLine())!=null){
 			ScmSyntaxRules rules=new ScmSyntaxRules((ScmPair)new Parser(s).nextDatum(),env);
 			System.out.println(rules);
@@ -103,7 +103,7 @@ public class ScmSyntaxRules extends ScmObject{
 				((ScmVector)patt).stream().forEach((p)->collectPatternVariables(p,bind));
 			}
 		}
-		private boolean matchIdentifier(ScmObject expr,ScmSymbol patt,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
+		private boolean matchIdentifier(ScmObject expr,ScmSymbol patt,HashMap<ScmSymbol,CapturedObjects> bind,SchemeEnvironment env,MultiIndex index){
 			if(literals.contains(patt)){
 				if(expr instanceof ScmUniqueSymbol){
 					expr=((ScmUniqueSymbol)expr).getOrigin();
@@ -119,7 +119,7 @@ public class ScmSyntaxRules extends ScmObject{
 				return true;
 			}
 		}
-		private boolean matchVector(ScmObject expr,ScmVector patt,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
+		private boolean matchVector(ScmObject expr,ScmVector patt,HashMap<ScmSymbol,CapturedObjects> bind,SchemeEnvironment env,MultiIndex index){
 			if(!(expr instanceof ScmVector))
 				return false;
 			ScmVector exp=(ScmVector)expr;
@@ -146,7 +146,7 @@ public class ScmSyntaxRules extends ScmObject{
 					return false;
 			return true;
 		}
-		private boolean matchList(ScmObject expr,ScmObject patt,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
+		private boolean matchList(ScmObject expr,ScmObject patt,HashMap<ScmSymbol,CapturedObjects> bind,SchemeEnvironment env,MultiIndex index){
 			while(patt instanceof ScmPair){
 				ScmObject sub=((ScmPair)patt).getCar();
 				if(((ScmPair)patt).getCdr()instanceof ScmPair&&((ScmPair)patt).getCadr().equals(ellipsis)){
@@ -174,7 +174,7 @@ public class ScmSyntaxRules extends ScmObject{
 			}else
 				return expr instanceof ScmNil;
 		}
-		private boolean match(ScmObject expr,ScmObject patt,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
+		private boolean match(ScmObject expr,ScmObject patt,HashMap<ScmSymbol,CapturedObjects> bind,SchemeEnvironment env,MultiIndex index){
 			if(patt instanceof ScmSymbol){
 				return matchIdentifier(expr,(ScmSymbol)patt,bind,env,index);
 			}else if(patt instanceof ScmPairOrNil){
@@ -187,7 +187,7 @@ public class ScmSyntaxRules extends ScmObject{
 				throw new SyntaxException();
 			}
 		}
-		private ScmObject transform(ScmObject temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,Environment env,MultiIndex index){
+		private ScmObject transform(ScmObject temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,SchemeEnvironment env,MultiIndex index){
 			if(temp instanceof ScmSymbol)
 				return transformSymbol((ScmSymbol)temp,bind,env,index);
 			else if(temp.isSelfevaluating())
@@ -202,7 +202,7 @@ public class ScmSyntaxRules extends ScmObject{
 			}else
 				return temp;
 		}
-		private ScmObject transformSymbol(ScmSymbol temp,HashMap<ScmSymbol,CapturedObjects> bind,Environment env,MultiIndex index){
+		private ScmObject transformSymbol(ScmSymbol temp,HashMap<ScmSymbol,CapturedObjects> bind,SchemeEnvironment env,MultiIndex index){
 			if(bind.containsKey(temp))
 				return bind.get(temp).get(index);
 			Optional<ScmObject> defVal=defEnv.getOptional(temp);
@@ -213,7 +213,7 @@ public class ScmSyntaxRules extends ScmObject{
 			}
 			return rename;
 		}
-		private ScmObject transformVector(ScmVector temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,Environment env,MultiIndex index){
+		private ScmObject transformVector(ScmVector temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,SchemeEnvironment env,MultiIndex index){
 			ArrayList<ScmObject> list=new ArrayList<>();
 			for(int i=0;i<temp.getLength();i++){
 				if(i+1<temp.getLength()&&temp.get(i+1).equals(ellipsis)&&!ellipsed){
@@ -233,7 +233,7 @@ public class ScmSyntaxRules extends ScmObject{
 			}
 			return new ScmVector(list);
 		}
-		private ScmObject transformList(ScmObject temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,Environment env,MultiIndex index){
+		private ScmObject transformList(ScmObject temp,HashMap<ScmSymbol,CapturedObjects> bind,boolean ellipsed,SchemeEnvironment env,MultiIndex index){
 			ScmListBuilder buf=new ScmListBuilder();
 			while(temp instanceof ScmPair){
 				ScmObject sub=((ScmPair)temp).getCar();
@@ -258,7 +258,7 @@ public class ScmSyntaxRules extends ScmObject{
 			}
 			return buf.toList();
 		}
-		private ScmObject apply(ScmPairOrNil argument,Environment env){
+		private ScmObject apply(ScmPairOrNil argument,SchemeEnvironment env){
 			HashMap<ScmSymbol,CapturedObjects> bind=new HashMap<>();
 			if(match(argument,pattern,bind,env,new MultiIndex()))
 				return transform(template,bind,false,env,new MultiIndex());

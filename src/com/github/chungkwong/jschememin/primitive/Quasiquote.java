@@ -32,11 +32,11 @@ public class Quasiquote extends BasicConstruct implements Primitive{
 		super(QUASIQUOTE);
 	}
 	@Override
-	public void call(Environment env,Continuation cont,Object pointer,ScmPairOrNil param){
+	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil param){
 		ScmObject val=ScmList.toList(QUOTE,quasiquote(ScmList.first(param),1,env));
 		cont.callTail(ExpressionEvaluator.INSTANCE,ScmList.toList(val),env);
 	}
-	private static ScmObject quasiquote(ScmObject obj,int depth,Environment env){
+	private static ScmObject quasiquote(ScmObject obj,int depth,SchemeEnvironment env){
 		if(depth==0){
 			return new Evaluator(env).eval(obj);//FIXME wrong hack
 		}else if(obj instanceof ScmVector){
@@ -71,7 +71,7 @@ public class Quasiquote extends BasicConstruct implements Primitive{
 		}else
 			return obj;
 	}
-	private static void processVector(ScmObject obj,List<ScmObject> vector,int depth,Environment env){
+	private static void processVector(ScmObject obj,List<ScmObject> vector,int depth,SchemeEnvironment env){
 		if(obj instanceof ScmPair&&ScmList.first(obj).equals(UNQUOTE_SLICING)){
 			ScmObject content=quasiquote(ScmList.second(obj),depth-1,env);
 			if(depth==1)
@@ -83,7 +83,7 @@ public class Quasiquote extends BasicConstruct implements Primitive{
 			vector.add(quasiquote(obj,depth,env));
 		}
 	}
-	private static void processList(ScmObject obj,ScmListBuilder buf,int depth,Environment env){
+	private static void processList(ScmObject obj,ScmListBuilder buf,int depth,SchemeEnvironment env){
 		if(obj instanceof ScmPair&&ScmList.first(obj).equals(UNQUOTE_SLICING)){
 			ScmObject content=quasiquote(ScmList.second(obj),depth-1,env);
 			if(depth==1)
