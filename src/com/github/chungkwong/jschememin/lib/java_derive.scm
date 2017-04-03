@@ -13,3 +13,15 @@
               ((instanceof x 'java.lang.Double) (Double->real x))
               ((instanceof x 'java.lang.Integer) (Integer->integer x))
               (else x)))
+
+(define (box args)
+        (map scheme->java args))
+(define (unbox args)
+        (map java->scheme args))
+
+(define (easy-construct cls . args)
+        (apply construct cls (box args)))
+(define (easy-invoke obj method . args)
+        (java->scheme (apply invoke (scheme->java obj) method (box args))))
+(define (easy-invoke-static cls method . args)
+        (java->scheme (apply invoke-static cls method (box args))))

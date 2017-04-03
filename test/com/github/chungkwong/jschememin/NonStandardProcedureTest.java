@@ -52,10 +52,10 @@ public class NonStandardProcedureTest{
 		assertExpressionValue("(begin (import (java)) (instanceof (string->String \"hello\") 'java.lang.Integer))","#f");
 		assertExpressionValue("(begin (import (java)) (Integer->integer (invoke (construct 'java.util.ArrayList (integer->Integer 5)) 'size)))","0");
 		assertExpressionValue("(begin (import (java)) "
-				+ "(set-static! 'com.github.chungkwong.jschememin.NonStandardProcedureTest 'sf (string->String \"world\")) "
+				+ "(set-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest 'sf (string->String \"world\")) "
 				+ "(String->string (get-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest 'sf)))","\"world\"");
 		assertExpressionValue("(begin (import (java)) (let ((obj (construct 'com.github.chungkwong.jschememin.NonStandardProcedureTest)))"
-				+ "(set! obj 'f (string->String \"world\")) "
+				+ "(set obj 'f (string->String \"world\")) "
 				+ "(String->string (get obj 'f))))","\"world\"");
 		assertExpressionValue("(begin (import (java)) (Boolean->boolean (invoke-static 'java.util.Objects 'isNull (null))))","#t");
 		assertExpressionValue("(begin (import (java)) (String->string (invoke-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest "
@@ -63,6 +63,9 @@ public class NonStandardProcedureTest{
 		assertExpressionValue("(begin (import (java)) (String->string (invoke-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest "
 				+ "'overloaded (integer->Integer -5) (string->String \"q\"))))","\"1\"");
 		assertExpressionValue("(begin (import (java)) (Integer->integer (invoke-static 'java.lang.Math 'abs (integer->Integer -5))))","5");
+		assertExpressionValue("(begin (import (java)) (easy-invoke (easy-construct 'java.lang.Double \"5.3\") 'intValue))","5");
+		assertExpressionValue("(begin (import (java)) (easy-invoke-static 'java.lang.Math 'abs -5))","5");
+		assertExpressionValue("(begin (import (java)) (easy-invoke \"hello\" 'substring 3))","\"lo\"");
 		expectException("(begin (import (java)) (invoke-static 'java.lang.math 'abs (integer->Integer -5)))");
 		expectException("(begin (import (java)) (invoke-static 'java.lang.Math 'abs (string->String \"hello\")))");
 		expectException("(begin (import (java)) (invoke 'java.lang.Math 'abs))");

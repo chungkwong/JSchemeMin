@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.type;
-
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
