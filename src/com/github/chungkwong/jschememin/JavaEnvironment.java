@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin;
-import com.github.chungkwong.jschememin.lib.*;
-import com.github.chungkwong.jschememin.primitive.*;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
 import javax.script.*;
@@ -25,36 +23,40 @@ import javax.script.*;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class JavaEnvironment extends Environment{
-	private final Bindings parent;
-	public JavaEnvironment(Bindings parent,boolean repl){
+	private final ScriptContext parent;
+	public JavaEnvironment(ScriptContext parent,boolean repl){
 		super(repl);
-		this.parent=null;
-		parent.put(DefineLibrary.INSTANCE.getKeyword().getValue(),DefineLibrary.INSTANCE);
-		parent.put(Import.INSTANCE.getKeyword().getValue(),Import.INSTANCE);
-		if(repl)
-			Base.INSTANCE.getLibrary().exportTo(this);
+		this.parent=parent;
 	}
 	@Override
 	public Optional<ScmObject> getOptional(ScmSymbol id){
-		String name=id.getValue();
-		if(parent.containsKey(name)){
-			Object value=parent.get(name);
-			return Optional.of(value instanceof ScmObject?(ScmObject)value:new ScmJavaObject(value));
-		}else{
-			return Optional.empty();
-		}
+		return Optional.ofNullable(getSelfOptional(id));
+	}
+	@Override
+	public ScmObject getSelfOptional(ScmSymbol id){
+		Object value=parent.getAttribute(id.getValue());
+		return value instanceof ScmObject?(ScmObject)value:(value==null?null:new ScmJavaObject(value));
 	}
 	@Override
 	public void set(ScmSymbol id,ScmObject obj){
-		if(isREPL()||parent.containsKey(id.getValue()))
+		int scope=parent.getAttributesScope(id.getValue());
+		if(scope!=-1)
+			parent.setAttribute(id.getValue(),unpack(obj),scope);
+		if(isREPL())
 			add(id,obj);
 	}
 	@Override
 	public void add(ScmSymbol id,ScmObject obj){
-		parent.put(id.getValue(),obj instanceof ScmJavaObject?((ScmJavaObject)obj).getJavaObject():obj);
+		parent.setAttribute(id.getValue(),unpack(obj),parent.getScopes().get(0));
+	}
+	private static Object unpack(ScmObject obj){
+		return obj instanceof ScmJavaObject?((ScmJavaObject)obj).getJavaObject():obj;
 	}
 	@Override
 	public void remove(ScmSymbol id){
-		parent.remove(id.getValue());
+		int scope=parent.getAttributesScope(id.getValue());
+		if(scope!=-1){
+			parent.removeAttribute(id.getValue(),scope);
+		}
 	}
 }

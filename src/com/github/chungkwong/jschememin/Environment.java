@@ -30,6 +30,7 @@ public abstract class Environment extends ScmObject{
 	public abstract Optional<ScmObject> getOptional(ScmSymbol id);
 	public abstract void set(ScmSymbol id,ScmObject obj);
 	public abstract void add(ScmSymbol id,ScmObject obj);
+	public abstract ScmObject getSelfOptional(ScmSymbol id);
 	public abstract void remove(ScmSymbol id);
 	public ScmObject get(ScmSymbol id){
 		Optional<ScmObject> obj=getOptional(id);

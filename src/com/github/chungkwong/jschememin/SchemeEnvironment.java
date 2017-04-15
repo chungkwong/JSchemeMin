@@ -24,7 +24,7 @@ import java.util.*;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class SchemeEnvironment extends Environment{
-	private final SchemeEnvironment parent;
+	private Environment parent;
 	private final HashMap<ScmSymbol,ScmObject> bindings=new HashMap<>();
 	public SchemeEnvironment(boolean repl){
 		super(repl);
@@ -34,28 +34,35 @@ public class SchemeEnvironment extends Environment{
 		if(repl)
 			Base.INSTANCE.getLibrary().exportTo(this);
 	}
-	public SchemeEnvironment(SchemeEnvironment parent){
+	void setParent(Environment parent){
+		this.parent=parent;
+	}
+	public SchemeEnvironment(Environment parent){
 		super(parent.isREPL());
 		this.parent=parent;
 	}
 	@Override
 	public Optional<ScmObject> getOptional(ScmSymbol id){
-		SchemeEnvironment env=getFirstEnvironmentContains(this,id);
-		return env!=null?Optional.of(env.bindings.get(id)):Optional.empty();
+		Environment env=getFirstEnvironmentContains(this,id);
+		return env!=null?Optional.ofNullable(env.getSelfOptional(id)):Optional.empty();
+	}
+	@Override
+	public ScmObject getSelfOptional(ScmSymbol id){
+		return bindings.get(id);
 	}
 	@Override
 	public void set(ScmSymbol id,ScmObject obj){
-		SchemeEnvironment env=getFirstEnvironmentContains(this,id);
+		Environment env=getFirstEnvironmentContains(this,id);
 		if(env!=null){
-			env.bindings.put(id,obj);
+			env.add(id,obj);
 		}else if(isREPL())
 			add(id,obj);
 	}
-	private static SchemeEnvironment getFirstEnvironmentContains(SchemeEnvironment env,ScmSymbol id){
-		while(env!=null){
-			if(env.bindings.containsKey(id))
+	private static Environment getFirstEnvironmentContains(Environment env,ScmSymbol id){
+		while(env instanceof SchemeEnvironment){
+			if(((SchemeEnvironment)env).bindings.containsKey(id))
 				break;
-			env=env.parent;
+			env=((SchemeEnvironment)env).parent;
 		}
 		return env;
 	}

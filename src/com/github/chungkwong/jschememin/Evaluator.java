@@ -47,13 +47,7 @@ public class Evaluator extends AbstractScriptEngine{
 	@Override
 	public Object eval(Reader reader,ScriptContext context) throws ScriptException{
 		Parser parser=new Parser(new Lex(reader));
-		for(int i:context.getScopes()){
-			Bindings bindings=context.getBindings(i);
-			if(bindings!=null){
-				bindings.forEach((key,value)->
-						env.add(new ScmSymbol(key),value instanceof ScmObject?(ScmObject)value:new ScmJavaObject(value)));
-			}
-		}
+		env.setParent(new JavaEnvironment(context,env.isREPL()));
 		ScmObject datum,ret=null;
 		while((datum=parser.nextDatum())!=null){
 			ret=eval(datum);
