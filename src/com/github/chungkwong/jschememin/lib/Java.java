@@ -150,7 +150,7 @@ public class Java extends NativeLibrary{
 		else
 			throw new NoSuchMethodException();
 	}
-	private static Object[] adjustForVarargs(Object[] args,Executable m){
+	public static Object[] adjustForVarargs(Object[] args,Executable m){
 		if(m.isVarArgs()){
 			Object[] arguments=new Object[m.getParameterCount()];
 			int len=arguments.length-1;
