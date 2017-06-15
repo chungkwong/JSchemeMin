@@ -29,9 +29,9 @@ public class File extends NativeLibrary{
 	}
 	@Override
 	protected void init(Library lib){
-		addNativeProcedure("file-exists?",(o)->ScmBoolean.valueOf(new java.io.File(((ScmString)car(o)).getValue()).exists()));
+		addNativeProcedure("file-exists?",(o)->ScmBoolean.valueOf(Main.resolveFile(((ScmString)car(o)).getValue()).exists()));
 		addNativeProcedure("file-delete",(o)->{
-			java.io.File file=new java.io.File(((ScmString)car(o)).getValue());
+			java.io.File file=Main.resolveFile(((ScmString)car(o)).getValue());
 			if(file.exists()&&file.delete())
 				return ScmBoolean.TRUE;
 			else

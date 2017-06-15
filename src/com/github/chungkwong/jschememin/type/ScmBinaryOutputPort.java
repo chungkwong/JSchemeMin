@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.type;
+import com.github.chungkwong.jschememin.*;
 import java.io.*;
 /**
  *
@@ -27,7 +28,7 @@ public class ScmBinaryOutputPort extends ScmPort{
 	}
 	public ScmBinaryOutputPort(String file){
 		try{
-			this.out=new FileOutputStream(file);
+			this.out=new FileOutputStream(Main.resolveFile(file));
 		}catch(FileNotFoundException ex){
 			throw ScmError.toException(new ScmError(new ScmString(ex.getLocalizedMessage()),ScmNil.NIL,ScmError.ErrorType.FILE));
 		}

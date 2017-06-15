@@ -42,7 +42,7 @@ public class Include extends BasicConstruct implements Primitive{
 	}
 	private void appendContent(String file,ScmListBuilder buf){
 		try{
-			Parser parser=new Parser(new Lex(new InputStreamReader(new FileInputStream(file),"UTF-8"),foldingCase));
+			Parser parser=new Parser(new Lex(new InputStreamReader(new FileInputStream(Main.resolveFile(file)),"UTF-8"),foldingCase));
 			ScmObject datum;
 			while((datum=parser.nextDatum())!=null)
 				buf.add(datum);

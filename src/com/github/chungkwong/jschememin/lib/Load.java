@@ -39,7 +39,7 @@ public class Load extends NativeLibrary{
 	private static ScmObject load(String filename,SchemeEnvironment env){
 		ScmPair content;
 		try{
-			Parser parser=new Parser(new Lex(new InputStreamReader(new FileInputStream(filename),"UTF-8"),false));
+			Parser parser=new Parser(new Lex(new InputStreamReader(new FileInputStream(Main.resolveFile(filename)),"UTF-8"),false));
 			content=new ScmPair(BEGIN,ScmList.toList(parser.getRemainingDatums()));
 		}catch(FileNotFoundException|UnsupportedEncodingException ex){
 			throw new RuntimeException();

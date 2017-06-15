@@ -31,7 +31,7 @@ public class ScmTextualInputPort extends ScmPort{
 	}
 	public ScmTextualInputPort(String file){
 		try{
-			this.in=new PushbackReader(new InputStreamReader(new FileInputStream(file),"UTF-8"),2);
+			this.in=new PushbackReader(new InputStreamReader(new FileInputStream(Main.resolveFile(file)),"UTF-8"),2);
 		}catch(UnsupportedEncodingException|FileNotFoundException ex){
 			throw ScmError.toException(new ScmError(new ScmString(ex.getLocalizedMessage()),ScmNil.NIL,ScmError.ErrorType.FILE));
 		}

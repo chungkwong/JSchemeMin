@@ -49,4 +49,7 @@ public class Main {
 			System.out.flush();
 		}
 	}
+	public static File resolveFile(String path){
+		return new File(path).getAbsoluteFile();
+	}
 }

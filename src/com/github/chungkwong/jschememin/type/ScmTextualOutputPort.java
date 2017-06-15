@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.type;
+import com.github.chungkwong.jschememin.*;
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
@@ -30,7 +31,7 @@ public class ScmTextualOutputPort extends ScmPort{
 	}
 	public ScmTextualOutputPort(String file){
 		try{
-			this.out=new OutputStreamWriter(new FileOutputStream(file),"UTF-8");
+			this.out=new OutputStreamWriter(new FileOutputStream(Main.resolveFile(file)),"UTF-8");
 		}catch(UnsupportedEncodingException|FileNotFoundException ex){
 			throw ScmError.toException(new ScmError(new ScmString(ex.getLocalizedMessage()),ScmNil.NIL,ScmError.ErrorType.FILE));
 		}
