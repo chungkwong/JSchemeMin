@@ -60,12 +60,16 @@ public class ScmError extends ScmObject{
 		//obj.printStackTrace();
 		if(obj instanceof ScmException)
 			return ((ScmException)obj).getObject();
-		return new ScmError(new ScmString(obj.toString()),ScmNil.NIL,ErrorType.OTHER);
+		return new ScmError(new ScmString(obj.toString()),ScmList.toList(new ScmJavaObject(obj)),ErrorType.OTHER);
 	}
 	private static class ScmException extends RuntimeException{
 		private final ScmObject obj;
 		public ScmException(ScmObject obj){
 			super();
+			this.obj=obj;
+		}
+		public ScmException(ScmObject obj,Throwable cause){
+			super(cause);
 			this.obj=obj;
 		}
 		public ScmObject getObject(){
