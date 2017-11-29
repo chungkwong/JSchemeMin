@@ -21,7 +21,7 @@ package com.github.chungkwong.jschememin.type;
  */
 public class ScmError extends ScmObject{
 	public static enum ErrorType{
-		READ,FILE,SYNTAX,OTHER
+		READ,FILE,SYNTAX,JAVA,OTHER
 	}
 	private final ScmString message;
 	private final ScmPairOrNil irritants;
@@ -54,13 +54,18 @@ public class ScmError extends ScmObject{
 		return new ScmException(toScmObject(t));
 	}
 	public static RuntimeException toException(ScmObject obj){
-		return new ScmException(obj);
+		if(obj instanceof ScmPair)
+			obj=ScmList.first(obj);
+		if(obj instanceof ScmError&&((ScmError)obj).getType()==ErrorType.JAVA)
+			return new ScmException(obj,(Throwable)((ScmJavaObject)ScmList.first(((ScmError)obj).getIrritants())).getJavaObject());
+		else
+			return new ScmException(obj);
 	}
 	public static ScmObject toScmObject(Throwable obj){
 		//obj.printStackTrace();
 		if(obj instanceof ScmException)
 			return ((ScmException)obj).getObject();
-		return new ScmError(new ScmString(obj.toString()),ScmList.toList(new ScmJavaObject(obj)),ErrorType.OTHER);
+		return new ScmError(new ScmString(obj.toString()),ScmList.toList(new ScmJavaObject(obj)),ErrorType.JAVA);
 	}
 	private static class ScmException extends RuntimeException{
 		private final ScmObject obj;
@@ -71,6 +76,7 @@ public class ScmError extends ScmObject{
 		public ScmException(ScmObject obj,Throwable cause){
 			super(cause);
 			this.obj=obj;
+			System.err.println("hello");
 		}
 		public ScmObject getObject(){
 			return obj;

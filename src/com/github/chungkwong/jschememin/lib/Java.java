@@ -121,9 +121,9 @@ public class Java extends NativeLibrary{
 		if(m!=null)
 			try{
 				return new ScmJavaObject(m.invoke(obj,adjustForVarargs(arguments,m)));
-		}catch(Throwable ex){
-			throw ScmError.toRuntimeException(ex);
-		}
+			}catch(Throwable ex){
+				throw ScmError.toRuntimeException(ex);
+			}
 		else
 			throw new NoSuchMethodException(method);
 	}
