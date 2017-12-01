@@ -30,7 +30,7 @@ public class RaiseContinuable extends BasicConstruct{
 	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil param){
 		ScmPair handler=cont.getErrorHandler();
 		if(handler==null)
-			throw new UncaughtExceptionError(ScmError.toException(param));
+			throw new UncaughtExceptionError(ScmError.toException(ScmList.first(param)));
 		cont.callTail((Evaluable)handler.getCar(),param,(SchemeEnvironment)handler.getCdr());
 	}
 }

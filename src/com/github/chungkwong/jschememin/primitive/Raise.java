@@ -38,7 +38,7 @@ public class Raise extends BasicConstruct{
 			cont.callTail(this,param,env);
 			cont.call((Evaluable)handler,param,param,e);
 		}else{
-			throw new UncaughtExceptionError(ScmError.toException(param));
+			throw new UncaughtExceptionError(ScmError.toException(ScmList.first(param)));
 		}
 	}
 }

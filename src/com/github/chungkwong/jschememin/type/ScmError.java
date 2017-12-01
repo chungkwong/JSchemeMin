@@ -54,8 +54,6 @@ public class ScmError extends ScmObject{
 		return new ScmException(toScmObject(t));
 	}
 	public static RuntimeException toException(ScmObject obj){
-		if(obj instanceof ScmPair)
-			obj=ScmList.first(obj);
 		if(obj instanceof ScmError&&((ScmError)obj).getType()==ErrorType.JAVA)
 			return new ScmException(obj,(Throwable)((ScmJavaObject)ScmList.first(((ScmError)obj).getIrritants())).getJavaObject());
 		else
@@ -76,7 +74,6 @@ public class ScmError extends ScmObject{
 		public ScmException(ScmObject obj,Throwable cause){
 			super(cause);
 			this.obj=obj;
-			System.err.println("hello");
 		}
 		public ScmObject getObject(){
 			return obj;
