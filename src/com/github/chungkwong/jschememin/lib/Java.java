@@ -30,6 +30,7 @@ import java.util.*;
  */
 public class Java extends NativeLibrary{
 	public static final Java INSTANCE=new Java();
+	private static ClassLoader loader=Java.class.getClassLoader();
 	private Java(){
 		super("java");
 	}
@@ -81,7 +82,7 @@ public class Java extends NativeLibrary{
 	}
 	private static ScmObject is(ScmObject param) throws ClassNotFoundException{
 		Object obj=((ScmJavaObject)car(param)).getJavaObject();
-		Class type=Class.forName(((ScmSymbol)cadr(param)).getValue());
+		Class type=forName(((ScmSymbol)cadr(param)).getValue());
 		return ScmBoolean.valueOf(type.isInstance(obj));
 	}
 	private static ScmObject getField(ScmObject param) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, ClassNotFoundException{
@@ -91,7 +92,7 @@ public class Java extends NativeLibrary{
 		return new ScmJavaObject(cls.getField(field).get(obj));
 	}
 	private static ScmObject getStaticField(ScmObject param) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, ClassNotFoundException{
-		Class cls=Class.forName(((ScmSymbol)car(param)).getValue());
+		Class cls=forName(((ScmSymbol)car(param)).getValue());
 		String field=((ScmSymbol)cadr(param)).getValue();
 		return new ScmJavaObject(cls.getField(field).get(null));
 	}
@@ -104,7 +105,7 @@ public class Java extends NativeLibrary{
 		return caddr(param);
 	}
 	private static ScmObject setStaticField(ScmObject param) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, ClassNotFoundException{
-		Class cls=Class.forName(((ScmSymbol)car(param)).getValue());
+		Class cls=forName(((ScmSymbol)car(param)).getValue());
 		String field=((ScmSymbol)cadr(param)).getValue();
 		Object val=((ScmJavaObject)caddr(param)).getJavaObject();
 		cls.getField(field).set(null,val);
@@ -129,7 +130,7 @@ public class Java extends NativeLibrary{
 	}
 	private static ScmObject invokeStatic(ScmObject param)throws ClassNotFoundException
 			, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
-		Class cls=Class.forName(((ScmSymbol)car(param)).getValue());
+		Class cls=forName(((ScmSymbol)car(param)).getValue());
 		String method=((ScmSymbol)cadr(param)).getValue();
 		Object[] arguments=toArray(((ScmPair)param).getCddr());
 		Class[] paraType=toClassArray(arguments);
@@ -141,7 +142,7 @@ public class Java extends NativeLibrary{
 	}
 	private static ScmObject construct(ScmObject param)throws ClassNotFoundException
 			, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException{
-		Class cls=Class.forName(((ScmSymbol)car(param)).getValue());
+		Class cls=forName(((ScmSymbol)car(param)).getValue());
 		Object[] arguments=toArray(cdr(param));
 		Class[] paraType=toClassArray(arguments);
 		Constructor m=(Constructor)selectMethod(cls.getConstructors(),cls.getName(),paraType);
@@ -162,7 +163,7 @@ public class Java extends NativeLibrary{
 		}
 	}
 	private static ScmObject cast(ScmObject param) throws ClassNotFoundException{
-		return new ScmJavaObject(Class.forName(((ScmSymbol)cadr(param)).getValue()).cast(((ScmJavaObject)car(param)).getJavaObject()));
+		return new ScmJavaObject(forName(((ScmSymbol)cadr(param)).getValue()).cast(((ScmJavaObject)car(param)).getJavaObject()));
 	}
 	private static Executable selectMethod(Executable[] choices,String name,Class[] argsType){
 		Executable best=null;
@@ -231,5 +232,11 @@ public class Java extends NativeLibrary{
 			if(!paraType2[i].isAssignableFrom(paraType1[paraType1.length-1]))
 				return false;
 		return true;
+	}
+	private static Class forName(String name) throws ClassNotFoundException{
+		return Class.forName(name,true,loader);
+	}
+	public static void setLoader(ClassLoader loader){
+		Java.loader=loader;
 	}
 }

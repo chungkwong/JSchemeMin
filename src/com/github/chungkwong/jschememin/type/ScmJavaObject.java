@@ -40,7 +40,7 @@ public class ScmJavaObject extends ScmObject{
 	}
 	@Override
 	public String toExternalRepresentation(){
-		return ScmList.toList(new ScmSymbol("java"),new ScmString(obj.toString())).toExternalRepresentation();
+		return ScmList.toList(new ScmSymbol("java"),new ScmString(Objects.toString(obj))).toExternalRepresentation();
 	}
 	@Override
 	public boolean isSelfevaluating(){
