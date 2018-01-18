@@ -24,7 +24,6 @@ import javax.script.*;
  */
 public class Evaluator extends AbstractScriptEngine{
 	private final SchemeEnvironment env;
-	private final Continuation cont=new Continuation();
 	public Evaluator(boolean repl){
 		this(new SchemeEnvironment(repl));
 	}
@@ -32,6 +31,7 @@ public class Evaluator extends AbstractScriptEngine{
 		this.env=env;
 	}
 	public ScmObject eval(ScmObject expr){
+		Continuation cont=new Continuation();
 		cont.callInit(ExpressionEvaluator.INSTANCE,expr,env);
 		while(cont.hasNext())
 			cont.evalNext();
