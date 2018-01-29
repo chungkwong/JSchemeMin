@@ -3,3 +3,4 @@
 /manifest.mf
 /.jacocoverage
 jacoco*
+/nbproject/private/

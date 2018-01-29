@@ -62,8 +62,8 @@ public class EvaluatorTest{
 	}
 	@Test
 	public void testInclude(){
-		check("(include \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/to_include.scm\")",new ScmInteger(12));
-		expectException("(include \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/non_exists.scm\")");
+		check("(include \"test/com/github/chungkwong/jschememin/to_include.scm\")",new ScmInteger(12));
+		expectException("(include \"test/com/github/chungkwong/jschememin/non_exists.scm\")");
 	}
 	@Test
 	public void testSet(){
@@ -91,19 +91,19 @@ public class EvaluatorTest{
 	@Test
 	public void testDefineLibrary(){
 		checkLast("(define-library (example bad) "
-				+ "(include-library-declarations \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/lib-dec.scm\") "
+				+ "(include-library-declarations \"test/com/github/chungkwong/jschememin/lib-dec.scm\") "
 				+ "(begin (define x 1) (define y 2) (define z 3))) (import (example bad)) x",new ScmInteger(1));
 		checkLast("(define-library (example bad) "
-				+ "(include-library-declarations \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/lib-dec.scm\") "
+				+ "(include-library-declarations \"test/com/github/chungkwong/jschememin/lib-dec.scm\") "
 				+ "(begin (define x 1) (define y 2) (define z 3))) (import (example bad)) y",new ScmInteger(2));
 		checkLast("(define z 7) (define-library (example bad) "
-				+ "(include-library-declarations \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/lib-dec.scm\") "
+				+ "(include-library-declarations \"test/com/github/chungkwong/jschememin/lib-dec.scm\") "
 				+ "(begin (define x 1) (define y 2) (define z 3))) (import (example bad)) z",new ScmInteger(7));
 		checkLast("(define-library (example bad) (export x y)"
-				+ "(include \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/lib-content.scm\")) "
+				+ "(include \"test/com/github/chungkwong/jschememin/lib-content.scm\")) "
 				+ "(import (example bad)) x",new ScmInteger(4));
 		checkLast("(define-library (example bad) (export x y)"
-				+ "(include-ci \"/home/kwong/NetBeansProjects/JSchemeMin/test/com/github/chungkwong/jschememin/lib-content.scm\")) "
+				+ "(include-ci \"test/com/github/chungkwong/jschememin/lib-content.scm\")) "
 				+ "(import (example bad)) y",new ScmInteger(3));
 		checkLast("(define x 2) (define y 3) (define-library (example worse) (cond-expand (r7rs (export x)))"
 				+ "(begin (define x 5) (define y 7))) "

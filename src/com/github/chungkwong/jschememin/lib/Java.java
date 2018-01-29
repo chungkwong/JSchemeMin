@@ -30,7 +30,6 @@ import java.util.*;
  */
 public class Java extends NativeLibrary{
 	public static final Java INSTANCE=new Java();
-	private static ClassLoader loader=Java.class.getClassLoader();
 	private Java(){
 		super("java");
 	}
@@ -234,9 +233,6 @@ public class Java extends NativeLibrary{
 		return true;
 	}
 	private static Class forName(String name) throws ClassNotFoundException{
-		return Class.forName(name,true,loader);
-	}
-	public static void setLoader(ClassLoader loader){
-		Java.loader=loader;
+		return Class.forName(name);
 	}
 }
