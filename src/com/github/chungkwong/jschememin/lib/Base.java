@@ -26,12 +26,12 @@ import com.github.chungkwong.jschememin.primitive.*;
 import com.github.chungkwong.jschememin.type.*;
 import java.io.*;
 /**
- *
+ * Correspoding to the library (scheme base) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Base extends NativeLibrary{
 	public static final Base INSTANCE=new Base();
-	public Base(){
+	private Base(){
 		super("scheme","base");
 	}
 	@Override

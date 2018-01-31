@@ -51,12 +51,26 @@ public class LibraryManager{
 	private static void addNativeLibrary(LibraryLoader lib){
 		NATIVE_LIBRARIES.put(lib.getName(),lib);
 	}
+	/**
+	 * Registry a library
+	 * @param lib
+	 */
 	public static void addLibrary(Library lib){
 		LIBRARIES.put(lib.getName(),lib);
 	}
+	/**
+	 * Check if a library is available
+	 * @param name the name of the library
+	 * @return
+	 */
 	public static boolean hasLibrary(ScmPair name){
 		return LIBRARIES.containsKey(name)||NATIVE_LIBRARIES.containsKey(name);
 	}
+	/**
+	 * Get a library
+	 * @param name the name of the library
+	 * @return
+	 */
 	public static Library getLibrary(ScmPair name){
 		if(LIBRARIES.containsKey(name))
 			return LIBRARIES.get(name);

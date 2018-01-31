@@ -21,13 +21,18 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.*;
 /**
- *
+ * Loder for Scheme library mainly written in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class SimpleLibrary implements LibraryLoader{
 	private final ScmPair name;
 	private final String path;
 	private Library lib=null;
+	/**
+	 * Construct a SimpleLibrary
+	 * @param path location of the script file
+	 * @param part the name of the library
+	 */
 	public SimpleLibrary(String path,String... part){
 		this.name=(ScmPair)Arrays.stream(part).map((n)->new ScmSymbol(n)).collect(ScmList.COLLECTOR);
 		this.path=path;

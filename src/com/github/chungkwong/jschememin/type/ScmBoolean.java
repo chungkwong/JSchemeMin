@@ -15,12 +15,26 @@
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
 public final class ScmBoolean extends ScmObject implements Token{
+	/**
+	 * True
+	 */
 	public static final ScmBoolean TRUE=new ScmBoolean(true);
+	/**
+	 * False
+	 */
 	public static final ScmBoolean FALSE=new ScmBoolean(false);
 	private final boolean val;
-	public ScmBoolean(boolean val){
+	/**
+	 * Wrap a boolean
+	 * @param val the value
+	 */
+	private ScmBoolean(boolean val){
 		this.val=val;
 	}
+	/**
+	 * Convert to boolean
+	 * @return the boolean
+	 */
 	public boolean isTrue(){
 		return val;
 	}
@@ -40,6 +54,11 @@ public final class ScmBoolean extends ScmObject implements Token{
 	public boolean isSelfevaluating(){
 		return true;
 	}
+	/**
+	 * Convert from a boolean
+	 * @param b the boolean
+	 * @return the Scheme boolean
+	 */
 	public static ScmBoolean valueOf(boolean b){
 		return b?ScmBoolean.TRUE:ScmBoolean.FALSE;
 	}

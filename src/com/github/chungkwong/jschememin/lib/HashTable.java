@@ -21,7 +21,7 @@ import static com.github.chungkwong.jschememin.lib.Utility.cadr;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Correspoding to the library (scheme hashtables) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class HashTable extends NativeLibrary{

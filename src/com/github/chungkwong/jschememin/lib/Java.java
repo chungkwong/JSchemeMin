@@ -25,7 +25,7 @@ import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
 /**
- *
+ * Correspoding to the library (java) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Java extends NativeLibrary{

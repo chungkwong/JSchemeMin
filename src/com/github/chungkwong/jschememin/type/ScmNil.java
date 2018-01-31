@@ -15,7 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.chungkwong.jschememin.type;
+/**
+ * Represents the type null in Scheme
+ * @author kwong
+ */
 public final class ScmNil extends ScmPairOrNil{
+	/**
+	 * The null value
+	 */
 	public static final ScmNil NIL=new ScmNil();
 	private ScmNil(){
 	}

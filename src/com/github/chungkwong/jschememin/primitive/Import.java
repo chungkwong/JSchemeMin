@@ -19,7 +19,7 @@ import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
 /**
- *
+ * Correspoding to the primitive import in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Import extends BasicConstruct implements Primitive{

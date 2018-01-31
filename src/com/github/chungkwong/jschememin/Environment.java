@@ -18,20 +18,56 @@ package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
 /**
- *
+ * Environment where variable is stored
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public abstract class Environment extends ScmObject{
+	/**
+	 * The value of unbound variable if in REPL mode
+	 */
 	public static final ScmSymbol UNBOUNDED=new ScmSymbol("unbound");
 	private final boolean repl;
+	/**
+	 * Create a environment
+	 * @param repl REPL mode or not
+	 */
 	public Environment(boolean repl){
 		this.repl=repl;
 	}
+	/**
+	 * Get the value of a variable
+	 * @param id name
+	 * @return value in Optional
+	 */
 	public abstract Optional<ScmObject> getOptional(ScmSymbol id);
+	/**
+	 * Set a variable
+	 * @param id name
+	 * @param obj value
+	 */
 	public abstract void set(ScmSymbol id,ScmObject obj);
+	/**
+	 * Add a variable
+	 * @param id name
+	 * @param obj value
+	 */
 	public abstract void add(ScmSymbol id,ScmObject obj);
+	/**
+	 * Get the value of a variable in this environment, not its parent
+	 * @param id
+	 * @return value in Optional
+	 */
 	public abstract ScmObject getSelfOptional(ScmSymbol id);
+	/**
+	 * Delete a variable
+	 * @param id name
+	 */
 	public abstract void remove(ScmSymbol id);
+	/**
+	 * Get the value of a variable
+	 * @param id the name of the variable
+	 * @return
+	 */
 	public ScmObject get(ScmSymbol id){
 		Optional<ScmObject> obj=getOptional(id);
 		if(obj.isPresent())
@@ -39,12 +75,25 @@ public abstract class Environment extends ScmObject{
 		else
 			return repl?UNBOUNDED:null;
 	}
+	/**
+	 * Check if a variable exists
+	 * @param id the name of the variable
+	 * @return
+	 */
 	public boolean containsKey(ScmSymbol id){
 		return getOptional(id).isPresent();
 	}
+	/**
+	 * Add a keyword
+	 * @param keyword
+	 */
 	public void addPrimitiveType(BasicConstruct keyword){
 		add(keyword.getKeyword(),keyword);
 	}
+	/**
+	 * Check if in REPL mode
+	 * @return
+	 */
 	public boolean isREPL(){
 		return repl;
 	}

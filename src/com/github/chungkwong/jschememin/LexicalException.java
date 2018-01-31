@@ -15,18 +15,15 @@
 package com.github.chungkwong.jschememin;
 
 /**
- *
+ * Lexical exception when reading script source code
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class LexicalException extends RuntimeException {
-
 	/**
 	 * Creates a new instance of <code>LexicalException</code> without detail message.
 	 */
 	public LexicalException() {
 	}
-
-
 	/**
 	 * Constructs an instance of <code>LexicalException</code> with the specified detail message.
 	 * @param msg the detail message.

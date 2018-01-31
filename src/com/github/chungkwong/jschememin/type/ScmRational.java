@@ -15,9 +15,18 @@
 package com.github.chungkwong.jschememin.type;
 import java.math.*;
 import java.util.*;
+/**
+ * Represents the type rational in Scheme
+ * @author kwong
+ */
 public final class ScmRational extends ScmNormalReal{
 	private ScmInteger numerator,denominator;
 	private boolean simplified=false;
+	/**
+	 * Create a rational number
+	 * @param numerator
+	 * @param denominator
+	 */
 	public ScmRational(ScmInteger numerator,ScmInteger denominator){
 		int sign=denominator.signum();
 		if(sign<0){
@@ -29,15 +38,23 @@ public final class ScmRational extends ScmNormalReal{
 		}else
 			throw new ArithmeticException("divided by zero");
 	}
+	/**
+	 * Corresponding procedure denominator in Scheme
+	 * @return
+	 */
 	public ScmInteger getDenominator(){
 		simplify();
 		return denominator;
 	}
+	/**
+	 * Corresponding procedure numerator in Scheme
+	 * @return
+	 */
 	public ScmInteger getNumerator(){
 		simplify();
 		return numerator;
 	}
-	public int compareTo(ScmRational num){
+	int compareTo(ScmRational num){
 		return numerator.multiply(num.denominator).compareTo(denominator.multiply(num.numerator));
 	}
 	@Override
@@ -88,16 +105,16 @@ public final class ScmRational extends ScmNormalReal{
 	public ScmRational negate(){
 		return new ScmRational(numerator.negate(),denominator);
 	}
-	public ScmRational add(ScmRational num){
+	ScmRational add(ScmRational num){
 		return new ScmRational(numerator.multiply(num.denominator).add(denominator.multiply(num.numerator)),denominator.multiply(num.denominator));
 	}
-	public ScmRational subtract(ScmRational num){
+	ScmRational subtract(ScmRational num){
 		return new ScmRational(numerator.multiply(num.denominator).subtract(denominator.multiply(num.numerator)),denominator.multiply(num.denominator));
 	}
-	public ScmRational multiply(ScmRational num){
+	ScmRational multiply(ScmRational num){
 		return new ScmRational(numerator.multiply(num.numerator),denominator.multiply(num.denominator));
 	}
-	public ScmRational divide(ScmRational num){
+	ScmRational divide(ScmRational num){
 		return new ScmRational(numerator.multiply(num.denominator),denominator.multiply(num.numerator));
 	}
 	@Override
@@ -208,13 +225,19 @@ public final class ScmRational extends ScmNormalReal{
 	public int signum(){
 		return numerator.signum();
 	}
+	/**
+	 * Corresponding procedure rationalize in Scheme
+	 * @param x
+	 * @param error
+	 * @return
+	 */
 	public static ScmReal rationalize(ScmReal x,ScmReal error){
 		if(x instanceof ScmNormalReal)
 			return rationalize((ScmNormalReal)x,error);
 		else
 			throw new RuntimeException();
 	}
-	public static ScmReal rationalize(ScmNormalReal x,ScmReal error){
+	private static ScmReal rationalize(ScmNormalReal x,ScmReal error){
 		if(x.signum()<0)
 			return rationalize(x.negate(),error).negate();
 		ScmInteger d=ScmInteger.ONE;

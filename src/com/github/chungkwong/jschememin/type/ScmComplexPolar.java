@@ -14,13 +14,18 @@
  */
 package com.github.chungkwong.jschememin.type;
 /**
- *
+ * Represents some complex number in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmComplexPolar extends ScmComplex{
 	private static final ScmFloatingPointNumber TWOPI=ScmFloatingPointNumber.PI.multiply(ScmInteger.TWO.toInExact());
 	private static final ScmInteger THREE=new ScmInteger(3);
 	private final ScmReal abs,radius;
+	/**
+	 * Construct a complex number
+	 * @param abs
+	 * @param radius
+	 */
 	public ScmComplexPolar(ScmReal abs,ScmReal radius){
 		this.abs=abs;
 		if(abs.isZero()){

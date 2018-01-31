@@ -17,12 +17,12 @@
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
 /**
- *
+ * Correspoding to the library (scheme lazy) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Lazy extends NativeLibrary{
 	public static final Lazy INSTANCE=new Lazy();
-	public Lazy(){
+	private Lazy(){
 		super("scheme","lazy");
 	}
 	@Override

@@ -17,14 +17,22 @@
 package com.github.chungkwong.jschememin.type;
 import java.util.*;
 /**
- *
+ * Represents the Scheme's type that wrap Java's type
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmJavaObject extends ScmObject{
 	private final Object obj;
+	/**
+	 * Wrap a Java's Object
+	 * @param obj
+	 */
 	public ScmJavaObject(Object obj){
 		this.obj=obj;
 	}
+	/**
+	 * Get the Java's object
+	 * @return
+	 */
 	public Object getJavaObject(){
 		return obj;
 	}

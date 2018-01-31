@@ -15,11 +15,23 @@
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
 import java.util.*;
+/**
+ * Represents the type symbol in Scheme
+ * @author kwong
+ */
 public class ScmSymbol extends ScmObject implements Token{
 	private final String id;
+	/**
+	 * Make a symbol
+	 * @param id the name of the symbol
+	 */
 	public ScmSymbol(String id){
 		this.id=id;
 	}
+	/**
+	 * Get the name of the symbol
+	 * @return
+	 */
 	public String getValue(){
 		return id;
 	}

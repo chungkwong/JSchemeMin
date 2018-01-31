@@ -32,17 +32,35 @@ public class Debugger{
 	private final ScmObject expr;
 	private final SchemeEnvironment env;
 	private final Continuation cont=new Continuation();
+	/**
+	 * Create a debugger
+	 * @param expr to be debugged
+	 * @param repl REPL mode or not
+	 */
 	public Debugger(ScmObject expr,boolean repl){
 		this(expr,new SchemeEnvironment(repl));
 	}
+	/**
+	 * Create a debugger
+	 * @param expr to be debugged
+	 * @param env Top level environment
+	 */
 	public Debugger(ScmObject expr,SchemeEnvironment env){
 		this.env=env;
 		this.expr=expr;
 		cont.callInit(ExpressionEvaluator.INSTANCE,expr,env);
 	}
-	public ScmObject getCurrentExpression(){
-		return null;
+	/**
+	 * Get the expression being debugged
+	 * @return
+	 */
+	public ScmObject getExpression(){
+		return expr;
 	}
+	/**
+	 * Go one step
+	 * @return finished or not
+	 */
 	public boolean step(){
 		if(cont.hasNext()){
 			cont.evalNext();
@@ -53,6 +71,9 @@ public class Debugger{
 			return false;
 		}
 	}
+	/**
+	 * Goto next expression on the same level
+	 */
 	public void stepOver(){
 		int level=cont.getLevel();
 		while(step()){
@@ -60,6 +81,9 @@ public class Debugger{
 				break;
 		}
 	}
+	/**
+	 * Goto next expression on the same level or a cared point
+	 */
 	public void stepIn(){
 		int level=cont.getLevel();
 		while(step()){
@@ -67,6 +91,9 @@ public class Debugger{
 				break;
 		}
 	}
+	/**
+	 * Go until next break point
+	 */
 	public void run(){
 		while(step()){
 			if(isBreakPoint())
@@ -79,27 +106,53 @@ public class Debugger{
 	}
 	private boolean isBreakPoint(){
 		return cont.hasNext()&&cont.getCurrentEvaluable()instanceof ExpressionEvaluator&&
-				breakPoints.containsKey(cont.getCurrentValue());
+				breakPoints.containsKey((ScmPair)cont.getCurrentValue());
 	}
 	private boolean isCaredPoint(){
 		return cont.hasNext()&&cont.getCurrentEvaluable()instanceof ExpressionEvaluator&&
-				caredExpressions.containsKey(cont.getCurrentValue());
+				caredExpressions.containsKey((ScmPair)cont.getCurrentValue());
 	}
+	/**
+	 * Evaluate a expression
+	 * @param obj expression
+	 * @return result
+	 */
 	public ScmObject eval(ScmObject obj){
 		return new Evaluator(cont.getCurrentEnvironment()).eval(obj);
 	}
+	/**
+	 * Get the current value
+	 * @return
+	 */
 	public ScmObject getValue(){
 		return cont.getCurrentValue();
 	}
+	/**
+	 * Add a break point
+	 * @param index
+	 */
 	public void addBreakPoint(int index){
 		breakPoints.put(caredExpressionsList.get(index),null);
 	}
+	/**
+	 * Delete a break point
+	 * @param index
+	 */
 	public void removeBreakPoint(int index){
 		breakPoints.remove(caredExpressionsList.get(index));
 	}
+	/**
+	 * Check if a expression has been evaluated
+	 * @param index
+	 * @return 
+	 */
 	public boolean isCovered(int index){
 		return coveredExpressions.containsKey(caredExpressionsList.get(index));
 	}
+	/**
+	 * Register a expression concerned
+	 * @param expr the expression
+	 */
 	public void addCaredExpression(ScmPair expr){
 		if(!caredExpressions.containsKey(expr)){
 			caredExpressions.put(expr,null);
@@ -110,9 +163,17 @@ public class Debugger{
 				addCaredExpression((ScmPair)expr.getCdr());
 		}
 	}
+	/**
+	 * Get the list of concerned expressions
+	 * @return
+	 */
 	public List<ScmPair> getCaredExpressionsList(){
 		return Collections.unmodifiableList(caredExpressionsList);
 	}
+	/**
+	 * Entrance to the debugger
+	 * @param args command line arguments
+	 */
 	public static void main(String[] args) {
 		System.out.println("JScmemeMin Debugger");
 		System.out.println("Enter a program here:");

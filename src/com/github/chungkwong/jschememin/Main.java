@@ -21,8 +21,12 @@ import java.util.*;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Main {
+	/**
+	 * Command line arguments given to JSchemeMin
+	 */
 	public static ScmPairOrNil COMMAND_LINE;
 	/**
+	 * Entrance to the interpreter
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
@@ -49,6 +53,11 @@ public class Main {
 			System.out.flush();
 		}
 	}
+	/**
+	 * Find a find
+	 * @param path the path to the file
+	 * @return
+	 */
 	public static File resolveFile(String path){
 		return new File(path).getAbsoluteFile();
 	}

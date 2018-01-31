@@ -17,7 +17,7 @@
 package com.github.chungkwong.jschememin.type;
 
 /**
- *
+ * Represents most reals in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public abstract class ScmNormalReal extends ScmReal implements Comparable<ScmNormalReal>{

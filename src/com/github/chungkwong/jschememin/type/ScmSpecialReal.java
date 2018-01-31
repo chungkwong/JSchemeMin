@@ -16,13 +16,22 @@
  */
 package com.github.chungkwong.jschememin.type;
 /**
- *
+ * Represents infinities and NaNs
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public abstract class ScmSpecialReal extends ScmReal{
-	public static final PositiveNaN POSITIVE_NAN=new PositiveNaN();
-	public static final PositiveInf POSITIVE_INF=new PositiveInf();
-	public static final NegativeInf NEGATIVE_INF=new NegativeInf();
+	/**
+	 * +nan.0
+	 */
+	public static final ScmSpecialReal POSITIVE_NAN=new PositiveNaN();
+	/**
+	 * +inf.0
+	 */
+	public static final ScmSpecialReal POSITIVE_INF=new PositiveInf();
+	/**
+	 * -inf.0
+	 */
+	public static final ScmSpecialReal NEGATIVE_INF=new NegativeInf();
 	@Override
 	public boolean isExact(){
 		return false;
@@ -80,7 +89,7 @@ public abstract class ScmSpecialReal extends ScmReal{
 	public ScmReal round(){
 		return this;
 	}
-	public static class PositiveNaN extends ScmSpecialReal{
+	private static class PositiveNaN extends ScmSpecialReal{
 		@Override
 		public String toExternalRepresentation(int radix){
 			return "+nan.0";
@@ -146,7 +155,7 @@ public abstract class ScmSpecialReal extends ScmReal{
 			return Double.NaN;
 		}
 	}
-	public static class PositiveInf extends ScmSpecialReal{
+	private static class PositiveInf extends ScmSpecialReal{
 		@Override
 		public String toExternalRepresentation(int radix){
 			return "+inf.0";
@@ -215,7 +224,7 @@ public abstract class ScmSpecialReal extends ScmReal{
 			return Double.POSITIVE_INFINITY;
 		}
 	}
-	public static class NegativeInf extends ScmSpecialReal{
+	private static class NegativeInf extends ScmSpecialReal{
 		@Override
 		public String toExternalRepresentation(int radix){
 			return "-inf.0";

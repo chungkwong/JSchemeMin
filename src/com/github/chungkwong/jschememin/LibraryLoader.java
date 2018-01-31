@@ -17,10 +17,18 @@
 package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Loader for library
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public interface LibraryLoader{
+	/**
+	 * Get the library
+	 * @return
+	 */
 	Library getLibrary();
+	/**
+	 * The name of the library that this loader load
+	 * @return
+	 */
 	ScmPair getName();
 }

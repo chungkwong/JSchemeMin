@@ -22,13 +22,13 @@ import static com.github.chungkwong.jschememin.lib.Utility.getInteractiveEnviron
 import com.github.chungkwong.jschememin.type.*;
 import java.io.*;
 /**
- *
+ * Correspoding to the library (scheme load) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Load extends NativeLibrary{
 	public static final Load INSTANCE=new Load();
 	private static final ScmSymbol BEGIN=new ScmSymbol("begin");
-	public Load(){
+	private Load(){
 		super("scheme","load");
 	}
 	@Override

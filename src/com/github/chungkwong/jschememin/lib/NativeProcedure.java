@@ -17,9 +17,15 @@
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Represents the dynamic part of a native procedure
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public interface NativeProcedure{
+	/**
+	 * To be called when the procedure is called
+	 * @param param
+	 * @return
+	 * @throws Exception
+	 */
 	ScmObject call(ScmObject param) throws Exception;
 }

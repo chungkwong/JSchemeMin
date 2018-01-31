@@ -17,7 +17,7 @@
 package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Represents expression types
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public abstract class Evaluable extends ScmObject{
@@ -25,7 +25,19 @@ public abstract class Evaluable extends ScmObject{
 	public boolean isSelfevaluating(){
 		return false;
 	}
+	/**
+	 * To be called when such exprssion is evaluated
+	 * @param env the environment where the exprssion is evaluated
+	 * @param cont the execution stack
+	 * @param pointer saved at last call
+	 * @param param parameters given to the type
+	 */
 	public abstract void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil param);
+	/**
+	 * Call and get the result in a new stack
+	 * @param param
+	 * @return
+	 */
 	public ScmObject call(ScmPairOrNil param){
 		Continuation cont=new Continuation();
 		cont.callInit(this,param,null);

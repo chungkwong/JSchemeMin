@@ -19,7 +19,7 @@ import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
 import java.io.*;
 /**
- *
+ * Correspoding to the primitive include in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Include extends BasicConstruct implements Primitive{

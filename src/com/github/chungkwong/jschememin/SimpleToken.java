@@ -14,11 +14,20 @@
  */
 package com.github.chungkwong.jschememin;
 import java.util.*;
+/**
+ * Standard tokens
+ * @author kwong
+ */
 public final class SimpleToken implements Token{
 	private final String id;
 	private SimpleToken(String id){
 		this.id=id;
 	}
+	/**
+	 * build a token
+	 * @param id the text
+	 * @return the token
+	 */
 	public static SimpleToken getToken(String id){
 		return new SimpleToken(id);
 	}

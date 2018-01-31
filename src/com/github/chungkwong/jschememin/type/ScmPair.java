@@ -16,16 +16,33 @@
  */
 package com.github.chungkwong.jschememin.type;
 import java.util.*;
+/**
+ * Represents the type pair in Scheme
+ * @author kwong
+ */
 public final class ScmPair extends ScmPairOrNil{
 	private ScmObject car;
 	private ScmObject cdr;
+	/**
+	 * Construct a pair
+	 * @param car the car field
+	 * @param cdr the cdr field
+	 */
 	public ScmPair(ScmObject car,ScmObject cdr){
 		this.car=car;
 		this.cdr=cdr;
 	}
+	/**
+	 * Corresponding to the procedure car in Scheme
+	 * @return
+	 */
 	public ScmObject getCar(){
 		return car;
 	}
+	/**
+	 * Corresponding to the procedure cdr in Scheme
+	 * @return
+	 */
 	public ScmObject getCdr(){
 		return cdr;
 	}
@@ -44,9 +61,17 @@ public final class ScmPair extends ScmPairOrNil{
 	public ScmObject getCaddr(){
 		return ((ScmPair)((ScmPair)cdr).getCdr()).getCar();
 	}
+	/**
+	 * Corresponding to the procedure set-car! in Scheme
+	 * @param car
+	 */
 	public void setCar(ScmObject car){
 		this.car=car;
 	}
+	/**
+	 * Corresponding to the procedure set-cdr! in Scheme
+	 * @param cdr
+	 */
 	public void setCdr(ScmObject cdr){
 		this.cdr=cdr;
 	}

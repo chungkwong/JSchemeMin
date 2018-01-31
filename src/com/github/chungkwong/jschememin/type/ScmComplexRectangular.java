@@ -14,12 +14,17 @@
  */
 package com.github.chungkwong.jschememin.type;
 /**
- *
+ * Represents some complex number in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmComplexRectangular extends ScmComplex{
 	public static final ScmComplexRectangular I=new ScmComplexRectangular(ScmInteger.ZERO,ScmInteger.ONE);
 	private final ScmReal real,imag;
+	/**
+	 * Construct a complex number
+	 * @param real
+	 * @param imag
+	 */
 	public ScmComplexRectangular(ScmReal real,ScmReal imag){
 		this.real=real;
 		this.imag=imag;

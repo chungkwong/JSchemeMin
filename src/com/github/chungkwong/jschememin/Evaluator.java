@@ -19,17 +19,30 @@ import com.github.chungkwong.jschememin.type.*;
 import java.io.*;
 import javax.script.*;
 /**
- *
+ * Evaluator for Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Evaluator extends AbstractScriptEngine{
 	private final SchemeEnvironment env;
+	/**
+	 * Create a evaluator
+	 * @param repl REPL mode or not
+	 */
 	public Evaluator(boolean repl){
 		this(new SchemeEnvironment(repl));
 	}
+	/**
+	 * Create a evaluator
+	 * @param env top-level environemnt
+	 */
 	public Evaluator(SchemeEnvironment env){
 		this.env=env;
 	}
+	/**
+	 * Evaluate a expression
+	 * @param expr the expression
+	 * @return the value
+	 */
 	public ScmObject eval(ScmObject expr){
 		Continuation cont=new Continuation();
 		cont.callInit(ExpressionEvaluator.INSTANCE,expr,env);
@@ -37,6 +50,10 @@ public class Evaluator extends AbstractScriptEngine{
 			cont.evalNext();
 		return cont.getCurrentValue();
 	}
+	/**
+	 * Get the top level environment
+	 * @return
+	 */
 	public SchemeEnvironment getEnvironment(){
 		return env;
 	}

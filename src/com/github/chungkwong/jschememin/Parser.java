@@ -15,25 +15,41 @@
 package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
+/**
+ * Parser for R7RS 
+ * @author kwong
+ */
 public final class Parser{
 	private final Lex lex;
 	private Stack<Level> stack=new Stack<>();
 	private final HashMap<DatumLabel,ScmObject> datumRef=new HashMap<>();
 	private final HashMap<DatumLabel,List<Backtrack>> datumBacktrack=new HashMap<>();
-	private static final HashMap<String,ScmSymbol> abbreviation=new HashMap<>();
+	private static final HashMap<String,ScmSymbol> ABBERTIATION=new HashMap<>();
 	private static final ScmSymbol COMMENT=new ScmSymbol("#;");
 	static{
-		abbreviation.put("\'",new ScmSymbol("quote"));
-		abbreviation.put("`",new ScmSymbol("quasiquote"));
-		abbreviation.put(",",new ScmSymbol("unquote"));
-		abbreviation.put(",@",new ScmSymbol("unquote-splicing"));
+		ABBERTIATION.put("\'",new ScmSymbol("quote"));
+		ABBERTIATION.put("`",new ScmSymbol("quasiquote"));
+		ABBERTIATION.put(",",new ScmSymbol("unquote"));
+		ABBERTIATION.put(",@",new ScmSymbol("unquote-splicing"));
 	}
+	/**
+	 * Create a parser to parse from tokens
+	 * @param lex
+	 */
 	public Parser(Lex lex){
 		this.lex=lex;
 	}
+	/**
+	 * Create a parser to parse from String
+	 * @param str
+	 */
 	public Parser(String str){
 		this(new Lex(str));
 	}
+	/**
+	 * Parse the next datum
+	 * @return the datum or null if ended
+	 */
 	public ScmObject nextDatum(){
 		boolean nonComment;
 		stack.add(new ListLevel());
@@ -61,8 +77,8 @@ public final class Parser{
 				nonComment=addDatum((ScmObject)token);
 			}else if(token instanceof SimpleToken){
 				String name=token.toString();
-				if(abbreviation.containsKey(name)){
-					stack.push(new ListLevel(abbreviation.get(name)));
+				if(ABBERTIATION.containsKey(name)){
+					stack.push(new ListLevel(ABBERTIATION.get(name)));
 				}else if(name.equals(")")){
 					nonComment=addDatum(stack.pop().getContent());
 				}else if(name.equals("(")){
@@ -100,6 +116,10 @@ public final class Parser{
 		}
 		return true;
 	}
+	/**
+	 * Parse all the remaining datums
+	 * @return the datums
+	 */
 	public ArrayList<ScmObject> getRemainingDatums(){
 		ArrayList<ScmObject> datums=new ArrayList<>();
 		ScmObject datum;

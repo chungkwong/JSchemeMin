@@ -17,10 +17,13 @@
 package com.github.chungkwong.jschememin.type;
 
 /**
- *
+ * Represents the end-of-file object in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmEndOfFileObject extends ScmObject{
+	/**
+	 * The object
+	 */
 	public static final ScmEndOfFileObject INSTANCE=new ScmEndOfFileObject();
 	private ScmEndOfFileObject(){
 	}

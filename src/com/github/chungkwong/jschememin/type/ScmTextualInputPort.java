@@ -18,17 +18,29 @@ package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
 import java.io.*;
 /**
- *
+ * Represents the type Textual input port in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmTextualInputPort extends ScmPort{
 	private final PushbackReader in;
+	/**
+	 * Wrap a Reader
+	 * @param in the Reader
+	 */
 	public ScmTextualInputPort(PushbackReader in){
 		this.in=in;
 	}
+	/**
+	 * Wrap a Reader
+	 * @param in the Reader
+	 */
 	public ScmTextualInputPort(Reader in){
 		this(new PushbackReader(in,2));
 	}
+	/**
+	 * Construct a port to read from a text file
+	 * @param file the filename
+	 */
 	public ScmTextualInputPort(String file){
 		try{
 			this.in=new PushbackReader(new InputStreamReader(new FileInputStream(Main.resolveFile(file)),"UTF-8"),2);
@@ -36,10 +48,19 @@ public class ScmTextualInputPort extends ScmPort{
 			throw ScmError.toException(new ScmError(new ScmString(ex.getLocalizedMessage()),ScmNil.NIL,ScmError.ErrorType.FILE));
 		}
 	}
+	/**
+	 * Corresponding to the read procedure in scheme
+	 * @return the object read
+	 */
 	public ScmObject read(){
 		ScmObject datum=new Parser(new Lex(in)).nextDatum();
 		return datum!=null?datum:ScmEndOfFileObject.INSTANCE;
 	}
+	/**
+	 * Corresponding to the read-char procedure in scheme
+	 * @return the object read
+	 * @throws IOException
+	 */
 	public ScmObject readCharacter() throws IOException{
 		int high=in.read();
 		if(high==-1)
@@ -50,6 +71,11 @@ public class ScmTextualInputPort extends ScmPort{
 		}else
 			return new ScmCharacter(high);
 	}
+	/**
+	 * Corresponding to the peek-char procedure in scheme
+	 * @return the object read
+	 * @throws IOException
+	 */
 	public ScmObject peekCharacter() throws IOException{
 		int high=in.read();
 		if(high==-1)
@@ -74,6 +100,12 @@ public class ScmTextualInputPort extends ScmPort{
 		}else
 			return high;
 	}
+	/**
+	 * Corresponding to the read-string procedure in scheme
+	 * @param max the maximal number of characters to be read
+	 * @return the object read
+	 * @throws IOException
+	 */
 	public ScmObject readString(ScmInteger max) throws IOException{
 		int len=max.getValue().intValueExact();
 		StringBuilder buf=new StringBuilder(len);
@@ -82,13 +114,28 @@ public class ScmTextualInputPort extends ScmPort{
 			buf.appendCodePoint(c);
 		return buf.length()==0?ScmEndOfFileObject.INSTANCE:new ScmString(buf.toString());
 	}
+	/**
+	 * Corresponding to the read-line procedure in scheme
+	 * @return the object read
+	 * @throws IOException
+	 */
 	public ScmObject readLine() throws IOException{
 		String line=new BufferedReader(in).readLine();
 		return line!=null?new ScmString(line):ScmEndOfFileObject.INSTANCE;
 	}
+	/**
+	 * Corresponding to the char-ready? procedure in scheme
+	 * @return if the next character is surely ready
+	 * @throws IOException
+	 */
 	public ScmBoolean ready() throws IOException{
 		return ScmBoolean.valueOf(in.ready());
 	}
+	/**
+	 * Corresponding to the close-input-port procedure in scheme
+	 * @return this
+	 * @throws IOException
+	 */
 	@Override
 	public ScmTextualInputPort close()throws IOException{
 		super.close();
@@ -99,6 +146,11 @@ public class ScmTextualInputPort extends ScmPort{
 	public String toExternalRepresentation(){
 		return in.toString();
 	}
+
+	/**
+	 * Get the underlying Reader
+	 * @return the Reader
+	 */
 	public PushbackReader getReader(){
 		return in;
 	}

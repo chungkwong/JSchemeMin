@@ -17,14 +17,22 @@
 package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * The base class for primitives
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public abstract class BasicConstruct extends Evaluable{
 	private final ScmSymbol keyword;
+	/**
+	 * Construct a BasicConstruct
+	 * @param keyword
+	 */
 	protected BasicConstruct(ScmSymbol keyword){
 		this.keyword=keyword;
 	}
+	/**
+	 * Get the keyword
+	 * @return
+	 */
 	public ScmSymbol getKeyword(){
 		return keyword;
 	}

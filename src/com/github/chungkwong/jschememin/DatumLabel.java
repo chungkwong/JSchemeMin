@@ -15,11 +15,23 @@
 package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
+/**
+ * Represents labels for datum
+ * @author kwong
+ */
 public abstract class DatumLabel extends ScmObject implements Token{
 	private final String label;
+	/**
+	 * Create a label
+	 * @param label the label name
+	 */
 	protected DatumLabel(String label){
 		this.label=label;
 	}
+	/**
+	 * Get label name
+	 * @return
+	 */
 	public String getLabel(){
 		return label;
 	}

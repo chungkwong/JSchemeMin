@@ -22,11 +22,16 @@ import java.util.*;
 import java.util.function.*;
 import javax.script.*;
 /**
- *
+ * Environment backed by ScriptContext
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class JavaEnvironment extends Environment{
 	private final ScriptContext parent;
+	/**
+	 * Create a new environment
+	 * @param parent the backed ScriptContext
+	 * @param repl REPL mode or not
+	 */
 	public JavaEnvironment(ScriptContext parent,boolean repl){
 		super(repl);
 		this.parent=parent;

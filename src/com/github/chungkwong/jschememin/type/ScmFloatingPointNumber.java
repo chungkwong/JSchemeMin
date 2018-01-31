@@ -20,11 +20,27 @@ import java.util.*;
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmFloatingPointNumber extends ScmNormalReal{
+	/**
+	 * Zero
+	 */
 	public static final ScmFloatingPointNumber ZERO=new ScmFloatingPointNumber(BigDecimal.ZERO);
+	/**
+	 * One
+	 */
 	public static final ScmFloatingPointNumber ONE=new ScmFloatingPointNumber(BigDecimal.ONE);
+	/**
+	 * π
+	 */
 	public static final ScmFloatingPointNumber PI=new ScmFloatingPointNumber(BigDecimal.valueOf(Math.PI));
+	/**
+	 * One half
+	 */
 	public static final ScmFloatingPointNumber HALF=new ScmFloatingPointNumber(BigDecimal.valueOf(0.5));
 	private final BigDecimal value;
+	/**
+	 * Wrap a BigDecimal
+	 * @param value the value
+	 */
 	public ScmFloatingPointNumber(BigDecimal value){
 		this.value=value;
 	}
@@ -32,16 +48,16 @@ public class ScmFloatingPointNumber extends ScmNormalReal{
 	public ScmFloatingPointNumber negate(){
 		return new ScmFloatingPointNumber(value.negate());
 	}
-	public ScmFloatingPointNumber add(ScmFloatingPointNumber num){
+	ScmFloatingPointNumber add(ScmFloatingPointNumber num){
 		return new ScmFloatingPointNumber(value.add(num.value));
 	}
-	public ScmFloatingPointNumber subtract(ScmFloatingPointNumber num){
+	ScmFloatingPointNumber subtract(ScmFloatingPointNumber num){
 		return new ScmFloatingPointNumber(value.subtract(num.value));
 	}
-	public ScmFloatingPointNumber multiply(ScmFloatingPointNumber num){
+	ScmFloatingPointNumber multiply(ScmFloatingPointNumber num){
 		return new ScmFloatingPointNumber(value.multiply(num.value));
 	}
-	public ScmReal divide(ScmFloatingPointNumber num){
+	ScmReal divide(ScmFloatingPointNumber num){
 		if(num.isZero()){
 			int sign=signum();
 			if(sign>0)
@@ -73,7 +89,7 @@ public class ScmFloatingPointNumber extends ScmNormalReal{
 	public ScmReal divide(ScmReal num){
 		return num instanceof ScmSpecialReal?num.multiply(this):divide((ScmFloatingPointNumber)num.toInExact());
 	}
-	public int compareTo(ScmFloatingPointNumber num){
+	int compareTo(ScmFloatingPointNumber num){
 		return value.compareTo(num.value);
 	}
 	@Override
@@ -87,6 +103,10 @@ public class ScmFloatingPointNumber extends ScmNormalReal{
 			return compareTo((ScmFloatingPointNumber)o);
 		}
 	}
+	/**
+	 * Convert to a BigDecimal
+	 * @return the BigDecimal
+	 */
 	public BigDecimal getValue(){
 		return value;
 	}
@@ -194,6 +214,11 @@ public class ScmFloatingPointNumber extends ScmNormalReal{
 		else
 			return new ScmComplexRectangular(ScmInteger.ZERO,(ScmReal)negate().sqrt());
 	}
+	/**
+	 * Convert from a double
+	 * @param d to be converted
+	 * @return a real
+	 */
 	public static ScmReal valueOf(double d){
 		if(Double.isNaN(d))
 			return ScmSpecialReal.POSITIVE_NAN;
@@ -202,13 +227,18 @@ public class ScmFloatingPointNumber extends ScmNormalReal{
 		else
 			return new ScmFloatingPointNumber(BigDecimal.valueOf(d));
 	}
+	/**
+	 * Convert to a double
+	 * @param d to be converted
+	 * @return a double
+	 */
 	public static double toDouble(ScmReal d){
 		d=d.toInExact();
 		if(d instanceof ScmFloatingPointNumber)
 			return ((ScmFloatingPointNumber)d).getValue().doubleValue();
-		else if(d instanceof ScmSpecialReal.PositiveInf){
+		else if(d==ScmSpecialReal.POSITIVE_INF){
 			return Double.POSITIVE_INFINITY;
-		}else if(d instanceof ScmSpecialReal.NegativeInf){
+		}else if(d==ScmSpecialReal.NEGATIVE_INF){
 			return Double.NEGATIVE_INFINITY;
 		}else
 			return Double.NaN;

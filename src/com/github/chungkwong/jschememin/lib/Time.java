@@ -18,12 +18,12 @@ package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Correspoding to the library (scheme time) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Time extends NativeLibrary{
 	public static final Time INSTANCE=new Time();
-	public Time(){
+	private Time(){
 		super("scheme","time");
 	}
 	@Override

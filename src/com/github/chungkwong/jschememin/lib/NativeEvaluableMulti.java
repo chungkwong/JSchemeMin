@@ -18,11 +18,15 @@ package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Represents native procedures that may return many values
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class NativeEvaluableMulti extends Evaluable{
 	private final NativeProcedure proc;
+	/**
+	 * Wrap a NativeProcedure
+	 * @param proc
+	 */
 	public NativeEvaluableMulti(NativeProcedure proc){
 		this.proc=proc;
 	}

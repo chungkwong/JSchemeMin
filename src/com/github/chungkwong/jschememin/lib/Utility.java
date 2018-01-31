@@ -22,7 +22,7 @@ import java.util.function.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class Utility{
+class Utility{
 	static final ScmObject car(ScmObject o){
 		return ((ScmPair)o).getCar();
 	}

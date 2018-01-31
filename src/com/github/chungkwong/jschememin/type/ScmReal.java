@@ -14,7 +14,15 @@
  */
 package com.github.chungkwong.jschememin.type;
 import java.math.*;
+/**
+ * Represents the type real in Scheme
+ * @author kwong
+ */
 public abstract class ScmReal extends ScmComplex{
+	/**
+	 * Check if the value is nonnegative
+	 * @return
+	 */
 	public abstract boolean needPlusSign();
 	@Override
 	public ScmReal getMagnitude(){
@@ -30,9 +38,29 @@ public abstract class ScmReal extends ScmComplex{
 	}
 	@Override
 	public abstract ScmReal negate();
+	/**
+	 * Corresponding the procedure + in Scheme
+	 * @param num
+	 * @return
+	 */
 	public abstract ScmReal add(ScmReal num);
+	/**
+	 * Corresponding the procedure - in Scheme
+	 * @param num
+	 * @return
+	 */
 	public abstract ScmReal subtract(ScmReal num);
+	/**
+	 * Corresponding the procedure * in Scheme
+	 * @param num
+	 * @return
+	 */
 	public abstract ScmReal multiply(ScmReal num);
+	/**
+	 * Corresponding the procedure / in Scheme
+	 * @param num
+	 * @return
+	 */
 	public abstract ScmReal divide(ScmReal num);
 	@Override
 	public abstract ScmReal toExact();
@@ -44,17 +72,51 @@ public abstract class ScmReal extends ScmComplex{
 	public abstract ScmReal sin();
 	@Override
 	public abstract ScmReal cos();
+	/**
+	 * Corresponding the procedure floor in Scheme
+	 * @return
+	 */
 	public abstract ScmReal floor();
+	/**
+	 * Corresponding the procedure ceiling in Scheme
+	 * @return
+	 */
 	public abstract ScmReal ceiling();
+	/**
+	 * Corresponding the procedure truncate in Scheme
+	 * @return
+	 */
 	public abstract ScmReal truncate();
+	/**
+	 * Corresponding the procedure round in Scheme
+	 * @return
+	 */
 	public abstract ScmReal round();
+	/**
+	 * Corresponding the procedure positive? in Scheme
+	 * @return
+	 */
 	public abstract boolean isPositive();
+	/**
+	 * Corresponding the procedure negative? in Scheme
+	 * @return
+	 */
 	public abstract boolean isNegative();
+	/**
+	 * Convert to double
+	 * @return
+	 */
 	public abstract double toDouble();
 	@Override
 	public boolean isNaN(){
 		return false;
 	}
+	/**
+	 * Corresponding the procedure max in Scheme
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	public static ScmReal max(ScmReal a,ScmReal b){
 		if(isNonNaN(a,b))
 			if(a.isExact()&&b.isExact())
@@ -64,6 +126,12 @@ public abstract class ScmReal extends ScmComplex{
 		else
 			return ScmSpecialReal.POSITIVE_NAN;
 	}
+	/**
+	 * Corresponding the procedure min in Scheme
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	public static ScmReal min(ScmReal a,ScmReal b){
 		if(isNonNaN(a,b))
 			if(a.isExact()&&b.isExact())
@@ -73,22 +141,52 @@ public abstract class ScmReal extends ScmComplex{
 		else
 			return ScmSpecialReal.POSITIVE_NAN;
 	}
+	/**
+	 * Corresponding the procedure < in Scheme
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	public static boolean less(ScmReal a,ScmReal b){
 		return isNonNaN(a,b)&&compare(a,b)<0;
 	}
+	/**
+	 * Corresponding the procedure <= in Scheme
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	public static boolean lessEquals(ScmReal a,ScmReal b){
 		return isNonNaN(a,b)&&compare(a,b)<=0;
 	}
+	/**
+	 * Corresponding the procedure > in Scheme
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	public static boolean greater(ScmReal a,ScmReal b){
 		return isNonNaN(a,b)&&compare(a,b)>0;
 	}
+	/**
+	 * Corresponding the procedure >= in Scheme
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	public static boolean greaterEquals(ScmReal a,ScmReal b){
 		return isNonNaN(a,b)&&compare(a,b)>=0;
 	}
+	/**
+	 * Corresponding the procedure = in Scheme
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	public static boolean equals(ScmReal a,ScmReal b){
 		return isNonNaN(a,b)&&compare(a,b)==0;
 	}
-	public static boolean isNonNaN(ScmReal a,ScmReal b){
+	private static boolean isNonNaN(ScmReal a,ScmReal b){
 		return a!=ScmSpecialReal.POSITIVE_NAN&&b!=ScmSpecialReal.POSITIVE_NAN;
 	}
 	private static int compare(ScmReal a,ScmReal b){
@@ -101,6 +199,11 @@ public abstract class ScmReal extends ScmComplex{
 		else// if(a==ScmSpecialReal.POSITIVE_INF||b==ScmSpecialReal.NEGATIVE_INF)
 			return 1;
 	}
+	/**
+	 * Convert from double
+	 * @param d
+	 * @return
+	 */
 	public static ScmReal valueOf(double d){
 		if(Double.isNaN(d))
 			return ScmSpecialReal.POSITIVE_NAN;

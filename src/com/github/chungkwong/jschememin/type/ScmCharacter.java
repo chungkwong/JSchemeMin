@@ -15,51 +15,109 @@
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
 import java.util.*;
+/**
+ * Represents the type char in Scheme
+ * @author kwong
+ */
 public final class ScmCharacter extends ScmObject implements Comparable<ScmCharacter>,Token{
-	static final HashMap<Integer,Integer> caseFoldMap=new HashMap<>();
+	static final HashMap<Integer,Integer> CASE_FOLD_MAP=new HashMap<>();
 	private final int codepoint;
 	static{
 		Scanner in=new Scanner(ScmCharacter.class.getResourceAsStream("/com/github/chungkwong/jschememin/type/CaseFolding.txt"),"UTF-8");
 		in.useRadix(16);
 		while(in.hasNextInt())
-			caseFoldMap.put(in.nextInt(),in.nextInt());
+			CASE_FOLD_MAP.put(in.nextInt(),in.nextInt());
 	}
+	/**
+	 * Wrap a codepoint
+	 * @param codepoint
+	 */
 	public ScmCharacter(int codepoint){
 		this.codepoint=codepoint;
 	}
+	/**
+	 * Convert to a character
+	 * @param codePoint
+	 * @return
+	 */
 	public static ScmCharacter getScmCharacter(int codePoint){
 		return new ScmCharacter(codePoint);
 	}
+	/**
+	 * Corresponding to the procedure char-upcase in Scheme
+	 * @return
+	 */
 	public ScmCharacter upCase(){
 		return new ScmCharacter(Character.toUpperCase(codepoint));
 	}
+	/**
+	 * Corresponding to the procedure char-downcase in Scheme
+	 * @return
+	 */
 	public ScmCharacter downCase(){
 		return new ScmCharacter(Character.toLowerCase(codepoint));
 	}
+	/**
+	 * Corresponding to the procedure char-foldcase in Scheme
+	 * @return
+	 */
 	public ScmCharacter foldCase(){
-		return caseFoldMap.containsKey(codepoint)?new ScmCharacter(caseFoldMap.get(codepoint)):this;
+		return CASE_FOLD_MAP.containsKey(codepoint)?new ScmCharacter(CASE_FOLD_MAP.get(codepoint)):this;
 	}
+	/**
+	 * Fold codepoint
+	 * @param codepoint
+	 * @return
+	 */
 	public static int toFoldCase(int codepoint){
-		return caseFoldMap.containsKey(codepoint)?caseFoldMap.get(codepoint):codepoint;
+		return CASE_FOLD_MAP.containsKey(codepoint)?CASE_FOLD_MAP.get(codepoint):codepoint;
 	}
+	/**
+	 * Get the codepoint
+	 * @return
+	 */
 	public int getCodePoint(){
 		return codepoint;
 	}
+	/**
+	 * Corresponding to the procedure digit-value in Scheme
+	 * @return
+	 */
 	public int getDigitValue(){
 		return Character.getNumericValue(codepoint);
 	}
+	/**
+	 * Corresponding to the procedure alphabetic? in Scheme
+	 * @return
+	 */
 	public boolean isAlphabetic(){
 		return Character.isLetter(codepoint);
 	}
+	/**
+	 * Corresponding to the procedure char-numeric? in Scheme
+	 * @return
+	 */
 	public boolean isNumeric(){
 		return Character.isDigit(codepoint);
 	}
+	/**
+	 * Corresponding to the procedure char-whitespace? in Scheme
+	 * @return
+	 */
 	public boolean isWhiteSpace(){
 		return Character.isWhitespace(codepoint);
 	}
+	/**
+	 * Corresponding to the procedure char-upper-case? in Scheme
+	 * @return
+	 */
 	public boolean isUpperCase(){
 		return Character.isUpperCase(codepoint);
 	}
+	/**
+	 * Corresponding to the procedure char-lower-case? in Scheme
+	 * @return
+	 */
 	public boolean isLowerCase(){
 		return Character.isLowerCase(codepoint);
 	}
@@ -67,6 +125,11 @@ public final class ScmCharacter extends ScmObject implements Comparable<ScmChara
 	public int compareTo(ScmCharacter c){
 		return codepoint-c.codepoint;
 	}
+	/**
+	 * Compare to another character after fold
+	 * @param c the other character
+	 * @return h the result
+	 */
 	public int compareToIgnoreCase(ScmCharacter c){
 		return foldCase().compareTo(c.foldCase());
 	}

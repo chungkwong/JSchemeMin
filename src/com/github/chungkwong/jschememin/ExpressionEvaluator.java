@@ -17,10 +17,13 @@
 package com.github.chungkwong.jschememin;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Being used to evaluate normal expression
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ExpressionEvaluator extends Evaluable implements Primitive{
+	/**
+	 * A Instance
+	 */
 	public static final ExpressionEvaluator INSTANCE=new ExpressionEvaluator();
 	private ExpressionEvaluator(){
 	}

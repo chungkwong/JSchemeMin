@@ -20,9 +20,9 @@ import java.util.*;
  *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
-public class ObjectPair{
+class ObjectPair{
 	private final Object car,cdr;
-	public ObjectPair(Object car,Object cdr){
+	private ObjectPair(Object car,Object cdr){
 		this.car=car;
 		this.cdr=cdr;
 	}
@@ -37,7 +37,7 @@ public class ObjectPair{
 		hash=23*hash+System.identityHashCode(cdr);
 		return hash;
 	}
-	public static boolean equals(Object a,Object b,HashSet<ObjectPair> found){
+	static boolean equals(Object a,Object b,HashSet<ObjectPair> found){
 		if(a instanceof ScmPair&&b instanceof ScmPair){
 			ScmPair c=(ScmPair)a,d=(ScmPair)b;
 			ObjectPair pair=new ObjectPair(a,b);

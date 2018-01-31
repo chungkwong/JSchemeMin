@@ -17,12 +17,17 @@
 package com.github.chungkwong.jschememin.type;
 import java.util.*;
 /**
- *
+ * Represents records in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmRecord extends ScmObject{
 	private final ScmRecordType type;
 	private final ScmObject[] fields;
+	/**
+	 * Create a record
+	 * @param type the type of the record
+	 * @param fields the fields that the record have
+	 */
 	public ScmRecord(ScmRecordType type,ScmObject[] fields){
 		this.type=type;
 		this.fields=fields;
@@ -33,6 +38,10 @@ public class ScmRecord extends ScmObject{
 	void set(int i,ScmObject obj){
 		fields[i]=obj;
 	}
+	/**
+	 * Get the type of the record
+	 * @return the type
+	 */
 	public ScmRecordType getType(){
 		return type;
 	}

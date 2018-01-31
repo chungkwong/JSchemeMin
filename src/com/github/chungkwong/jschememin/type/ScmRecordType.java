@@ -18,12 +18,17 @@ package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.lib.*;
 import java.util.*;
 /**
- *
+ * Represents the type of records in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmRecordType extends ScmObject{
 	private final ScmSymbol name;
 	final HashMap<ScmSymbol,Integer> indices;
+	/**
+	 * Create a record type
+	 * @param name the name of the type
+	 * @param fields the fields which the records have
+	 */
 	public ScmRecordType(ScmSymbol name,ScmObject fields){
 		this.name=name;
 		this.indices=new HashMap<>();
@@ -33,6 +38,10 @@ public class ScmRecordType extends ScmObject{
 			fields=((ScmPair)fields).getCdr();
 		}
 	}
+	/**
+	 * Get the name of the type
+	 * @return the name
+	 */
 	public ScmSymbol getName(){
 		return name;
 	}
@@ -54,15 +63,33 @@ public class ScmRecordType extends ScmObject{
 		hash=73*hash+Objects.hashCode(this.name);
 		return hash;
 	}
+	/**
+	 * Get the constructor of the type
+	 * @return the procedure
+	 */
 	public NativeEvaluable getConstractor(){
 		return new NativeEvaluable(new Constructor());
 	}
+	/**
+	 * Get the predicate of the type
+	 * @return the procedure
+	 */
 	public NativeEvaluable getPredicate(){
 		return new NativeEvaluable(new Predicate());
 	}
+	/**
+	 * Get the accessor of a field of the type
+	 * @param field the field
+	 * @return the procedure
+	 */
 	public NativeEvaluable getAccessor(ScmSymbol field){
 		return new NativeEvaluable(new Accessor(field));
 	}
+	/**
+	 * Get the modifier of a field of the type
+	 * @param field the field
+	 * @return the procedure
+	 */
 	public NativeEvaluable getModifier(ScmSymbol field){
 		return new NativeEvaluable(new Modifier(field));
 	}

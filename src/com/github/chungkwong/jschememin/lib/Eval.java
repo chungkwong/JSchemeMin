@@ -16,15 +16,14 @@
  */
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
-import com.github.chungkwong.jschememin.lib.Eval;
 import com.github.chungkwong.jschememin.primitive.*;
 /**
- *
+ * Correspoding to the library (scheme eval) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Eval extends NativeLibrary{
 	public static final Eval INSTANCE=new Eval();
-	public Eval(){
+	private Eval(){
 		super("scheme","eval");
 	}
 	@Override

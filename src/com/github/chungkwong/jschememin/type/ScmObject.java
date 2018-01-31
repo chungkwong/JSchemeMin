@@ -13,17 +13,38 @@
  *
  */
 package com.github.chungkwong.jschememin.type;
-
+/**
+ * Represents objects in scheme
+ * @author kwong
+ */
 public abstract class ScmObject{
+	/**
+	 * Get the external representation of the object
+	 * @return the String
+	 */
 	public abstract String toExternalRepresentation();
+	/**
+	 * Check if the object is self-evaluating
+	 * @return
+	 */
 	public abstract boolean isSelfevaluating();
 	@Override
 	public String toString(){
 		return toExternalRepresentation();
 	}
+	/**
+	 * Corresponding to the procedure eqv? in Scheme
+	 * @param obj
+	 * @return
+	 */
 	public boolean equalsValue(ScmObject obj){
 		return equals(obj);
 	}
+	/**
+	 * Corresponding to the procedure eq? in Scheme
+	 * @param obj
+	 * @return
+	 */
 	public boolean equalsStrict(ScmObject obj){
 		return equalsValue(obj);
 	}

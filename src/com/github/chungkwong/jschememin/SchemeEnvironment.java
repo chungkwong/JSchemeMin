@@ -20,12 +20,16 @@ import com.github.chungkwong.jschememin.primitive.*;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.*;
 /**
- *
+ * Standard environment
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class SchemeEnvironment extends Environment{
 	private Environment parent;
 	private final HashMap<ScmSymbol,ScmObject> bindings=new HashMap<>();
+	/**
+	 * Create a top-level environment
+	 * @param repl REPL mode or not
+	 */
 	public SchemeEnvironment(boolean repl){
 		super(repl);
 		this.parent=null;
@@ -37,6 +41,10 @@ public class SchemeEnvironment extends Environment{
 	void setParent(Environment parent){
 		this.parent=parent;
 	}
+	/**
+	 * Create a envionment
+	 * @param parent parent environment
+	 */
 	public SchemeEnvironment(Environment parent){
 		super(parent.isREPL());
 		this.parent=parent;

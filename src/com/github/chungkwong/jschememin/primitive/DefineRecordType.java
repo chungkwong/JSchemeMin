@@ -18,12 +18,12 @@ package com.github.chungkwong.jschememin.primitive;
 import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Correspoding to the primitive define-record-type in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class DefineRecordType extends BasicConstruct implements Primitive{
 	public static final DefineRecordType INSTANCE=new DefineRecordType();
-	public DefineRecordType(){
+	private DefineRecordType(){
 		super(new ScmSymbol("define-record-type"));
 	}
 	@Override

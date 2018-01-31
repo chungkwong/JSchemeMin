@@ -20,12 +20,12 @@ import static com.github.chungkwong.jschememin.lib.Utility.cadr;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Correspoding to the library (scheme complex) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Complex extends NativeLibrary{
 	public static final Complex INSTANCE=new Complex();
-	public Complex(){
+	private Complex(){
 		super("scheme","complex");
 	}
 	@Override

@@ -17,41 +17,71 @@
 package com.github.chungkwong.jschememin.type;
 import java.util.*;
 /**
- *
+ * A data structure being used to trace cyclic reference. Mainly for internal use.
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class DatumRecord{
 	private static int idCounter=0;
 	private final int id;
 	private boolean reused,defined;
+	/**
+	 * Construct a record
+	 */
 	public DatumRecord(){
 		this.id=++idCounter;
 		this.reused=false;
 		this.defined=false;
 	}
+	/**
+	 * Mark the record as reused
+	 */
 	public void reuse(){
 		reused=true;
 	}
+	/**
+	 * Check if the record is marked as reused
+	 * @return
+	 */
 	public boolean isReused(){
 		return reused;
 	}
+	/**
+	 * Mark the record as defined
+	 */
 	public void define(){
 		defined=true;
 	}
+	/**
+	 * Check if the record is marked as defined
+	 * @return
+	 */
 	public boolean isDefined(){
 		return defined;
 	}
+	/**
+	 * Get the ID of the record
+	 * @return
+	 */
 	public int getId(){
 		return id;
 	}
+	/**
+	 * Ensure that new records have a greater ID later on
+	 * @param counter
+	 */
 	public static void updateId(int counter){
 		if(counter>idCounter)
 			idCounter=counter;
 	}
 	@Override
 	public String toString(){
-		return super.toString(); //To change body of generated methods, choose Tools | Templates.
+		return super.toString();
 	}
+	/**
+	 * Collect reference in a object to a map
+	 * @param object
+	 * @param map
+	 */
 	public static void collectReference(ScmObject object,IdentityHashMap<ScmObject,DatumRecord> map){
 		if(map.containsKey(object))
 			map.get(object).reuse();
@@ -65,6 +95,13 @@ public class DatumRecord{
 			collectReference(((ScmPair)object).getCdr(),map);
 		}
 	}
+	/**
+	 * Write external representation of a object
+	 * @param obj the object
+	 * @param buf output buffer
+	 * @param refs known references
+	 * @return
+	 */
 	public static boolean  toExternalRepresentation(ScmObject obj,StringBuilder buf,IdentityHashMap<ScmObject,DatumRecord> refs){
 		if(obj instanceof ScmVector){
 			return ((ScmVector)obj).toExternalRepresentation(buf,refs);

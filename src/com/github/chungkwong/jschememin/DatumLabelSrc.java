@@ -13,7 +13,15 @@
  *
  */
 package com.github.chungkwong.jschememin;
+/**
+ * Represents labels to be referenced
+ * @author kwong
+ */
 public final class DatumLabelSrc extends DatumLabel{
+	/**
+	 * Create a label
+	 * @param label ID
+	 */
 	public DatumLabelSrc(String label){
 		super(label);
 	}

@@ -169,7 +169,7 @@ public class LexTest{
 		check("1.e-10)",new ScmFloatingPointNumber(new BigDecimal("1e-10")),SimpleToken.getToken(")"));
 		Assert.assertSame(new Lex("+nan.0)").nextToken(),ScmSpecialReal.POSITIVE_NAN);
 		try{
-			Assert.assertEquals(new Lex("+nan.0)").getRemainingTokens().size(),2);
+			Assert.assertEquals(2,new Lex("+nan.0)").getRemainingTokens().size());
 			Assert.assertEquals(new Lex("+nan.0)").getRemainingTokens().get(1),SimpleToken.getToken(")"));
 		}catch(IOException ex){
 			Assert.assertTrue(false);
@@ -181,7 +181,7 @@ public class LexTest{
 		check("-i",new ScmComplexRectangular(ScmInteger.ZERO,ScmInteger.ONE.negate()));
 		check("+40i",new ScmComplexRectangular(ScmInteger.ZERO,new ScmInteger(BigInteger.valueOf(40))));
 		check("-2.5e-1i",new ScmComplexRectangular(ScmInteger.ZERO,new ScmFloatingPointNumber(new BigDecimal(-0.25))));
-		check("1/2-i",new ScmComplexRectangular(new ScmRational(ScmInteger.ONE,ScmInteger.ONE.add(ScmInteger.ONE)),ScmInteger.ONE.negate()));
+		check("1/2-i",new ScmComplexRectangular(new ScmRational(ScmInteger.ONE,ScmInteger.TWO),ScmInteger.ONE.negate()));
 		check("1+i",new ScmComplexRectangular(ScmInteger.ONE,ScmInteger.ONE));
 		assertComplexEqualSpecial("1+nan.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.POSITIVE_NAN));
 		assertComplexEqualSpecial("1-nan.0i",new ScmComplexRectangular(ScmInteger.ONE,ScmSpecialReal.POSITIVE_NAN));

@@ -17,7 +17,7 @@
 package com.github.chungkwong.jschememin;
 
 /**
- *
+ * Interface for primitive
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public interface Primitive{

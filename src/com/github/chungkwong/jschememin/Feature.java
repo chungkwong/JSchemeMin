@@ -34,9 +34,18 @@ public class Feature{
 		FEATURES.add(System.getProperty("os.arch"));
 		FEATURES.add(System.getProperty("os.name"));
 	}
+	/**
+	 * Check if a feature is presented
+	 * @param feature
+	 * @return
+	 */
 	public static boolean contains(String feature){
 		return FEATURES.contains(feature);
 	}
+	/**
+	 * Get all features presented
+	 * @return
+	 */
 	public static ScmPairOrNil getAll(){
 		return ScmList.toList(FEATURES.stream().map((feature)->new ScmSymbol(feature)).toArray(ScmObject[]::new));
 	}

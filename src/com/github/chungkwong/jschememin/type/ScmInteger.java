@@ -15,17 +15,43 @@
 package com.github.chungkwong.jschememin.type;
 import java.math.*;
 import java.util.*;
+/**
+ * Represents the type integer in Scheme
+ * @author kwong
+ */
 public final class ScmInteger extends ScmNormalReal{
+	/**
+	 * Integer zero
+	 */
 	public static final ScmInteger ZERO=new ScmInteger(BigInteger.ZERO);
+	/**
+	 * Integer ONE
+	 */
 	public static final ScmInteger ONE=new ScmInteger(BigInteger.ONE);
+	/**
+	 * Integre TWO
+	 */
 	public static final ScmInteger TWO=new ScmInteger(BigInteger.valueOf(2));
 	private final BigInteger value;
+	/**
+	 * Wrap a long
+	 * @param value
+	 */
 	public ScmInteger(long value){
 		this.value=BigInteger.valueOf(value);
 	}
+	/**
+	 * Wrap a BigInteger
+	 * @param value
+	 */
 	public ScmInteger(BigInteger value){
 		this.value=value;
 	}
+	/**
+	 * Convert to integer
+	 * @param val
+	 * @return
+	 */
 	public static ScmInteger valueOf(long val){
 		return new ScmInteger(BigInteger.valueOf(val));
 	}
@@ -33,30 +59,61 @@ public final class ScmInteger extends ScmNormalReal{
 	public ScmInteger negate(){
 		return new ScmInteger(value.negate());
 	}
-	public ScmInteger add(ScmInteger num){
+	ScmInteger add(ScmInteger num){
 		return new ScmInteger(value.add(num.value));
 	}
-	public ScmInteger subtract(ScmInteger num){
+	ScmInteger subtract(ScmInteger num){
 		return new ScmInteger(value.subtract(num.value));
 	}
-	public ScmInteger multiply(ScmInteger num){
+	ScmInteger multiply(ScmInteger num){
 		return new ScmInteger(value.multiply(num.value));
 	}
+	/**
+	 * Corresponding the procedure truncate-quotient in Scheme
+	 * @param num
+	 * @return
+	 */
 	public ScmInteger divide(ScmInteger num){
 		return new ScmInteger(value.divide(num.value));
 	}
+	/**
+	 * Corresponding the procedure truncate-remainder in Scheme
+	 * @param num
+	 * @return
+	 */
 	public ScmInteger remainder(ScmInteger num){
 		return new ScmInteger(value.remainder(num.value));
 	}
+	/**
+	 * Corresponding the procedure truncate/ in Scheme
+	 * @param num
+	 * @return
+	 */
 	public ScmInteger[] divideAndRemainder(ScmInteger num){
 		BigInteger[] qr=value.divideAndRemainder(num.value);
 		return new ScmInteger[]{new ScmInteger(qr[0]),new ScmInteger(qr[1])};
-	}public ScmInteger moduloQuotient(ScmInteger num){
+	}
+	/**
+	 * Corresponding the procedure floor-quotient in Scheme
+	 * @param num
+	 * @return
+	 */
+	public ScmInteger moduloQuotient(ScmInteger num){
 		return quotientAndRemainder(num)[0];
 	}
+	/**
+	 * Corresponding the procedure floor-remainder in Scheme
+	 * @param num
+	 * @return
+	 */
 	public ScmInteger moduloRemainder(ScmInteger num){
 		return quotientAndRemainder(num)[1];
 	}
+	/**
+	 * Corresponding the procedure floor/ in Scheme
+	 * @param num
+	 * @return
+	 */
 	public ScmInteger[] quotientAndRemainder(ScmInteger num){
 		BigInteger[] qr=value.divideAndRemainder(num.value);
 		if(num.signum()*qr[1].signum()<0){
@@ -65,12 +122,26 @@ public final class ScmInteger extends ScmNormalReal{
 		}
 		return new ScmInteger[]{new ScmInteger(qr[0]),new ScmInteger(qr[1])};
 	}
+	/**
+	 * Corresponding the procedure gcd? in Scheme
+	 * @param num
+	 * @return
+	 */
 	public ScmInteger gcd(ScmInteger num){
 		return new ScmInteger(value.gcd(num.value));
 	}
+	/**
+	 * Corresponding the procedure lcm Scheme
+	 * @param num
+	 * @return
+	 */
 	public ScmInteger lcm(ScmInteger num){
 		return new ScmInteger(value.multiply(num.value).abs().divide(value.gcd(num.value)));
 	}
+	/**
+	 * Corresponding the procedure exact-integer-sqrt in Scheme
+	 * @return
+	 */
 	public ScmInteger[] sqrtExact(){
 		BigInteger root=BigInteger.ZERO;
 		for(int bit=(value.bitLength()-1)/2;bit>=0;bit--){
@@ -81,7 +152,7 @@ public final class ScmInteger extends ScmNormalReal{
 		}
 		return new ScmInteger[]{new ScmInteger(root),new ScmInteger(value.subtract(root.multiply(root)))};
 	}
-	public int compareTo(ScmInteger num){
+	int compareTo(ScmInteger num){
 		return value.compareTo(num.value);
 	}
 	@Override
@@ -95,6 +166,10 @@ public final class ScmInteger extends ScmNormalReal{
 			return toInExact().compareTo((ScmFloatingPointNumber)o);
 		}
 	}
+	/**
+	 * Convert to BigInteger
+	 * @return
+	 */
 	public BigInteger getValue(){
 		return value;
 	}
@@ -216,9 +291,17 @@ public final class ScmInteger extends ScmNormalReal{
 	public ScmFloatingPointNumber toInExact(){
 		return new ScmFloatingPointNumber(new BigDecimal(value));
 	}
+	/**
+	 * Corresponding the procedure even? in Scheme
+	 * @return
+	 */
 	public boolean isEven(){
 		return !isOdd();
 	}
+	/**
+	 * Corresponding the procedure odd? in Scheme
+	 * @return
+	 */
 	public boolean isOdd(){
 		return value.testBit(0);
 	}

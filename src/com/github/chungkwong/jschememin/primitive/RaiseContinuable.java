@@ -18,7 +18,7 @@ package com.github.chungkwong.jschememin.primitive;
 import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Correspoding to the primitive raise-continuable in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class RaiseContinuable extends BasicConstruct{

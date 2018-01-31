@@ -17,29 +17,71 @@ import java.math.*;
 import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
+/**
+ * Represents the type bytevector in Scheme
+ * @author kwong
+ */
 public final class ScmByteVector extends ScmObject{
 	private final byte[] vector;
+	/**
+	 * Wrap a array of byte
+	 * @param vector
+	 */
 	public ScmByteVector(byte[] vector){
 		this.vector=vector;
 	}
+	/**
+	 * Get the length of the vector
+	 * @return
+	 */
 	public int getLength(){
 		return vector.length;
 	}
+	/**
+	 * Corresponding to the procedure bytevector-u8-ref of Scheme
+	 * @param index
+	 * @return
+	 */
 	public ScmInteger get(int index){
 		return new ScmInteger(BigInteger.valueOf(vector[index]));
 	}
-	public ScmByteVector set(int index,ScmComplex element){
+	/**
+	 * Corresponding to the procedure bytevector-u8-set! of Scheme
+	 * @param index
+	 * @param element
+	 * @return
+	 */
+	public ScmByteVector set(int index,ScmComplex element){ 
 		vector[index]=byteValueExact(element);
 		return this;
 	}
+	/**
+	 * Corresponding to the procedure bytevector-copy of Scheme
+	 * @param start
+	 * @param end
+	 * @return
+	 */
 	public ScmByteVector copy(int start,int end){
 		return new ScmByteVector(Arrays.copyOfRange(vector,start,end));
 	}
+	/**
+	 * Corresponding to the procedure bytevector-copy! of Scheme
+	 * @param to
+	 * @param at
+	 * @param start
+	 * @param end
+	 * @return
+	 */
 	public ScmByteVector copyTo(ScmByteVector to,int at,int start,int end){
 		while(start<end)
 			to.vector[at++]=vector[start++];
 		return to;
 	}
+	/**
+	 * Corresponding to the procedure bytevector-append of Scheme
+	 * @param list
+	 * @return
+	 */
 	public static ScmByteVector append(ScmPairOrNil list){
 		int len=ScmList.asStream(list).mapToInt((bv)->((ScmByteVector)bv).getLength()).sum();
 		byte[] data=new byte[len];
@@ -58,6 +100,10 @@ public final class ScmByteVector extends ScmObject{
 		else
 			throw new RuntimeException();
 	}
+	/**
+	 * Get the value in array
+	 * @return
+	 */
 	public byte[] getByteArray(){
 		return vector;
 	}
@@ -72,6 +118,12 @@ public final class ScmByteVector extends ScmObject{
 		buf.append(')');
 		return buf.toString();
 	}
+	/**
+	 * Build a bytevector which all elements are the same
+	 * @param byt the element
+	 * @param size the length
+	 * @return the new bytevector
+	 */
 	public static ScmByteVector fill(ScmInteger byt,int size){
 		int b=byteValueExact(byt);
 		byte[] data=new byte[size];
@@ -98,6 +150,11 @@ public final class ScmByteVector extends ScmObject{
 	public boolean isSelfevaluating(){
 		return true;
 	}
+	/**
+	 * Convert to bytevector
+	 * @param list
+	 * @return
+	 */
 	public static ScmByteVector toByteVector(ScmPairOrNil list){
 		int len=ScmList.getLength(list);
 		byte[] data=new byte[len];
@@ -107,6 +164,12 @@ public final class ScmByteVector extends ScmObject{
 		}
 		return new ScmByteVector(data);
 	}
+	/**
+	 * Decode the data using UTF-8
+	 * @param start
+	 * @param end
+	 * @return
+	 */
 	public ScmString decodeUTF8(int start,int end){
 		return new ScmString(StandardCharsets.UTF_8.decode(ByteBuffer.wrap(vector,start,end-start)).toString());
 	}

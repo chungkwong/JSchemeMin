@@ -17,15 +17,22 @@
 package com.github.chungkwong.jschememin.type;
 
 /**
- *
+ * A helper that may construct list by reverse order in the structure
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmListBuilder{
 	private ScmObject start=ScmNil.NIL;
 	private ScmPair end=null;
+	/**
+	 * Prepare for a list
+	 */
 	public ScmListBuilder(){
 
 	}
+	/**
+	 * Provides a item to be added
+	 * @param item
+	 */
 	public void add(ScmObject item){
 		ScmPair fresh=new ScmPair(item,ScmNil.NIL);
 		if(end==null){
@@ -35,9 +42,17 @@ public class ScmListBuilder{
 			end=fresh;
 		}
 	}
+	/**
+	 * Provides some items to be added
+	 * @param list
+	 */
 	public void addAll(ScmPairOrNil list){
 		ScmList.forEach(list,(item)->add(item));
 	}
+	/**
+	 * Provides some items to be added
+	 * @param buf
+	 */
 	public void addAll(ScmListBuilder buf){
 		if(end==null){
 			start=buf.start;
@@ -47,12 +62,20 @@ public class ScmListBuilder{
 			end=buf.end;
 		}
 	}
+	/**
+	 * Set the last item in a partial list
+	 * @param obj
+	 */
 	public void setLast(ScmObject obj){
 		if(end==null)
 			start=obj;
 		else
 			end.setCdr(obj);
 	}
+	/**
+	 * Build the list
+	 * @return the list
+	 */
 	public ScmObject toList(){
 		return start;
 	}

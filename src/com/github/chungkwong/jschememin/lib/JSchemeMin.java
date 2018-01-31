@@ -20,7 +20,7 @@ import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
 import java.lang.management.*;
 /**
- *
+ * Correspoding to the library (jschememin) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class JSchemeMin extends NativeLibrary{

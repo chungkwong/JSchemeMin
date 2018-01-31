@@ -23,12 +23,12 @@ import static com.github.chungkwong.jschememin.lib.Utility.getEnvironmentVariabl
 import static com.github.chungkwong.jschememin.lib.Utility.getEnvironmentVariables;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Correspoding to the library (scheme process-context) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ProcessContext extends NativeLibrary{
 	public static final ProcessContext INSTANCE=new ProcessContext();
-	public ProcessContext(){
+	private ProcessContext(){
 		super("scheme","process-context");
 	}
 	@Override

@@ -19,7 +19,7 @@ import com.github.chungkwong.jschememin.*;
 import java.util.*;
 import java.util.stream.*;
 /**
- *
+ * Represents the type hashtable in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmHashTable extends ScmObject{
@@ -33,53 +33,122 @@ public class ScmHashTable extends ScmObject{
 		this.equiv=equiv;
 		this.mutable=mutable;
 	}
+	/**
+	 * Construct a hashtable
+	 * @param hash the hash function
+	 * @param equiv the equal function
+	 */
 	public ScmHashTable(Evaluable hash,Evaluable equiv){
 		this(new HashMap<>(),hash,equiv,true);
 	}
+	/**
+	 * Construct a hashtable
+	 * @param hash the hash function
+	 * @param equiv the equal function
+	 * @param k the expected size
+	 */
 	public ScmHashTable(Evaluable hash,Evaluable equiv,int k){
 		this(new HashMap<>(k),hash,equiv,true);
 	}
+	/**
+	 * Corresponding the procedure hashtable-size in Scheme
+	 * @return
+	 */
 	public int size(){
 		return table.size();
 	}
+	/**
+	 * Corresponding the procedure hashtable-ref in Scheme
+	 * @param key
+	 * @param def
+	 * @return
+	 */
 	public ScmObject get(ScmObject key,ScmObject def){
 		keyWithHash.setObject(key);
 		ScmObject value=table.get(keyWithHash);
 		return value==null?def:value;
 	}
+	/**
+	 * Corresponding the procedure hashtable-contains in Scheme
+	 * @param key
+	 * @return
+	 */
 	public boolean contains(ScmObject key){
 		keyWithHash.setObject(key);
 		return table.containsKey(keyWithHash);
 	}
+
+	/**
+	 * Corresponding the procedure hashtable-delete in Scheme
+	 * @param key
+	 */
 	public void remove(ScmObject key){
 		keyWithHash.setObject(key);
 		table.remove(keyWithHash);
 	}
+
+	/**
+	 * Corresponding the procedure hashtable-set! in Scheme
+	 * @param key
+	 * @param value
+	 */
 	public void put(ScmObject key,ScmObject value){
 		table.put(new ObjectWithHash(key),value);
 	}
+
+	/**
+	 * Corresponding the procedure hashtable-clear! in Scheme
+	 */
 	public void clear(){
 		table.clear();
 	}
+
+	/**
+	 * Corresponding the procedure hashtable-keys in Scheme
+	 * @return
+	 */
 	public ScmVector keys(){
 		ArrayList<ScmObject> keys=new ArrayList<>(table.size());
 		table.forEach((k,v)->keys.add(k.getObject()));
 		return new ScmVector(keys);
 	}
+
+	/**
+	 * Get the vector of values
+	 * @return
+	 */
 	public ScmVector values(){
 		ArrayList<ScmObject> values=new ArrayList<>(table.size());
 		table.forEach((k,v)->values.add(v));
 		return new ScmVector(values);
 	}
+	/**
+	 * Corresponding the procedure hashtable-copy in Scheme
+	 * @param mutable
+	 * @return
+	 */
 	public ScmHashTable copy(boolean mutable){
 		return new ScmHashTable(new HashMap<>(table),hash,equiv,mutable);
 	}
+
+	/**
+	 * Corresponding the procedure hashtable-equivalence-function in Scheme
+	 * @return
+	 */
 	public Evaluable getEquivalenceFunction(){
 		return equiv;
 	}
+	/**
+	 * Corresponding the procedure hashtable-hash-function in Scheme
+	 * @return
+	 */
 	public Evaluable getHashFunction(){
 		return hash;
 	}
+	/**
+	 * Corresponding the procedure hashtable-mutable? in Scheme
+	 * @return
+	 */
 	public boolean isMutable(){
 		return mutable;
 	}

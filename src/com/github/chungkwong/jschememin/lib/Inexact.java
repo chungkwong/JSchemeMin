@@ -21,12 +21,12 @@ import static com.github.chungkwong.jschememin.lib.Utility.car;
 import static com.github.chungkwong.jschememin.lib.Utility.cdr;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Correspoding to the library (scheme inexact) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Inexact extends NativeLibrary{
 	public static final Inexact INSTANCE=new Inexact();
-	public Inexact(){
+	private Inexact(){
 		super("scheme","inexact");
 	}
 	@Override

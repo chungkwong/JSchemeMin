@@ -17,12 +17,12 @@
 package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
 /**
- *
+ * Correspoding to the library (scheme repl) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class REPL extends NativeLibrary{
 	public static final REPL INSTANCE=new REPL();
-	public REPL(){
+	private REPL(){
 		super("scheme","repl");
 	}
 	@Override

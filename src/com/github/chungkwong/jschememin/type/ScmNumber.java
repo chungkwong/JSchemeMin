@@ -14,7 +14,15 @@
  */
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
+/**
+ * Represents the type number in Scheme
+ * @author kwong
+ */
 public abstract class ScmNumber extends ScmObject implements Token{
+	/**
+	 * Check if the number is a exact number
+	 * @return the result
+	 */
 	public abstract boolean isExact();
 	@Override
 	public boolean isSelfevaluating(){

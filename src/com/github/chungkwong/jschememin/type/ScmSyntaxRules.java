@@ -21,7 +21,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 /**
- *
+ * Represents syntax rules in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmSyntaxRules extends ScmObject{
@@ -31,6 +31,11 @@ public class ScmSyntaxRules extends ScmObject{
 	private final ScmSymbol ellipsis;
 	private final HashSet<ScmSymbol> literals=new HashSet<>();
 	private final SchemeEnvironment defEnv;
+	/**
+	 * Define a syntax rule
+	 * @param spec the rule according to the syntax of Scheme
+	 * @param defEnv the environment where the rule is defined
+	 */
 	public ScmSyntaxRules(ScmPair spec,SchemeEnvironment defEnv){
 		if(spec.getCar() instanceof ScmSymbol){
 			ellipsis=(ScmSymbol)spec.getCar();
@@ -60,6 +65,12 @@ public class ScmSyntaxRules extends ScmObject{
 	public boolean isSelfevaluating(){
 		return false;
 	}
+	/**
+	 * Apply this rule
+	 * @param argument to be transformed
+	 * @param env the environment where the rule is applied
+	 * @return the transformed object
+	 */
 	public ScmObject transform(ScmPairOrNil argument,SchemeEnvironment env){
 		for(SyntaxRule rule:rules){
 			ScmObject transformed=rule.apply(argument,env);

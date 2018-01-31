@@ -18,12 +18,17 @@ package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.type.*;
 import java.util.function.*;
 /**
- *
+ * NativeProcedure with default arguments
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class NativeProcedureDefault implements NativeProcedure{
 	private final NativeProcedure proc;
 	private final Function<ScmPairOrNil,ScmObject>[] def;
+	/**
+	 *
+	 * @param proc the NativeProcedure
+	 * @param def the functions being used to generate default argument
+	 */
 	public NativeProcedureDefault(NativeProcedure proc,Function<ScmPairOrNil,ScmObject>... def){
 		this.proc=proc;
 		this.def=def;

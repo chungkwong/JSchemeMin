@@ -19,12 +19,12 @@ import com.github.chungkwong.jschememin.*;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Correspoding to the library (scheme char) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Char extends NativeLibrary{
 	public static final Char INSTANCE=new Char();
-	public Char(){
+	private Char(){
 		super("scheme","char");
 	}
 	@Override

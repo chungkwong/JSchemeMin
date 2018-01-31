@@ -17,10 +17,14 @@
 package com.github.chungkwong.jschememin.primitive;
 
 /**
- *
+ * Being thrown when a exception is no caught
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class UncaughtExceptionError extends Error{
+	/**
+	 * Wrap a Exception
+	 * @param cause
+	 */
 	public UncaughtExceptionError(RuntimeException cause){
 		super(cause);
 	}

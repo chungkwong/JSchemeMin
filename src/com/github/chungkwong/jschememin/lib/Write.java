@@ -20,12 +20,12 @@ import static com.github.chungkwong.jschememin.lib.Utility.cadr;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Correspoding to the library (scheme write) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Write extends NativeLibrary{
 	public static final Write INSTANCE=new Write();
-	public Write(){
+	private Write(){
 		super("scheme","write");
 	}
 	@Override
@@ -38,5 +38,5 @@ public class Write extends NativeLibrary{
 			(o)->car(o),(o)->ScmPort.CURRENT_OUTPUT));
 		addNativeProcedure("display",new NativeProcedureDefault((o)->((ScmTextualOutputPort)cadr(o)).display(car(o)),
 			(o)->car(o),(o)->ScmPort.CURRENT_OUTPUT));
-		}
+	}
 }

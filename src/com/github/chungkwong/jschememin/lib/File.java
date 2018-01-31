@@ -19,12 +19,12 @@ import com.github.chungkwong.jschememin.*;
 import static com.github.chungkwong.jschememin.lib.Utility.car;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Correspoding to the library (scheme file) in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class File extends NativeLibrary{
 	public static final File INSTANCE=new File();
-	public File(){
+	private File(){
 		super("scheme","file");
 	}
 	@Override

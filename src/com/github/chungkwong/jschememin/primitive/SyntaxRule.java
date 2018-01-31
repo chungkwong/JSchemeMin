@@ -18,12 +18,12 @@ package com.github.chungkwong.jschememin.primitive;
 import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Correspoding to the primitive syntax-rules in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class SyntaxRule extends BasicConstruct implements Primitive{
 	public static final SyntaxRule INSTANCE=new SyntaxRule();
-	public SyntaxRule(){
+	private SyntaxRule(){
 		super(new ScmSymbol("syntax-rules"));
 	}
 	@Override

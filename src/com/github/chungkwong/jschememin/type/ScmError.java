@@ -16,27 +16,49 @@
  */
 package com.github.chungkwong.jschememin.type;
 /**
- *
+ * Represents errors in Scheme
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class ScmError extends ScmObject{
+	/**
+	 * The type of error in Scheme
+	 */
 	public static enum ErrorType{
 		READ,FILE,SYNTAX,JAVA,OTHER
 	}
 	private final ScmString message;
 	private final ScmPairOrNil irritants;
 	private final ErrorType type;
+	/**
+	 * Construct a error
+	 * @param message the error message
+	 * @param irritants something related to the errir
+	 * @param type the type of the error
+	 */
 	public ScmError(ScmString message,ScmPairOrNil irritants,ErrorType type){
 		this.message=message;
 		this.irritants=irritants;
 		this.type=type;
 	}
+
+	/**
+	 * Get the error message
+	 * @return
+	 */
 	public ScmString getErrorMessage(){
 		return message;
 	}
+	/**
+	 * Get something related to the error
+	 * @return
+	 */
 	public ScmPairOrNil getIrritants(){
 		return irritants;
 	}
+	/**
+	 * Get the type of the error
+	 * @return
+	 */
 	public ErrorType getType(){
 		return type;
 	}
@@ -48,17 +70,32 @@ public class ScmError extends ScmObject{
 	public boolean isSelfevaluating(){
 		return true;
 	}
+	/**
+	 * Wrap a Throwable
+	 * @param t
+	 * @return
+	 */
 	public static RuntimeException toRuntimeException(Throwable t){
 		if(t instanceof ScmException)
 			return (ScmException)t;
 		return new ScmException(toScmObject(t));
 	}
+	/**
+	 * Wrap a error object
+	 * @param obj
+	 * @return
+	 */
 	public static RuntimeException toException(ScmObject obj){
 		if(obj instanceof ScmError&&((ScmError)obj).getType()==ErrorType.JAVA)
 			return new ScmException(obj,(Throwable)((ScmJavaObject)ScmList.first(((ScmError)obj).getIrritants())).getJavaObject());
 		else
 			return new ScmException(obj);
 	}
+	/**
+	 * Convert to a Scheme object
+	 * @param obj
+	 * @return
+	 */
 	public static ScmObject toScmObject(Throwable obj){
 		//obj.printStackTrace();
 		if(obj instanceof ScmException)

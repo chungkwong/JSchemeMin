@@ -20,29 +20,32 @@ import java.util.*;
 import java.util.stream.*;
 import javax.script.*;
 /**
- *
+ * An implementation of ScriptEngineFactory
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class EvaluatorFactory implements ScriptEngineFactory{
+	/**
+	 * The factory for jSchemeMin
+	 */
 	public static final EvaluatorFactory INSTANCE=new EvaluatorFactory();
-	private static final HashMap<String,String> parameters=new HashMap<>();
+	private static final HashMap<String,String> PARAMETERS=new HashMap<>();
 	static{
-		parameters.put("ScriptEngine.ENGINE","JSchemeMin");
-		parameters.put("ScriptEngine.ENGINE_VERSION","0.0.1");
-		parameters.put("ScriptEngine.NAME","JSchemeMin");
-		parameters.put("ScriptEngine.LANGUAGE","scheme");
-		parameters.put("ScriptEngine.LANGUAGE_VERSION","7");
+		PARAMETERS.put("ScriptEngine.ENGINE","JSchemeMin");
+		PARAMETERS.put("ScriptEngine.ENGINE_VERSION","0.0.1");
+		PARAMETERS.put("ScriptEngine.NAME","JSchemeMin");
+		PARAMETERS.put("ScriptEngine.LANGUAGE","scheme");
+		PARAMETERS.put("ScriptEngine.LANGUAGE_VERSION","7");
 	}
 	private  EvaluatorFactory(){
 
 	}
 	@Override
 	public String getEngineName(){
-		return parameters.get("ScriptEngine.ENGINE");
+		return PARAMETERS.get("ScriptEngine.ENGINE");
 	}
 	@Override
 	public String getEngineVersion(){
-		return parameters.get("ScriptEngine.ENGINE_VERSION");
+		return PARAMETERS.get("ScriptEngine.ENGINE_VERSION");
 	}
 	@Override
 	public List<String> getExtensions(){
@@ -54,19 +57,19 @@ public class EvaluatorFactory implements ScriptEngineFactory{
 	}
 	@Override
 	public List<String> getNames(){
-		return Arrays.asList(parameters.get("ScriptEngine.NAME"));
+		return Arrays.asList(PARAMETERS.get("ScriptEngine.NAME"));
 	}
 	@Override
 	public String getLanguageName(){
-		return parameters.get("ScriptEngine.LANGUAGE_NAME");
+		return PARAMETERS.get("ScriptEngine.LANGUAGE_NAME");
 	}
 	@Override
 	public String getLanguageVersion(){
-		return parameters.get("ScriptEngine.LANGUAGE_VERSION");
+		return PARAMETERS.get("ScriptEngine.LANGUAGE_VERSION");
 	}
 	@Override
 	public Object getParameter(String key){
-		return parameters.get(key);
+		return PARAMETERS.get(key);
 	}
 	@Override
 	public String getMethodCallSyntax(String obj,String m,String... args){

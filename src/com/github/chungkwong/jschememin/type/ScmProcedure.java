@@ -1,9 +1,19 @@
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
+/**
+ * Represents the type procedure in Scheme
+ * @author kwong
+ */
 public final class ScmProcedure extends Evaluable{
 	private final SchemeEnvironment parent;
 	private final ScmObject formal;
 	private final ScmPair body;
+	/**
+	 * Construct a procedure
+	 * @param formal the formal parameters
+	 * @param body the body
+	 * @param parent the environment where the procedure is defined
+	 */
 	public ScmProcedure(ScmObject formal,ScmPair body,SchemeEnvironment parent){
 		this.formal=formal;
 		this.body=body;

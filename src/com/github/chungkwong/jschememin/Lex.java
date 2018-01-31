@@ -26,11 +26,11 @@ public final class Lex{
 	private static final int ALARM='\u0007',BACKSPACE='\u0008',TABULATION='\u0009',LINEFEED='\n',NEWLINE='\n'
 		,LINE_TABULATION='\u000B',FORM_FEED='\u000C',CARRIAGE_RETURN='\r',ESCAPE='\u001B',SPACE='\u0020'
 		,DELETE='\u007F',NEXT_LINE='\u0085',LINE_SEPARATOR='\u2028',PARAGRAPH_SEPARATOR='\u2029';
-	private static final HashMap<String,Integer> name2char=new HashMap<>();
-	private static final HashMap<Integer,Integer> mem2char=new HashMap<>();
-	private static final HashSet<Integer> delimiter=new HashSet<>();
-	private static final HashSet<Integer> idInitial=new HashSet<>(),idSubsequent=new HashSet<>();
-	private static final HashSet<Integer> idInitialType=new HashSet<>(),idSubsequentType=new HashSet<>();
+	private static final HashMap<String,Integer> NAME2CHAR=new HashMap<>();
+	private static final HashMap<Integer,Integer> MEM2CHAR=new HashMap<>();
+	private static final HashSet<Integer> DELIMITER=new HashSet<>();
+	private static final HashSet<Integer> ID_INITIAL=new HashSet<>(),ID_SUBSEQUENCE=new HashSet<>();
+	private static final HashSet<Integer> ID_INITIAL_TYPE=new HashSet<>(),ID_SUBSEQUENCE_TYPE=new HashSet<>();
 	private static final SimpleToken DOT=SimpleToken.getToken(".");
 	private static final SimpleToken COMMA=SimpleToken.getToken(",");
 	private static final SimpleToken COMMA_AT=SimpleToken.getToken(",@");
@@ -44,76 +44,76 @@ public final class Lex{
 	private final PushbackReader in;
 	private boolean foldingCase;
 	static{
-		name2char.put("null",(int)'\0');
-		name2char.put("alarm",ALARM);
-		name2char.put("backspace",BACKSPACE);
-		name2char.put("tab",TABULATION);
-		name2char.put("linefeed",LINEFEED);
-		name2char.put("newline",NEWLINE);
-		name2char.put("vtab",LINE_TABULATION);
-		name2char.put("page",FORM_FEED);
-		name2char.put("return",CARRIAGE_RETURN);
-		name2char.put("escape",ESCAPE);
-		name2char.put("space",SPACE);
-		name2char.put("delete",DELETE);
-		mem2char.put((int)'a',ALARM);
-		mem2char.put((int)'b',BACKSPACE);
-		mem2char.put((int)'t',TABULATION);
-		mem2char.put((int)'n',LINEFEED);
-		mem2char.put((int)'v',LINE_TABULATION);
-		mem2char.put((int)'f',FORM_FEED);
-		mem2char.put((int)'r',CARRIAGE_RETURN);
-		mem2char.put((int)'\"',(int)'\"');
-		mem2char.put((int)'\\',(int)'\\');
-		mem2char.put((int)'|',(int)'|');
-		delimiter.add((int)'(');
-		delimiter.add((int)')');
+		NAME2CHAR.put("null",(int)'\0');
+		NAME2CHAR.put("alarm",ALARM);
+		NAME2CHAR.put("backspace",BACKSPACE);
+		NAME2CHAR.put("tab",TABULATION);
+		NAME2CHAR.put("linefeed",LINEFEED);
+		NAME2CHAR.put("newline",NEWLINE);
+		NAME2CHAR.put("vtab",LINE_TABULATION);
+		NAME2CHAR.put("page",FORM_FEED);
+		NAME2CHAR.put("return",CARRIAGE_RETURN);
+		NAME2CHAR.put("escape",ESCAPE);
+		NAME2CHAR.put("space",SPACE);
+		NAME2CHAR.put("delete",DELETE);
+		MEM2CHAR.put((int)'a',ALARM);
+		MEM2CHAR.put((int)'b',BACKSPACE);
+		MEM2CHAR.put((int)'t',TABULATION);
+		MEM2CHAR.put((int)'n',LINEFEED);
+		MEM2CHAR.put((int)'v',LINE_TABULATION);
+		MEM2CHAR.put((int)'f',FORM_FEED);
+		MEM2CHAR.put((int)'r',CARRIAGE_RETURN);
+		MEM2CHAR.put((int)'\"',(int)'\"');
+		MEM2CHAR.put((int)'\\',(int)'\\');
+		MEM2CHAR.put((int)'|',(int)'|');
+		DELIMITER.add((int)'(');
+		DELIMITER.add((int)')');
 		//delimiter.add((int)'[');//for R6RS
 		//delimiter.add((int)']');//for R6RS
-		delimiter.add((int)'\"');
-		delimiter.add((int)'|');
-		delimiter.add((int)';');
-		idInitial.add((int)'!');
-		idInitial.add((int)'$');
-		idInitial.add((int)'%');
-		idInitial.add((int)'&');
-		idInitial.add((int)'*');
-		idInitial.add((int)'/');
-		idInitial.add((int)':');
-		idInitial.add((int)'<');
-		idInitial.add((int)'=');
-		idInitial.add((int)'>');
-		idInitial.add((int)'?');
-		idInitial.add((int)'^');
-		idInitial.add((int)'_');
-		idInitial.add((int)'~');
-		idInitial.add((int)'\u200C');
-		idInitial.add((int)'\u200D');
-		idInitialType.add((int)Character.UPPERCASE_LETTER);
-		idInitialType.add((int)Character.LOWERCASE_LETTER);
-		idInitialType.add((int)Character.TITLECASE_LETTER);
-		idInitialType.add((int)Character.MODIFIER_LETTER);
-		idInitialType.add((int)Character.OTHER_LETTER);
-		idInitialType.add((int)Character.NON_SPACING_MARK);
-		idInitialType.add((int)Character.LETTER_NUMBER);
-		idInitialType.add((int)Character.OTHER_NUMBER);
-		idInitialType.add((int)Character.DASH_PUNCTUATION);
-		idInitialType.add((int)Character.CONNECTOR_PUNCTUATION);
-		idInitialType.add((int)Character.OTHER_PUNCTUATION);
-		idInitialType.add((int)Character.CURRENCY_SYMBOL);
-		idInitialType.add((int)Character.MATH_SYMBOL);
-		idInitialType.add((int)Character.MODIFIER_SYMBOL);
-		idInitialType.add((int)Character.OTHER_SYMBOL);
-		idInitialType.add((int)Character.PRIVATE_USE);
-		idSubsequent.addAll(idInitial);
-		idSubsequent.add((int)'+');
-		idSubsequent.add((int)'-');
-		idSubsequent.add((int)'.');
-		idSubsequent.add((int)'@');
-		idSubsequentType.addAll(idInitialType);
-		idSubsequentType.add((int)Character.DECIMAL_DIGIT_NUMBER);
-		idSubsequentType.add((int)Character.COMBINING_SPACING_MARK);
-		idSubsequentType.add((int)Character.ENCLOSING_MARK);
+		DELIMITER.add((int)'\"');
+		DELIMITER.add((int)'|');
+		DELIMITER.add((int)';');
+		ID_INITIAL.add((int)'!');
+		ID_INITIAL.add((int)'$');
+		ID_INITIAL.add((int)'%');
+		ID_INITIAL.add((int)'&');
+		ID_INITIAL.add((int)'*');
+		ID_INITIAL.add((int)'/');
+		ID_INITIAL.add((int)':');
+		ID_INITIAL.add((int)'<');
+		ID_INITIAL.add((int)'=');
+		ID_INITIAL.add((int)'>');
+		ID_INITIAL.add((int)'?');
+		ID_INITIAL.add((int)'^');
+		ID_INITIAL.add((int)'_');
+		ID_INITIAL.add((int)'~');
+		ID_INITIAL.add((int)'\u200C');
+		ID_INITIAL.add((int)'\u200D');
+		ID_INITIAL_TYPE.add((int)Character.UPPERCASE_LETTER);
+		ID_INITIAL_TYPE.add((int)Character.LOWERCASE_LETTER);
+		ID_INITIAL_TYPE.add((int)Character.TITLECASE_LETTER);
+		ID_INITIAL_TYPE.add((int)Character.MODIFIER_LETTER);
+		ID_INITIAL_TYPE.add((int)Character.OTHER_LETTER);
+		ID_INITIAL_TYPE.add((int)Character.NON_SPACING_MARK);
+		ID_INITIAL_TYPE.add((int)Character.LETTER_NUMBER);
+		ID_INITIAL_TYPE.add((int)Character.OTHER_NUMBER);
+		ID_INITIAL_TYPE.add((int)Character.DASH_PUNCTUATION);
+		ID_INITIAL_TYPE.add((int)Character.CONNECTOR_PUNCTUATION);
+		ID_INITIAL_TYPE.add((int)Character.OTHER_PUNCTUATION);
+		ID_INITIAL_TYPE.add((int)Character.CURRENCY_SYMBOL);
+		ID_INITIAL_TYPE.add((int)Character.MATH_SYMBOL);
+		ID_INITIAL_TYPE.add((int)Character.MODIFIER_SYMBOL);
+		ID_INITIAL_TYPE.add((int)Character.OTHER_SYMBOL);
+		ID_INITIAL_TYPE.add((int)Character.PRIVATE_USE);
+		ID_SUBSEQUENCE.addAll(ID_INITIAL);
+		ID_SUBSEQUENCE.add((int)'+');
+		ID_SUBSEQUENCE.add((int)'-');
+		ID_SUBSEQUENCE.add((int)'.');
+		ID_SUBSEQUENCE.add((int)'@');
+		ID_SUBSEQUENCE_TYPE.addAll(ID_INITIAL_TYPE);
+		ID_SUBSEQUENCE_TYPE.add((int)Character.DECIMAL_DIGIT_NUMBER);
+		ID_SUBSEQUENCE_TYPE.add((int)Character.COMBINING_SPACING_MARK);
+		ID_SUBSEQUENCE_TYPE.add((int)Character.ENCLOSING_MARK);
 	}
 	/**
 	 * Construct a lexical analyzer to analysis a piece of code from a Reader
@@ -122,12 +122,26 @@ public final class Lex{
 	public Lex(Reader in){
 		this(new PushbackReader(in,2),false);
 	}
+	/**
+	 * Construct a lexical analyzer to analysis a piece of code from a Reader
+	 * @param in the source
+	 * @param foldingCase default to case folding or not
+	 */
 	public Lex(Reader in,boolean foldingCase){
 		this(new PushbackReader(in,2),foldingCase);
 	}
+	/**
+	 * Construct a lexical analyzer to analysis a piece of code from a Reader
+	 * @param in the source
+	 */
 	public Lex(PushbackReader in){
 		this(in,false);
 	}
+	/**
+	 * Construct a lexical analyzer to analysis a piece of code from a Reader
+	 * @param in the source
+	 * @param foldingCase default to case folding or not
+	 */
 	public Lex(PushbackReader in,boolean foldingCase){
 		this.in=in;
 		this.foldingCase=foldingCase;
@@ -291,7 +305,7 @@ public final class Lex{
 		return type==Character.SPACE_SEPARATOR||type==Character.LINE_SEPARATOR||type==Character.PARAGRAPH_SEPARATOR;
 	}
 	private static boolean isDelimiter(int c){
-		return delimiter.contains(c)||isWhiteSpace(c);
+		return DELIMITER.contains(c)||isWhiteSpace(c);
 	}
 	private void eatLineRemaining()throws IOException{
 		int c=in.read();
@@ -333,8 +347,8 @@ public final class Lex{
 		}else{
 			if(foldingCase)
 				cname=ScmString.toFoldingCase(cname);
-			if(name2char.containsKey(cname))
-				codepoint=name2char.get(cname);
+			if(NAME2CHAR.containsKey(cname))
+				codepoint=NAME2CHAR.get(cname);
 			else
 				throw new LexicalException();
 		}
@@ -374,8 +388,8 @@ public final class Lex{
 		while(true){
 			if(c=='\\'){
 				c=in.read();
-				if(mem2char.containsKey(Character.toLowerCase(c))){
-					str.appendCodePoint(mem2char.get(c));
+				if(MEM2CHAR.containsKey(Character.toLowerCase(c))){
+					str.appendCodePoint(MEM2CHAR.get(c));
 					c=in.read();
 				}else if(c=='x'){
 					int point=0;
@@ -436,8 +450,8 @@ public final class Lex{
 	}
 	private int nextHexOrMem()throws IOException{
 		int c=in.read();
-		if(mem2char.containsKey(Character.toLowerCase(c)))
-			return mem2char.get(c);
+		if(MEM2CHAR.containsKey(Character.toLowerCase(c)))
+			return MEM2CHAR.get(c);
 		else if(c=='x'){
 			int point=0;
 			while((c=in.read())!=';'){
@@ -487,10 +501,10 @@ public final class Lex{
 		return parseNumber(token);
 	}
 	private static boolean isInitial(int c){
-		return (c>='a'&&c<='z')||(c>='A'&&c<='Z')||idInitial.contains(c)||(c>127&&idInitialType.contains(Character.getType(c)));
+		return (c>='a'&&c<='z')||(c>='A'&&c<='Z')||ID_INITIAL.contains(c)||(c>127&&ID_INITIAL_TYPE.contains(Character.getType(c)));
 	}
 	private static boolean isSubsequent(int c){
-		return (c>='a'&&c<='z')||(c>='A'&&c<='Z')||(c>='0'&&c<='9')||idSubsequent.contains(c)||(c>127&&idSubsequentType.contains(Character.getType(c)));
+		return (c>='a'&&c<='z')||(c>='A'&&c<='Z')||(c>='0'&&c<='9')||ID_SUBSEQUENCE.contains(c)||(c>127&&ID_SUBSEQUENCE_TYPE.contains(Character.getType(c)));
 	}
 	private static ScmNumber parseNumber(String literal)throws IOException{
 		PushbackReader in=new PushbackReader(new StringReader(literal));
@@ -635,7 +649,7 @@ public final class Lex{
 }
 class DigitVerifier{
 	BitSet digits=new BitSet(128);
-	static final DigitVerifier[] loaded=new DigitVerifier[37];
+	static final DigitVerifier[] LOADED=new DigitVerifier[37];
 	private DigitVerifier(int base){
 		if(base<2||base>36)
 			throw new RuntimeException();
@@ -646,9 +660,9 @@ class DigitVerifier{
 		}
 	}
 	public static DigitVerifier getDigitVerifier(int base){
-		if(loaded[base]==null)
-			loaded[base]=new DigitVerifier(base);
-		return loaded[base];
+		if(LOADED[base]==null)
+			LOADED[base]=new DigitVerifier(base);
+		return LOADED[base];
 	}
 	public boolean verify(int c){
 		return c>=0&&c<128&&digits.get(c);

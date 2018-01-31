@@ -18,11 +18,15 @@ package com.github.chungkwong.jschememin.lib;
 import com.github.chungkwong.jschememin.*;
 import com.github.chungkwong.jschememin.type.*;
 /**
- *
+ * Represents native procedures
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class NativeEvaluable extends Evaluable{
 	private final NativeProcedure proc;
+	/**
+	 * Wrap a NativeProcedure
+	 * @param proc
+	 */
 	public NativeEvaluable(NativeProcedure proc){
 		this.proc=proc;
 	}

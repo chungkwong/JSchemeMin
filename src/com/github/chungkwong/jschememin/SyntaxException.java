@@ -16,20 +16,16 @@
  */
 
 package com.github.chungkwong.jschememin;
-
 /**
- *
+ * Syntax exception when parsing script
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class SyntaxException extends RuntimeException{
-
 	/**
 	 * Creates a new instance of <code>SyntaxException</code> without detail message.
 	 */
 	public SyntaxException() {
 	}
-
-
 	/**
 	 * Constructs an instance of <code>SyntaxException</code> with the specified detail message.
 	 * @param msg the detail message.
