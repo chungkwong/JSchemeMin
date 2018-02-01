@@ -110,7 +110,7 @@
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dfile=${sources-jar}" />
 			<arg value="-Dclassifier=sources" />
-			<arg value="-Dgpg.passphrase=eIpip1eq0" />
+			<arg value="-Pgpg" />
 		</artifact:mvn>
 		<!-- sign and deploy the javadoc artifact -->
 		<artifact:mvn>
