@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.github.chungkwong</groupId>
+  <artifactId>jschememin</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>jschememin</name>
+  <description>A implementation of the Scheme language R7RS</description>
+  <url>http://github.com/chungkwong/jschememin</url>
+
+  <licenses>
+    <license>
+      <name>GNU GENERAL PUBLIC LICENSE, Version 3</name>
+      <url>https://www.gnu.org/licenses/gpl.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Chan Chung Kwong</name>
+      <email>1m02math@126.com</email>
+      <organization>SYSU</organization>
+      <organizationUrl>http://www.sysu.edu.cn</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/chungkwong/JSchemeMin.git</connection>
+    <developerConnection>scm:git:ssh://github.com:chungkwong/JSchemeMin.git</developerConnection>
+    <url>http://github.com/chungkwong/jschememin/tree/master</url>
+   </scm>
+</project>
