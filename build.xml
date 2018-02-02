@@ -124,6 +124,8 @@
 		</artifact:mvn>
 	</target>
 	<target name="snapshot" depends="jar">
+		<mkdir dir="dist/deploy"/>
+		<copy file="dist/JSchemeMin.jar" tofile="${jar}"/>
 		<artifact:mvn>
 			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-file" />
 			<arg value="-Durl=${ossrh-snapshots-repository-url}" />
