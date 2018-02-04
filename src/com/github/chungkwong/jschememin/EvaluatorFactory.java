@@ -84,7 +84,7 @@ public class EvaluatorFactory implements ScriptEngineFactory{
 		return Arrays.stream(statements).collect(Collectors.joining(" ","(begin ",")"));
 	}
 	@Override
-	public ScriptEngine getScriptEngine(){
+	public Evaluator getScriptEngine(){
 		return new Evaluator(true);
 	}
 }
