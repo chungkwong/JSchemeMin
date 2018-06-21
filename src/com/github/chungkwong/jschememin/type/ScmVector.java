@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.stream.*;
 /**
  * Representation of the type vector in Scheme
+ *
  * @author kwong
  */
 public final class ScmVector extends ScmObject{
@@ -28,6 +29,7 @@ public final class ScmVector extends ScmObject{
 	}
 	/**
 	 * Construct a vector
+	 *
 	 * @param vector the list which the vector backed by
 	 */
 	public ScmVector(ArrayList<ScmObject> vector){
@@ -35,6 +37,7 @@ public final class ScmVector extends ScmObject{
 	}
 	/**
 	 * Get the length of the vector
+	 *
 	 * @return the length of the vector
 	 */
 	public int getLength(){
@@ -42,6 +45,7 @@ public final class ScmVector extends ScmObject{
 	}
 	/**
 	 * Get a elements in a vector
+	 *
 	 * @param index the index of that element
 	 * @return the element
 	 */
@@ -50,6 +54,7 @@ public final class ScmVector extends ScmObject{
 	}
 	/**
 	 * Set a element in the vector
+	 *
 	 * @param index the index of that element
 	 * @param element the new value
 	 * @return this
@@ -104,6 +109,7 @@ public final class ScmVector extends ScmObject{
 	}
 	/**
 	 * Build a vector
+	 *
 	 * @param obj the elements of the vector
 	 * @return the new vector
 	 */
@@ -112,6 +118,7 @@ public final class ScmVector extends ScmObject{
 	}
 	/**
 	 * Build a vector
+	 *
 	 * @param list the elements of the vector
 	 * @return the new vector
 	 */
@@ -123,6 +130,7 @@ public final class ScmVector extends ScmObject{
 	}
 	/**
 	 * Build a vector containing elements of this vector and the others
+	 *
 	 * @param list the others elements
 	 * @return the new vector
 	 */
@@ -132,6 +140,7 @@ public final class ScmVector extends ScmObject{
 	}
 	/**
 	 * Build a list containing the elements of this vector
+	 *
 	 * @param start index of the first element
 	 * @param end index after the last element
 	 * @return the list
@@ -141,6 +150,7 @@ public final class ScmVector extends ScmObject{
 	}
 	/**
 	 * Build a vector which all elements are the same
+	 *
 	 * @param o the element
 	 * @param count the length of the vector
 	 * @return the new vector
@@ -154,18 +164,21 @@ public final class ScmVector extends ScmObject{
 	}
 	/**
 	 * Set some elements to be the same
+	 *
 	 * @param item the new element
 	 * @param start index of the first element
 	 * @param end index after the last element
 	 * @return this
 	 */
 	public ScmVector setRange(ScmObject item,int start,int end){
-		for(int i=start;i<end;i++)
+		for(int i=start;i<end;i++){
 			vector.set(i,item);
+		}
 		return this;
 	}
 	/**
 	 * Copy some elements from this vector to override elements in another
+	 *
 	 * @param to the other vector
 	 * @param at index of the first element to be copied
 	 * @param start index of the first element
@@ -173,12 +186,14 @@ public final class ScmVector extends ScmObject{
 	 * @return
 	 */
 	public ScmVector copyTo(ScmVector to,int at,int start,int end){
-		while(start<end)
+		while(start<end){
 			to.vector.set(at++,vector.get(start++));
+		}
 		return to;
 	}
 	/**
 	 * Copy some of the elements to a new vector
+	 *
 	 * @param start index of the first element
 	 * @param end index after the last element
 	 * @return the new vector
@@ -188,6 +203,7 @@ public final class ScmVector extends ScmObject{
 	}
 	/**
 	 * Get the String containing the codepoints in this vector
+	 *
 	 * @param start index of the first element
 	 * @param end index after the last element
 	 * @return the String
