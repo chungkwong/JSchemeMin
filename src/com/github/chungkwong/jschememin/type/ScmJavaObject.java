@@ -16,8 +16,8 @@
  */
 package com.github.chungkwong.jschememin.type;
 import com.github.chungkwong.jschememin.*;
-import com.github.chungkwong.jschememin.lib.*;
 import java.lang.reflect.*;
+import java.math.*;
 import java.util.*;
 import java.util.function.*;
 import javax.script.*;
@@ -67,53 +67,68 @@ public class ScmJavaObject extends Evaluable{
 		try{
 			Optional<Class<?>> function=Arrays.stream(obj.getClass().getInterfaces()).filter((i)->i.isAnnotationPresent(FunctionalInterface.class)).findAny();
 			Method method=function.get().getDeclaredMethods()[0];
-			cont.ret(fromType(method.invoke(obj,correctType(ScmList.asStream(param).toArray(),method)),method.getReturnType()));
+			cont.ret(toScmObject(method.invoke(obj,correctType(ScmList.asStream(param).toArray(),method))));
 		}catch(Exception ex){
 			throw new RuntimeException("Expect Evaluable:"+obj,ex);
 		}
 	}
-	private static Object[] correctType(Object[] args,Method method){
+	/**
+	 * Convert scheme objects to java objects for invocation
+	 *
+	 * @param args the arguments
+	 * @param method to be invoked
+	 * @return the java objects
+	 */
+	public static Object[] correctType(Object[] args,Executable method){
 		Class<?>[] types=method.getParameterTypes();
 		if(method.isVarArgs()){
+			Object[] arguments=new Object[method.getParameterCount()];
 			for(int i=0;i<types.length-1;i++){
-				args[i]=toType(args[i],types[i]);
+				arguments[i]=toJavaObject(args[i],types[i]);
 			}
-			for(int i=types.length-1;i<args.length;i++){
-				args[i]=toType(args[i],types[types.length-1]);
+			Object[] remaining=new Object[args.length-types.length+1];
+			for(int i=types.length-1, j=0;i<args.length;i++,j++){
+				remaining[j]=toJavaObject(args[i],types[types.length-1]);
 			}
+			arguments[arguments.length-1]=remaining;
+			return arguments;
 		}else{
 			for(int i=0;i<types.length;i++){
-				args[i]=toType(args[i],types[i]);
+				args[i]=toJavaObject(args[i],types[i]);
+			}
+			return args;
+		}
+	}
+	/**
+	 * Convert a Scheme object to Object
+	 *
+	 * @param obj the Java object
+	 * @param cls the target type
+	 * @return the Scheme object
+	 */
+	private static Object toJavaObject(Object obj,Class cls){
+		if(obj==null||cls.isAssignableFrom(obj.getClass())){
+			return obj;
+		}else if(obj instanceof ScmJavaObject){
+			return ((ScmJavaObject)obj).getJavaObject();
+		}else if(obj instanceof ScmComplex&&Number.class.isAssignableFrom(cls)){
+			if(cls==int.class||cls==Integer.class){
+				return ((ScmComplex)obj).getReal().toScmInteger().getValue().intValue();
+			}else if(cls==byte.class||cls==Byte.class){
+				return ((ScmComplex)obj).getReal().toScmInteger().getValue().byteValue();
+			}else if(cls==short.class||cls==Short.class){
+				return ((ScmComplex)obj).getReal().toScmInteger().getValue().shortValue();
+			}else if(cls==long.class||cls==Long.class){
+				return ((ScmComplex)obj).getReal().toScmInteger().getValue().longValue();
+			}else if(cls==BigInteger.class){
+				return ((ScmComplex)obj).getReal().toScmInteger().getValue();
+			}else if(cls==float.class||cls==Float.class){
+				return (float)((ScmComplex)obj).getReal().toDouble();
+			}else if(cls==double.class||cls==Double.class){
+				return ((ScmComplex)obj).getReal().toDouble();
 			}
 		}
-		return Java.adjustForVarargs(args,method);
-	}
-	private static Object toType(Object obj,Class cls){
-		if(cls.isAssignableFrom(obj.getClass())){
-			return obj;
-		}else if(cls==String.class&&obj instanceof ScmString){
-			return ((ScmString)obj).getValue();
-		}else if((cls==Integer.class||cls==int.class)&&obj instanceof ScmComplex){
-			return ((ScmComplex)obj).intValueExact();
-		}else if((cls==Boolean.class||cls==boolean.class)&&obj instanceof ScmBoolean){
-			return ((ScmBoolean)obj).isTrue();
-		}else{
-			return obj;
-		}
-	}
-	private static ScmObject fromType(Object obj,Class cls){
-		if(cls==Void.TYPE){
-			return ScmNil.NIL;
-		}
-		if(cls==String.class){
-			return new ScmString((String)obj);
-		}else if((cls==Integer.class||cls==int.class)){
-			return new ScmInteger((Integer)obj);
-		}else if((cls==Boolean.class||cls==boolean.class)){
-			return ScmBoolean.valueOf((Boolean)obj);
-		}else{
-			return toScmObject(obj);
-		}
+		return ScmJavaObject.toJavaObject((ScmObject)obj);
 	}
 	/**
 	 * Convert a Scheme object to Java object

@@ -23,9 +23,9 @@ import static com.github.chungkwong.jschememin.lib.Utility.cdr;
 import com.github.chungkwong.jschememin.type.*;
 import java.lang.reflect.*;
 import java.math.*;
-import java.util.*;
 /**
  * Correspoding to the library (java) in Scheme
+ *
  * @author Chan Chung Kwong <1m02math@126.com>
  */
 public class Java extends NativeLibrary{
@@ -52,6 +52,8 @@ public class Java extends NativeLibrary{
 		addNativeProcedure("BigDecimal->real",(o)->new ScmFloatingPointNumber((BigDecimal)((ScmJavaObject)car(o)).getJavaObject()));
 		addNativeProcedure("bytevector->ByteArray",(o)->new ScmJavaObject(((ScmByteVector)car(o)).getByteArray()));
 		addNativeProcedure("ByteArray->bytevector",(o)->new ScmByteVector((byte[])((ScmJavaObject)car(o)).getJavaObject()));
+		addNativeProcedure("scheme->java",(o)->new ScmJavaObject(ScmJavaObject.toJavaObject(car(o))));
+		addNativeProcedure("java->scheme",(o)->ScmJavaObject.toScmObject(((ScmJavaObject)car(o)).getJavaObject()));
 		addNativeProcedure("instanceof",(o)->is(o));
 		addNativeProcedure("construct",(o)->construct(o));
 		addNativeProcedure("invoke",(o)->invoke(o));
@@ -61,8 +63,6 @@ public class Java extends NativeLibrary{
 		addNativeProcedure("set",(o)->setField(o));
 		addNativeProcedure("set-static",(o)->setStaticField(o));
 		addNativeProcedure("cast-to",(o)->cast(o));
-		addDeriveFile("/com/github/chungkwong/jschememin/lib/java_derive.scm","scheme->java","java->scheme",
-				"easy-construct","easy-invoke","easy-invoke-static");
 	}
 	private static Object[] toArray(ScmObject obj){
 		int length=ScmList.getLength(obj);
@@ -75,8 +75,9 @@ public class Java extends NativeLibrary{
 	}
 	private static Class[] toClassArray(Object[] args){
 		Class[] types=new Class[args.length];
-		for(int i=0;i<args.length;i++)
+		for(int i=0;i<args.length;i++){
 			types[i]=args[i]==null?null:args[i].getClass();
+		}
 		return types;
 	}
 	private static ScmObject is(ScmObject param) throws ClassNotFoundException{
@@ -84,18 +85,18 @@ public class Java extends NativeLibrary{
 		Class type=forName(((ScmSymbol)cadr(param)).getValue());
 		return ScmBoolean.valueOf(type.isInstance(obj));
 	}
-	private static ScmObject getField(ScmObject param) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, ClassNotFoundException{
+	private static ScmObject getField(ScmObject param) throws NoSuchFieldException,IllegalArgumentException,IllegalAccessException,ClassNotFoundException{
 		Object obj=((ScmJavaObject)car(param)).getJavaObject();
 		Class cls=obj.getClass();
 		String field=((ScmSymbol)cadr(param)).getValue();
 		return new ScmJavaObject(cls.getField(field).get(obj));
 	}
-	private static ScmObject getStaticField(ScmObject param) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, ClassNotFoundException{
+	private static ScmObject getStaticField(ScmObject param) throws NoSuchFieldException,IllegalArgumentException,IllegalAccessException,ClassNotFoundException{
 		Class cls=forName(((ScmSymbol)car(param)).getValue());
 		String field=((ScmSymbol)cadr(param)).getValue();
 		return new ScmJavaObject(cls.getField(field).get(null));
 	}
-	private static ScmObject setField(ScmObject param) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, ClassNotFoundException{
+	private static ScmObject setField(ScmObject param) throws NoSuchFieldException,IllegalArgumentException,IllegalAccessException,ClassNotFoundException{
 		Object obj=((ScmJavaObject)car(param)).getJavaObject();
 		Class cls=obj.getClass();
 		String field=((ScmSymbol)cadr(param)).getValue();
@@ -103,62 +104,54 @@ public class Java extends NativeLibrary{
 		cls.getField(field).set(obj,val);
 		return caddr(param);
 	}
-	private static ScmObject setStaticField(ScmObject param) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, ClassNotFoundException{
+	private static ScmObject setStaticField(ScmObject param) throws NoSuchFieldException,IllegalArgumentException,IllegalAccessException,ClassNotFoundException{
 		Class cls=forName(((ScmSymbol)car(param)).getValue());
 		String field=((ScmSymbol)cadr(param)).getValue();
 		Object val=((ScmJavaObject)caddr(param)).getJavaObject();
 		cls.getField(field).set(null,val);
 		return caddr(param);
 	}
-	private static ScmObject invoke(ScmObject param)throws ClassNotFoundException
-			, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+	private static ScmObject invoke(ScmObject param) throws ClassNotFoundException,
+			NoSuchMethodException,IllegalAccessException,IllegalArgumentException,InvocationTargetException{
 		Object obj=((ScmJavaObject)car(param)).getJavaObject();
 		Class cls=obj.getClass();
 		String method=((ScmSymbol)cadr(param)).getValue();
 		Object[] arguments=toArray(((ScmPair)param).getCddr());
 		Class[] paraType=toClassArray(arguments);
 		Method m=(Method)selectMethod(cls.getMethods(),method,paraType);
-		if(m!=null)
+		if(m!=null){
 			try{
-				return new ScmJavaObject(m.invoke(obj,adjustForVarargs(arguments,m)));
+				return new ScmJavaObject(m.invoke(obj,ScmJavaObject.correctType(arguments,m)));
 			}catch(Throwable ex){
 				throw ScmError.toRuntimeException(ex);
 			}
-		else
+		}else{
 			throw new NoSuchMethodException(method);
+		}
 	}
-	private static ScmObject invokeStatic(ScmObject param)throws ClassNotFoundException
-			, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+	private static ScmObject invokeStatic(ScmObject param) throws ClassNotFoundException,
+			NoSuchMethodException,IllegalAccessException,IllegalArgumentException,InvocationTargetException{
 		Class cls=forName(((ScmSymbol)car(param)).getValue());
 		String method=((ScmSymbol)cadr(param)).getValue();
 		Object[] arguments=toArray(((ScmPair)param).getCddr());
 		Class[] paraType=toClassArray(arguments);
 		Method m=(Method)selectMethod(cls.getMethods(),method,paraType);
-		if(m!=null)
-			return new ScmJavaObject(m.invoke(null,adjustForVarargs(arguments,m)));
-		else
+		if(m!=null){
+			return new ScmJavaObject(m.invoke(null,ScmJavaObject.correctType(arguments,m)));
+		}else{
 			throw new NoSuchMethodException(method);
+		}
 	}
-	private static ScmObject construct(ScmObject param)throws ClassNotFoundException
-			, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException{
+	private static ScmObject construct(ScmObject param) throws ClassNotFoundException,
+			NoSuchMethodException,IllegalAccessException,IllegalArgumentException,InvocationTargetException,InstantiationException{
 		Class cls=forName(((ScmSymbol)car(param)).getValue());
 		Object[] arguments=toArray(cdr(param));
 		Class[] paraType=toClassArray(arguments);
 		Constructor m=(Constructor)selectMethod(cls.getConstructors(),cls.getName(),paraType);
-		if(m!=null)
-			return new ScmJavaObject(m.newInstance(adjustForVarargs(arguments,m)));
-		else
-			throw new NoSuchMethodException();
-	}
-	public static Object[] adjustForVarargs(Object[] args,Executable m){
-		if(m.isVarArgs()){
-			Object[] arguments=new Object[m.getParameterCount()];
-			int len=arguments.length-1;
-			System.arraycopy(args,0,arguments,0,len);
-			arguments[len]=Arrays.copyOfRange(args,len,args.length,(Class)m.getParameterTypes()[len]);
-			return arguments;
+		if(m!=null){
+			return new ScmJavaObject(m.newInstance(ScmJavaObject.correctType(arguments,m)));
 		}else{
-			return args;
+			throw new NoSuchMethodException();
 		}
 	}
 	private static ScmObject cast(ScmObject param) throws ClassNotFoundException{
@@ -169,8 +162,9 @@ public class Java extends NativeLibrary{
 		Class<?>[] bestParameterTypes=null;
 		boolean bestVarargs=false;
 		for(Executable m:choices){
-			if(!m.getName().equals(name))
+			if(!m.getName().equals(name)){
 				continue;
+			}
 			Class<?>[] parameterTypes=m.getParameterTypes();
 			boolean varargs=m.isVarArgs();
 			if(isPossible(parameterTypes,varargs,argsType)){
@@ -178,29 +172,38 @@ public class Java extends NativeLibrary{
 					best=m;
 					bestParameterTypes=parameterTypes;
 					bestVarargs=varargs;
-				}else if(!isBetterThan(bestParameterTypes,bestVarargs,parameterTypes,varargs))
+				}else if(!isBetterThan(bestParameterTypes,bestVarargs,parameterTypes,varargs)){
 					return null;
+				}
 			}
 		}
 		return best;
 	}
 	private static boolean isPossible(Class<?>[] paraType,boolean varargs,Class<?>[] argsType){
 		if(varargs){
-			if(argsType.length<paraType.length-1)
+			if(argsType.length<paraType.length-1){
 				return false;
-			for(int i=0;i<paraType.length-1;i++)
-				if(!canAssignFrom(paraType[i],argsType[i]))
+			}
+			for(int i=0;i<paraType.length-1;i++){
+				if(!canAssignFrom(paraType[i],argsType[i])){
 					return false;
-			for(int i=paraType.length-1;i<argsType.length;i++)
-				if(!canAssignFrom(paraType[paraType.length-1].getComponentType(),argsType[i]))
+				}
+			}
+			for(int i=paraType.length-1;i<argsType.length;i++){
+				if(!canAssignFrom(paraType[paraType.length-1].getComponentType(),argsType[i])){
 					return false;
+				}
+			}
 			return true;
 		}else{
-			if(argsType.length!=paraType.length)
+			if(argsType.length!=paraType.length){
 				return false;
-			for(int i=0;i<argsType.length;i++)
-				if(!canAssignFrom(paraType[i],argsType[i]))
+			}
+			for(int i=0;i<argsType.length;i++){
+				if(!canAssignFrom(paraType[i],argsType[i])){
 					return false;
+				}
+			}
 			return true;
 		}
 	}
@@ -208,28 +211,35 @@ public class Java extends NativeLibrary{
 		return right==null||left.isAssignableFrom(right)||(left.isPrimitive()&&boxTo(left,right))||(right.isPrimitive()&&boxTo(right,left));
 	}
 	private static boolean boxTo(Class left,Class right){
-		return (left==int.class&&right==Integer.class)||
-				(left==boolean.class&&right==Boolean.class)||
-				(left==double.class&&right==Double.class)||
-				(left==char.class&&right==Character.class)||
-				(left==short.class&&right==Short.class)||
-				(left==byte.class&&right==Byte.class)||
-				(left==long.class&&right==Long.class)||
-				(left==float.class&&right==Float.class);
+		return (left==int.class&&right==Integer.class)
+				||(left==boolean.class&&right==Boolean.class)
+				||(left==double.class&&right==Double.class)
+				||(left==char.class&&right==Character.class)
+				||(left==short.class&&right==Short.class)
+				||(left==byte.class&&right==Byte.class)
+				||(left==long.class&&right==Long.class)
+				||(left==float.class&&right==Float.class);
 	}
 	private static boolean isBetterThan(Class<?>[] paraType1,boolean varargs1,Class<?>[] paraType2,boolean varargs2){
-		if(varargs1!=varargs2)
+		if(varargs1!=varargs2){
 			return varargs2;
+		}
 		int i=0;
-		for(;i<paraType1.length&&i<paraType2.length;i++)
-			if(!paraType2[i].isAssignableFrom(paraType1[i]))
+		for(;i<paraType1.length&&i<paraType2.length;i++){
+			if(!paraType2[i].isAssignableFrom(paraType1[i])){
 				return false;
-		for(;i<paraType1.length;i++)
-			if(!paraType2[paraType2.length-1].isAssignableFrom(paraType1[i]))
+			}
+		}
+		for(;i<paraType1.length;i++){
+			if(!paraType2[paraType2.length-1].isAssignableFrom(paraType1[i])){
 				return false;
-		for(;i<paraType2.length;i++)
-			if(!paraType2[i].isAssignableFrom(paraType1[paraType1.length-1]))
+			}
+		}
+		for(;i<paraType2.length;i++){
+			if(!paraType2[i].isAssignableFrom(paraType1[paraType1.length-1])){
 				return false;
+			}
+		}
 		return true;
 	}
 	private static Class forName(String name) throws ClassNotFoundException{
