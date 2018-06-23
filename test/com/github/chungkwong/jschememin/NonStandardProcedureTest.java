@@ -16,7 +16,8 @@
  */
 package com.github.chungkwong.jschememin;
 import static com.github.chungkwong.jschememin.SchemeAssert.assertExpressionValue;
-import static com.github.chungkwong.jschememin.SchemeAssert.expectException;import org.junit.*;
+import static com.github.chungkwong.jschememin.SchemeAssert.expectException;
+import org.junit.*;
 /**
  *
  * @author Chan Chung Kwong <1m02math@126.com>
@@ -52,28 +53,25 @@ public class NonStandardProcedureTest{
 		assertExpressionValue("(begin (import (java)) (instanceof (string->String \"hello\") 'java.lang.Integer))","#f");
 		assertExpressionValue("(begin (import (java)) (Integer->integer (invoke (construct 'java.util.ArrayList (integer->Integer 5)) 'size)))","0");
 		assertExpressionValue("(begin (import (java)) "
-				+ "(set-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest 'sf (string->String \"world\")) "
-				+ "(String->string (get-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest 'sf)))","\"world\"");
+				+"(set-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest 'sf (string->String \"world\")) "
+				+"(String->string (get-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest 'sf)))","\"world\"");
 		assertExpressionValue("(begin (import (java)) (let ((obj (construct 'com.github.chungkwong.jschememin.NonStandardProcedureTest)))"
-				+ "(set obj 'f (string->String \"world\")) "
-				+ "(String->string (get obj 'f))))","\"world\"");
+				+"(set obj 'f (string->String \"world\")) "
+				+"(String->string (get obj 'f))))","\"world\"");
 		assertExpressionValue("(begin (import (java)) (Boolean->boolean (invoke-static 'java.util.Objects 'isNull (null))))","#t");
 		assertExpressionValue("(begin (import (java)) (String->string (invoke-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest "
-				+ "'overloaded (string->String \"q\") (integer->Integer -5))))","\"0\"");
+				+"'overloaded (string->String \"q\") (integer->Integer -5))))","\"0\"");
 		assertExpressionValue("(begin (import (java)) (String->string (invoke-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest "
-				+ "'overloaded (integer->Integer -5) (string->String \"q\"))))","\"1\"");
+				+"'overloaded (integer->Integer -5) (string->String \"q\"))))","\"1\"");
 		assertExpressionValue("(begin (import (java)) (Integer->integer (invoke-static 'java.lang.Math 'abs (integer->Integer -5))))","5");
-		assertExpressionValue("(begin (import (java)) (easy-invoke (easy-construct 'java.lang.Double \"5.3\") 'intValue))","5");
-		assertExpressionValue("(begin (import (java)) (easy-invoke-static 'java.lang.Math 'abs -5))","5");
-		assertExpressionValue("(begin (import (java)) (easy-invoke \"hello\" 'substring 3))","\"lo\"");
 		expectException("(begin (import (java)) (invoke-static 'java.lang.math 'abs (integer->Integer -5)))");
 		expectException("(begin (import (java)) (invoke-static 'java.lang.Math 'abs (string->String \"hello\")))");
 		expectException("(begin (import (java)) (invoke 'java.lang.Math 'abs))");
 		expectException("(begin (import (java)) (construct 'java.lang.Math (integer->Integer -5)))");
 		expectException("(begin (import (java)) (invoke-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest "
-				+ "'overloaded (integer->Integer -5) (integer->Integer -5)))");
+				+"'overloaded (integer->Integer -5) (integer->Integer -5)))");
 		expectException("(begin (import (java)) (invoke-static 'com.github.chungkwong.jschememin.NonStandardProcedureTest "
-				+ "'overloaded (string->String \"q\") (string->String \"w\")))");
+				+"'overloaded (string->String \"q\") (string->String \"w\")))");
 	}
 	@Test
 	public void testHashtable(){
@@ -95,55 +93,55 @@ public class NonStandardProcedureTest{
 		assertExpressionValue("(begin (import (scheme hashtables)) (hashtable-equivalence-function (make-eqv-hashtable)))","eqv?");
 		assertExpressionValue("(begin (import (scheme hashtables)) (hashtable-equivalence-function (make-hashtable equal-hash equal?)))","equal?");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-size table)))","0");
+				+"(hashtable-size table)))","0");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-size table)))","2");
+				+"(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-size table)))","2");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) (hashtable-size table)))","2");
+				+"(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) (hashtable-size table)))","2");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
-				+ "(hashtable-ref table 'one #f)))","'ONE");
+				+"(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
+				+"(hashtable-ref table 'one #f)))","'ONE");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
-				+ "(hashtable-ref table 'ONE #f)))","#f");
+				+"(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
+				+"(hashtable-ref table 'ONE #f)))","#f");
 		assertExpressionValue("(begin (import (scheme hashtables) (scheme char)) (let ((table (make-hashtable string-ci-hash string-ci=?))) "
-				+ "(hashtable-set! table \"one\" 1) (hashtable-set! table \"two\" 2) (hashtable-set! table \"oNe\" 'ONE) "
-				+ "(hashtable-ref table \"ONE\" #f)))","'ONE");
+				+"(hashtable-set! table \"one\" 1) (hashtable-set! table \"two\" 2) (hashtable-set! table \"oNe\" 'ONE) "
+				+"(hashtable-ref table \"ONE\" #f)))","'ONE");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
-				+ "(hashtable-delete! table 'one) (hashtable-contains? table 'one)))","#f");
+				+"(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
+				+"(hashtable-delete! table 'one) (hashtable-contains? table 'one)))","#f");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
-				+ "(hashtable-delete! table 'two) (hashtable-contains? table 'one)))","#t");
+				+"(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
+				+"(hashtable-delete! table 'two) (hashtable-contains? table 'one)))","#t");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
-				+ "(hashtable-delete! table 'rubblish) (hashtable-contains? table 'one)))","#t");
+				+"(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
+				+"(hashtable-delete! table 'rubblish) (hashtable-contains? table 'one)))","#t");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-set! table 'two 2) (hashtable-update! table 'two (lambda (x) (* x x)) 7)"
-				+ "(hashtable-ref table 'two #f)))","4");
+				+"(hashtable-set! table 'two 2) (hashtable-update! table 'two (lambda (x) (* x x)) 7)"
+				+"(hashtable-ref table 'two #f)))","4");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-set! table 'one 2) (hashtable-update! table 'two (lambda (x) (* x x)) 7)"
-				+ "(hashtable-ref table 'two #f)))","49");
+				+"(hashtable-set! table 'one 2) (hashtable-update! table 'two (lambda (x) (* x x)) 7)"
+				+"(hashtable-ref table 'two #f)))","49");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
-				+ "(= (hashtable-size table) (hashtable-size (hashtable-copy table)))))","#t");
+				+"(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
+				+"(= (hashtable-size table) (hashtable-size (hashtable-copy table)))))","#t");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
-				+ "(eq? (hashtable-ref table 'one #f) (hashtable-ref (hashtable-copy table) 'one #f))))","#t");
+				+"(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
+				+"(eq? (hashtable-ref table 'one #f) (hashtable-ref (hashtable-copy table) 'one #f))))","#t");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let* ((table (make-hashtable equal-hash equal?)) (table2 (hashtable-copy table #t))) "
-				+ "(hashtable-set! table 'one 1) (= (hashtable-size table) (hashtable-size table2))))","#f");
+				+"(hashtable-set! table 'one 1) (= (hashtable-size table) (hashtable-size table2))))","#f");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let* ((table (make-hashtable equal-hash equal?)) (table2 (hashtable-copy table #t))) "
-				+ "(hashtable-set! table2 'one 1) (= (hashtable-size table) (hashtable-size table2))))","#f");
+				+"(hashtable-set! table2 'one 1) (= (hashtable-size table) (hashtable-size table2))))","#f");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
-				+ "(or (equal? (hashtable-keys table) #(one two)) (equal? (hashtable-keys table) #(two one)))))","#t");
+				+"(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
+				+"(or (equal? (hashtable-keys table) #(one two)) (equal? (hashtable-keys table) #(two one)))))","#t");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
-				+ "(let-values (((k v) (hashtable-entries table))) (or "
-				+ "(and (equal? k #(one two)) (equal? v #(ONE 2)))"
-				+ "(and (equal? k #(two one)) (equal? v #(2 ONE)))))))","#t");
+				+"(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-set! table 'one 'ONE) "
+				+"(let-values (((k v) (hashtable-entries table))) (or "
+				+"(and (equal? k #(one two)) (equal? v #(ONE 2)))"
+				+"(and (equal? k #(two one)) (equal? v #(2 ONE)))))))","#t");
 		assertExpressionValue("(begin (import (scheme hashtables)) (let ((table (make-hashtable equal-hash equal?))) "
-				+ "(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-clear! table) (hashtable-size table)))","0");
+				+"(hashtable-set! table 'one 1) (hashtable-set! table 'two 2) (hashtable-clear! table) (hashtable-size table)))","0");
 		assertExpressionValue("(begin (import (scheme hashtables)) (eqv? (equal-hash '(a b)) (equal-hash '(a b))))","#t");
 		assertExpressionValue("(begin (import (scheme hashtables)) (eqv? (symbol-hash 'hello) (equal-hash 'hello)))","#t");
 		assertExpressionValue("(begin (import (scheme hashtables)) (eqv? (string-hash \"hello\") (string-hash \"helLo\")))","#f");

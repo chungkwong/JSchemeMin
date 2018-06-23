@@ -64,21 +64,14 @@ public class Java extends NativeLibrary{
 		addNativeProcedure("set-static",(o)->setStaticField(o));
 		addNativeProcedure("cast-to",(o)->cast(o));
 	}
-	private static Object[] toArray(ScmObject obj){
+	private static ScmObject[] toArray(ScmObject obj){
 		int length=ScmList.getLength(obj);
-		Object[] array=new Object[length];
+		ScmObject[] array=new ScmObject[length];
 		for(int i=0;i<length;i++){
-			array[i]=((ScmJavaObject)((ScmPair)obj).getCar()).getJavaObject();
+			array[i]=((ScmPair)obj).getCar();
 			obj=((ScmPair)obj).getCdr();
 		}
 		return array;
-	}
-	private static Class[] toClassArray(Object[] args){
-		Class[] types=new Class[args.length];
-		for(int i=0;i<args.length;i++){
-			types[i]=args[i]==null?null:args[i].getClass();
-		}
-		return types;
 	}
 	private static ScmObject is(ScmObject param) throws ClassNotFoundException{
 		Object obj=((ScmJavaObject)car(param)).getJavaObject();
@@ -116,9 +109,8 @@ public class Java extends NativeLibrary{
 		Object obj=((ScmJavaObject)car(param)).getJavaObject();
 		Class cls=obj.getClass();
 		String method=((ScmSymbol)cadr(param)).getValue();
-		Object[] arguments=toArray(((ScmPair)param).getCddr());
-		Class[] paraType=toClassArray(arguments);
-		Method m=(Method)selectMethod(cls.getMethods(),method,paraType);
+		ScmObject[] arguments=toArray(((ScmPair)param).getCddr());
+		Method m=(Method)selectMethod(cls.getMethods(),method,arguments);
 		if(m!=null){
 			try{
 				return new ScmJavaObject(m.invoke(obj,ScmJavaObject.correctType(arguments,m)));
@@ -133,9 +125,8 @@ public class Java extends NativeLibrary{
 			NoSuchMethodException,IllegalAccessException,IllegalArgumentException,InvocationTargetException{
 		Class cls=forName(((ScmSymbol)car(param)).getValue());
 		String method=((ScmSymbol)cadr(param)).getValue();
-		Object[] arguments=toArray(((ScmPair)param).getCddr());
-		Class[] paraType=toClassArray(arguments);
-		Method m=(Method)selectMethod(cls.getMethods(),method,paraType);
+		ScmObject[] arguments=toArray(((ScmPair)param).getCddr());
+		Method m=(Method)selectMethod(cls.getMethods(),method,arguments);
 		if(m!=null){
 			return new ScmJavaObject(m.invoke(null,ScmJavaObject.correctType(arguments,m)));
 		}else{
@@ -145,9 +136,8 @@ public class Java extends NativeLibrary{
 	private static ScmObject construct(ScmObject param) throws ClassNotFoundException,
 			NoSuchMethodException,IllegalAccessException,IllegalArgumentException,InvocationTargetException,InstantiationException{
 		Class cls=forName(((ScmSymbol)car(param)).getValue());
-		Object[] arguments=toArray(cdr(param));
-		Class[] paraType=toClassArray(arguments);
-		Constructor m=(Constructor)selectMethod(cls.getConstructors(),cls.getName(),paraType);
+		ScmObject[] arguments=toArray(cdr(param));
+		Constructor m=(Constructor)selectMethod(cls.getConstructors(),cls.getName(),arguments);
 		if(m!=null){
 			return new ScmJavaObject(m.newInstance(ScmJavaObject.correctType(arguments,m)));
 		}else{
@@ -157,7 +147,7 @@ public class Java extends NativeLibrary{
 	private static ScmObject cast(ScmObject param) throws ClassNotFoundException{
 		return new ScmJavaObject(forName(((ScmSymbol)cadr(param)).getValue()).cast(((ScmJavaObject)car(param)).getJavaObject()));
 	}
-	private static Executable selectMethod(Executable[] choices,String name,Class[] argsType){
+	private static Executable selectMethod(Executable[] choices,String name,ScmObject[] args){
 		Executable best=null;
 		Class<?>[] bestParameterTypes=null;
 		boolean bestVarargs=false;
@@ -167,7 +157,7 @@ public class Java extends NativeLibrary{
 			}
 			Class<?>[] parameterTypes=m.getParameterTypes();
 			boolean varargs=m.isVarArgs();
-			if(isPossible(parameterTypes,varargs,argsType)){
+			if(isPossible(parameterTypes,varargs,args)){
 				if(best==null||isBetterThan(parameterTypes,varargs,bestParameterTypes,bestVarargs)){
 					best=m;
 					bestParameterTypes=parameterTypes;
@@ -179,28 +169,28 @@ public class Java extends NativeLibrary{
 		}
 		return best;
 	}
-	private static boolean isPossible(Class<?>[] paraType,boolean varargs,Class<?>[] argsType){
+	private static boolean isPossible(Class<?>[] paraType,boolean varargs,ScmObject[] args){
 		if(varargs){
-			if(argsType.length<paraType.length-1){
+			if(args.length<paraType.length-1){
 				return false;
 			}
 			for(int i=0;i<paraType.length-1;i++){
-				if(!canAssignFrom(paraType[i],argsType[i])){
+				if(!ScmJavaObject.isConvertable(args[i],paraType[i])){
 					return false;
 				}
 			}
-			for(int i=paraType.length-1;i<argsType.length;i++){
-				if(!canAssignFrom(paraType[paraType.length-1].getComponentType(),argsType[i])){
+			for(int i=paraType.length-1;i<args.length;i++){
+				if(!ScmJavaObject.isConvertable(args[i],paraType[paraType.length-1].getComponentType())){
 					return false;
 				}
 			}
 			return true;
 		}else{
-			if(argsType.length!=paraType.length){
+			if(args.length!=paraType.length){
 				return false;
 			}
-			for(int i=0;i<argsType.length;i++){
-				if(!canAssignFrom(paraType[i],argsType[i])){
+			for(int i=0;i<args.length;i++){
+				if(!ScmJavaObject.isConvertable(args[i],paraType[i])){
 					return false;
 				}
 			}

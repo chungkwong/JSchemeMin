@@ -65,9 +65,14 @@ public class ScmJavaObject extends Evaluable{
 	@Override
 	public void call(SchemeEnvironment env,Continuation cont,Object pointer,ScmPairOrNil param){
 		try{
-			Optional<Class<?>> function=Arrays.stream(obj.getClass().getInterfaces()).filter((i)->i.isAnnotationPresent(FunctionalInterface.class)).findAny();
-			Method method=function.get().getDeclaredMethods()[0];
-			cont.ret(toScmObject(method.invoke(obj,correctType(ScmList.asStream(param).toArray(),method))));
+			Method method;
+			if(obj instanceof Method){
+				method=(Method)obj;
+			}else{
+				Optional<Class<?>> function=Arrays.stream(obj.getClass().getInterfaces()).filter((i)->i.isAnnotationPresent(FunctionalInterface.class)).findAny();
+				method=function.get().getDeclaredMethods()[0];
+			}
+			cont.ret(toScmObject(method.invoke(obj,correctType(ScmList.asStream(param).toArray(ScmObject[]::new),method))));
 		}catch(Exception ex){
 			throw new RuntimeException("Expect Evaluable:"+obj,ex);
 		}
@@ -79,7 +84,7 @@ public class ScmJavaObject extends Evaluable{
 	 * @param method to be invoked
 	 * @return the java objects
 	 */
-	public static Object[] correctType(Object[] args,Executable method){
+	public static Object[] correctType(ScmObject[] args,Executable method){
 		Class<?>[] types=method.getParameterTypes();
 		if(method.isVarArgs()){
 			Object[] arguments=new Object[method.getParameterCount()];
@@ -93,24 +98,65 @@ public class ScmJavaObject extends Evaluable{
 			arguments[arguments.length-1]=remaining;
 			return arguments;
 		}else{
+			Object[] arguments=new Object[types.length];
 			for(int i=0;i<types.length;i++){
-				args[i]=toJavaObject(args[i],types[i]);
+				arguments[i]=toJavaObject(args[i],types[i]);
 			}
-			return args;
+			return arguments;
 		}
+	}
+	/**
+	 * Check if a scheme object can be converted to a java type
+	 *
+	 * @param obj the Scheme object
+	 * @param cls the target type
+	 * @return the Scheme object
+	 */
+	public static boolean isConvertable(ScmObject obj,Class cls){
+		if(obj==null||obj==ScmNil.NIL||cls.isAssignableFrom(obj.getClass())){
+			return true;
+		}else if(obj instanceof ScmJavaObject){
+			Object javaObject=((ScmJavaObject)obj).getJavaObject();
+			return javaObject==null||cls.isAssignableFrom(javaObject.getClass())
+					||(cls.isPrimitive()&&boxTo(cls,javaObject.getClass()))
+					||(javaObject.getClass().isPrimitive()&&boxTo(javaObject.getClass(),cls));
+		}else if(obj instanceof ScmComplex){
+			return (Number.class.isAssignableFrom(cls)||cls.isPrimitive())
+					&&(cls==int.class||cls==Integer.class||cls==byte.class||cls==Byte.class
+					||cls==short.class||cls==Short.class||cls==long.class||cls==Long.class
+					||cls==BigInteger.class||cls==float.class||cls==Float.class||cls==double.class||cls==Double.class);
+		}else if(obj instanceof ScmBoolean){
+			return cls==Boolean.class;
+		}else if(obj instanceof ScmString){
+			return cls==String.class;
+		}else if(obj instanceof ScmByteVector){
+			return cls==byte[].class;
+		}else{
+			return false;
+		}
+	}
+	private static boolean boxTo(Class left,Class right){
+		return (left==int.class&&right==Integer.class)
+				||(left==boolean.class&&right==Boolean.class)
+				||(left==double.class&&right==Double.class)
+				||(left==char.class&&right==Character.class)
+				||(left==short.class&&right==Short.class)
+				||(left==byte.class&&right==Byte.class)
+				||(left==long.class&&right==Long.class)
+				||(left==float.class&&right==Float.class);
 	}
 	/**
 	 * Convert a Scheme object to Object
 	 *
-	 * @param obj the Java object
+	 * @param obj the Scheme object
 	 * @param cls the target type
-	 * @return the Scheme object
+	 * @return the Java object
 	 */
-	private static Object toJavaObject(Object obj,Class cls){
-		if(obj==null||cls.isAssignableFrom(obj.getClass())){
-			return obj;
-		}else if(obj instanceof ScmJavaObject){
+	private static Object toJavaObject(ScmObject obj,Class cls){
+		if(obj instanceof ScmJavaObject){
 			return ((ScmJavaObject)obj).getJavaObject();
+		}else if(obj==null||cls.isAssignableFrom(obj.getClass())){
+			return obj;
 		}else if(obj instanceof ScmComplex&&Number.class.isAssignableFrom(cls)){
 			if(cls==int.class||cls==Integer.class){
 				return ((ScmComplex)obj).getReal().toScmInteger().getValue().intValue();
@@ -145,6 +191,8 @@ public class ScmJavaObject extends Evaluable{
 			return ScmBoolean.valueOf((Boolean)obj);
 		}else if(obj instanceof Byte[]){
 			return new ScmByteVector((byte[])obj);
+		}else if(obj instanceof ScmObject){
+			return (ScmObject)obj;
 		}else{
 			return new ScmJavaObject(obj);
 		}
@@ -170,7 +218,7 @@ public class ScmJavaObject extends Evaluable{
 			return obj;
 		}
 	}
-	public static void main(String[] args) throws ScriptException{
+	public static void main(String[] args) throws Exception{
 		ScriptEngine engine=EvaluatorFactory.INSTANCE.getScriptEngine();
 		SimpleBindings bindings=new SimpleBindings();
 		Function<String,String> f=new Function<String,String>(){
