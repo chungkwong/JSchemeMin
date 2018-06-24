@@ -68,11 +68,18 @@ public class ScmJavaObject extends Evaluable{
 			Method method;
 			if(obj instanceof Method){
 				method=(Method)obj;
+				if(Modifier.isStatic(method.getModifiers())){
+					cont.ret(toScmObject(method.invoke(null,correctType(ScmList.asStream(param).toArray(ScmObject[]::new),method))));
+				}else{
+					cont.ret(toScmObject(method.invoke(ScmList.first(param),correctType(ScmList.asStream(param).skip(1).toArray(ScmObject[]::new),method))));
+				}
 			}else{
-				Optional<Class<?>> function=Arrays.stream(obj.getClass().getInterfaces()).filter((i)->i.isAnnotationPresent(FunctionalInterface.class)).findAny();
-				method=function.get().getDeclaredMethods()[0];
+				method=Arrays.stream(obj.getClass().getInterfaces()).
+						filter((i)->i.isAnnotationPresent(FunctionalInterface.class)).
+						flatMap((i)->Arrays.stream(i.getDeclaredMethods())).
+						filter((m)->Modifier.isPublic(m.getModifiers())&&!Modifier.isStatic(m.getModifiers())&&!m.isDefault()).findAny().get();
+				cont.ret(toScmObject(method.invoke(obj,correctType(ScmList.asStream(param).toArray(ScmObject[]::new),method))));
 			}
-			cont.ret(toScmObject(method.invoke(obj,correctType(ScmList.asStream(param).toArray(ScmObject[]::new),method))));
 		}catch(Exception ex){
 			throw new RuntimeException("Expect Evaluable:"+obj,ex);
 		}
@@ -91,7 +98,7 @@ public class ScmJavaObject extends Evaluable{
 			for(int i=0;i<types.length-1;i++){
 				arguments[i]=toJavaObject(args[i],types[i]);
 			}
-			Object[] remaining=new Object[args.length-types.length+1];
+			Object[] remaining=(Object[])Array.newInstance(types[types.length-1].getComponentType(),args.length-types.length+1);
 			for(int i=types.length-1, j=0;i<args.length;i++,j++){
 				remaining[j]=toJavaObject(args[i],types[types.length-1]);
 			}
@@ -153,10 +160,10 @@ public class ScmJavaObject extends Evaluable{
 	 * @return the Java object
 	 */
 	private static Object toJavaObject(ScmObject obj,Class cls){
-		if(obj instanceof ScmJavaObject){
-			return ((ScmJavaObject)obj).getJavaObject();
-		}else if(obj==null||cls.isAssignableFrom(obj.getClass())){
+		if(ScmObject.class.isAssignableFrom(cls)){
 			return obj;
+		}else if(obj instanceof ScmJavaObject){
+			return ((ScmJavaObject)obj).getJavaObject();
 		}else if(obj instanceof ScmComplex&&Number.class.isAssignableFrom(cls)){
 			if(cls==int.class||cls==Integer.class){
 				return ((ScmComplex)obj).getReal().toScmInteger().getValue().intValue();
@@ -174,7 +181,7 @@ public class ScmJavaObject extends Evaluable{
 				return ((ScmComplex)obj).getReal().toDouble();
 			}
 		}
-		return ScmJavaObject.toJavaObject((ScmObject)obj);
+		return toJavaObject(obj);
 	}
 	/**
 	 * Convert a Scheme object to Java object
