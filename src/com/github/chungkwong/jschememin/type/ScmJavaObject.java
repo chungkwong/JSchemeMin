@@ -200,6 +200,16 @@ public class ScmJavaObject extends Evaluable{
 			return new ScmByteVector((byte[])obj);
 		}else if(obj instanceof ScmObject){
 			return (ScmObject)obj;
+		}else if(obj instanceof Number){
+			if(obj instanceof BigInteger){
+				return new ScmInteger((BigInteger)obj);
+			}else if(obj instanceof BigDecimal){
+				return new ScmFloatingPointNumber((BigDecimal)obj);
+			}else if(obj instanceof Double||obj instanceof Float){
+				return ScmFloatingPointNumber.valueOf(((Number)obj).doubleValue());
+			}else{
+				return ScmInteger.valueOf(((Number)obj).longValue());
+			}
 		}else{
 			return new ScmJavaObject(obj);
 		}
@@ -221,6 +231,17 @@ public class ScmJavaObject extends Evaluable{
 			return ((ScmByteVector)obj).getByteArray();
 		}else if(obj instanceof ScmJavaObject){
 			return ((ScmJavaObject)obj).getJavaObject();
+		}else if(obj instanceof ScmComplex){
+			ScmReal real=((ScmComplex)obj).getReal();
+			if(real.isInteger()){
+				try{
+					return real.intValueExact();
+				}catch(RuntimeException ex){
+					return real.toScmInteger().getValue();
+				}
+			}else{
+				return real.toDouble();
+			}
 		}else{
 			return obj;
 		}
